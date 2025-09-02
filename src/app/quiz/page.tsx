@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useMemo, useState, useEffect } from "react";
 import ChoiceGroup from "@/components/ChoiceGroup";
 import QuestionCard from "@/components/QuestionCard";
@@ -12,29 +13,6 @@ import { pickFromAllBanks } from "@/lib/database";
 
 // --- Helpers: fraction/number parsing for grid-in answers
 
-function parseToNumber(value: string): number | null {
-  const v = value.trim().replace(/\s+/g, "");
-  if (!v) return null;
-  // Fraction like -2/3
-  if (/^-?\d+\/-?\d+$/.test(v)) {
-    const [nStr, dStr] = v.split("/");
-    const n = parseInt(nStr, 10);
-    const d = parseInt(dStr, 10);
-    if (d === 0) return null;
-    return n / d;
-  }
-  // Decimal or integer
-  const num = Number(v);
-  return Number.isFinite(num) ? num : null;
-}
-
-function isGridCorrect(input: string, answer: string): boolean {
-  // Try tolerant numeric comparison (handles integers, decimals, fractions)
-  const a = parseToNumber(input);
-  const b = parseToNumber(answer);
-  if (a === null || b === null) return false;
-  return Math.abs(a - b) < 1e-9;
-}
 export default function QuizPage() {
   // --- Config state
   const [count, setCount] = useState<number>(5);
