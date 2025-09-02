@@ -1,4 +1,3 @@
-import Image from "next/image";
 import QuizPage from "./quiz/page";
 
 export default function Home() {

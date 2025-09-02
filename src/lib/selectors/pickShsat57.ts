@@ -123,7 +123,7 @@ export function pickShsat57(
   );
 
   // If targets exceed total, scale them down proportionally
-  let sumTargets = algebraTarget + geometryTarget + statsTarget;
+  const sumTargets = algebraTarget + geometryTarget + statsTarget;
   if (sumTargets > C.total) {
     const scale = C.total / sumTargets;
     algebraTarget = Math.floor(algebraTarget * scale);
@@ -170,7 +170,7 @@ export function pickShsat57(
   remainingSlots -= geometryLeft;
   statsLeft = Math.min(statsLeft, remainingSlots);
   remainingSlots -= statsLeft;
-  let otherLeft = remainingSlots; // whatever remains can be any category
+  const otherLeft = remainingSlots; // whatever remains can be any category
 
   // Split MC pool by bucket
   const mcByBucket = {

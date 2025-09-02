@@ -4,8 +4,6 @@ import ChoiceGroup from "./ChoiceGroup";
 import Dot from "./Dot";
 import GridIn from "./GridIn";
 
-interface Props {}
-
 const QuestionCard = ({
   q,
   value,
