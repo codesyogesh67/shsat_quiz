@@ -1,5 +1,4 @@
 import type { Question } from "@/types";
-import { useMemo } from "react";
 
 function gcd(a: number, b: number): number {
   if (!b) return Math.abs(a);

@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useMemo, useState, useEffect } from "react";
-import ChoiceGroup from "@/components/ChoiceGroup";
+
 import QuestionCard from "@/components/QuestionCard";
-import GridIn from "@/components/GridIn";
-import { QUESTIONBANK } from "@/lib/data";
+
 import type { Mode, Question } from "@/types";
-import { pickQuestions, parseToNumber, isGridCorrect } from "@/lib/helpers";
+import { isGridCorrect } from "@/lib/helpers";
 import TimerDisplay from "@/components/TimerDisplay";
-import { pickFromAllBanks } from "@/lib/database";
+
 // --- Types
 
 // --- Helpers: fraction/number parsing for grid-in answers
