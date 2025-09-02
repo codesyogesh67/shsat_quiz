@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SHSAT Math Practice (Next.js)
 
-## Getting Started
+A sleek, zero-DB SHSAT math practice app. Create timed quizzes, run a realistic **57-question exam (90 min)**, filter by category (Algebra / Geometry / Statistics-Probability), and get instant scoring — all powered by simple JSON files.
 
-First, run the development server:
+---
+
+## ✨ Features
+
+- **One-click Exam Mode**: Generates a 57-question set with **exactly 5 Grid-In** and a target mix: **40–45% Algebra/Proportional**, **30–35% Geometry**, **15–20% Statistics/Probability**.
+- **Custom quizzes**: Choose question count, randomize order, set a timer.
+- **Category filtering**: Start Algebra-only, Geometry-only, or Stats/Prob-only sets.
+- **Instant scoring**: Per-question correctness, total score, and a **Reveal Results** mode.
+- **Cancel test**: Leave mid-test and return to configuration safely.
+- **Zero database**: Drop JSON files into `lib/database/*.json` and the app auto-discovers them.
+
+---
+
+## 🧱 Tech Stack
+
+- **Next.js (App Router)** + **TypeScript**
+- **React** + **Tailwind CSS**
+- No database required (filesystem JSON loader)
+- Optional preset selector for DOE-like exam mix
+
+---
+
+## 🚀 Quick Start
 
 ```bash
+# 1) Install dependencies
+npm install
+
+# 2) Add your questions
+#   Put *.json files into lib/database/
+#   (See schema below.)
+
+# 3) Run the app
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Visit http://localhost:3000
