@@ -2,7 +2,7 @@ import "server-only";
 import fs from "fs";
 import { promises as fsp } from "fs";
 import path from "path";
-import type { RawQuestion } from "@/types";
+import type { RawQuestion, Question } from "@/types";
 
 // If you use Zod, uncomment to validate.
 // import { z } from "zod";
@@ -41,7 +41,7 @@ export async function loadAllQuestionsFromDir(
     .map((e) => path.join(base, e.name));
 
   const seen = new Set<string>();
-  const out: Question[] = [];
+  const out: RawQuestion[] = [];
 
   for (const file of files) {
     let parsed: unknown;
