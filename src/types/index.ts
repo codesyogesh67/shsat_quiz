@@ -6,6 +6,7 @@ export type RawQuestion = {
   id: string;
   index?: number; // display number
   type: QuestionType;
+  category?: string;
   stem: string; // can include simple HTML/markdown-like text
   choices?: Choice[]; // only for MC
   answer: string; // "A" | "B" | ... or a numeric/fraction string like "-4" or "3/10"
