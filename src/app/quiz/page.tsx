@@ -1,52 +1,67 @@
 "use client";
 
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import QuestionCard from "@/components/QuestionCard";
+import TimerDisplay from "@/components/TimerDisplay";
+import { isGridCorrect } from "@/lib/helpers";
 
 import type { Mode, Question } from "@/types";
-import { isGridCorrect } from "@/lib/helpers";
-import TimerDisplay from "@/components/TimerDisplay";
 
-// --- Types
+/** ---------- Small utils ---------- */
+const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
-// --- Helpers: fraction/number parsing for grid-in answers
+async function fetchJsonSafe<T>(url: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(url, { cache: "no-store", ...init });
+  const raw = await res.text(); // robust against HTML error pages
+  if (!res.ok) {
+    throw new Error(raw || `HTTP ${res.status}`);
+  }
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    throw new Error("Server did not return valid JSON.");
+  }
+}
 
+type QuestionsPayload = { total: number; questions: Question[] };
+
+/** ---------- Page Component ---------- */
 export default function QuizPage() {
-  // --- Config state
+  // Config state
   const [count, setCount] = useState<number>(5);
   const [minutes, setMinutes] = useState<number>(10);
   const [randomize, setRandomize] = useState<boolean>(true);
   const [presetLabel, setPresetLabel] = useState<string | null>(null);
 
-  // --- Session state
+  // Session state
   const [mode, setMode] = useState<Mode>("CONFIG");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [timeRunning, setTimeRunning] = useState<boolean>(false);
-  // remember config if you start the preset exam so you can restore on cancel
+
+  // Remember pre-preset config so Cancel can restore it
   const [savedConfig, setSavedConfig] = useState<{
     count: number;
     minutes: number;
   } | null>(null);
 
-  // NEW: how many questions are available across all files
+  // How many questions are available (caps the "count" input)
   const [maxCount, setMaxCount] = useState<number>(1);
 
-  // Fetch available total once (or whenever you need to refresh)
+  // Fetch available total once on mount
   useEffect(() => {
     let alive = true;
     (async () => {
       try {
-        const res = await fetch("/api/questions?count=0", {
-          cache: "no-store",
-        });
-        const data = await res.json();
-        const total = Math.max(
-          1,
-          Number(data?.total ?? data?.questions?.length ?? 1)
-        );
+        const data = await fetchJsonSafe<
+          QuestionsPayload | { total?: number; questions?: unknown[] }
+        >("/api/questions?count=0");
+        const total =
+          typeof (data as any)?.total === "number"
+            ? Math.max(1, (data as any).total)
+            : Math.max(1, ((data as any)?.questions?.length as number) || 1);
         if (alive) setMaxCount(total);
       } catch {
         if (alive) setMaxCount(1);
@@ -57,16 +72,16 @@ export default function QuizPage() {
     };
   }, []);
 
-  // Keep count within [1, maxCount] whenever maxCount changes
+  // Keep count within [1, maxCount]
   useEffect(() => {
     setCount((c) => Math.max(1, Math.min(maxCount, c)));
   }, [maxCount]);
+
   const total = questions.length;
 
-  function isQuestionCorrect(q: Question, user?: string) {
+  function isQuestionCorrectLocal(q: Question, user?: string) {
     if (user == null || user === "") return false;
     if (q.type === "MULTIPLE_CHOICE") return user === q.answer;
-    // uses your existing isGridCorrect
     return isGridCorrect(user, q.answer);
   }
 
@@ -75,65 +90,50 @@ export default function QuizPage() {
     const per: Record<string, boolean> = {};
     for (const q of questions) {
       const user = answers[q.id];
-      if (q.type === "MULTIPLE_CHOICE") {
-        const ok = user === q.answer;
-        per[q.id] = !!ok;
-        if (ok) correct++;
-      } else {
-        const ok = user != null ? isGridCorrect(user, q.answer) : false;
-        per[q.id] = ok;
-        if (ok) correct++;
-      }
+      const ok =
+        q.type === "MULTIPLE_CHOICE"
+          ? user === q.answer
+          : user != null
+          ? isGridCorrect(user, q.answer)
+          : false;
+      per[q.id] = !!ok;
+      if (ok) correct++;
     }
     return { correctCount: correct, perQuestionCorrect: per };
   }, [answers, questions]);
 
-  // const start = () => {
-  //   const picked = pickFromAllBanks(count, randomize);
-  //   setQuestions(picked);
-  //   setAnswers({});
-  //   setSubmitted(false);
-  //   setMode("TEST");
-  //   setTimeRunning(true);
-  // };
-
+  /** Start a custom quiz (count/randomize) */
   const start = async () => {
     try {
-      const res = await fetch(
-        `/api/questions?count=${count}&randomize=${randomize}`,
-        { cache: "no-store" }
+      const data = await fetchJsonSafe<QuestionsPayload>(
+        `/api/questions?count=${count}&randomize=${randomize}`
       );
-      const raw = await res.text(); // read raw to inspect errors/HTML
-      if (!res.ok) {
-        console.error("Questions API failed:", res.status, raw);
-        alert(`Failed to load questions (${res.status}). Check server logs.`);
-        return;
-      }
-      const data = JSON.parse(raw);
       if (!data?.questions)
         throw new Error("Malformed response from /api/questions");
-
       setQuestions(data.questions);
       setAnswers({});
+      setSubmitted(false);
+      setPresetLabel(null);
       setMode("TEST");
       setTimeRunning(true);
     } catch (e) {
       console.error("start() error:", e);
-      alert(`Could not start quiz: ${e?.message ?? e}`);
+      alert(`Could not start quiz: ${errMsg(e)}`);
     }
   };
 
+  /** Submit the quiz */
   const submit = () => {
     setSubmitted(true);
     setTimeRunning(false);
     setMode("RESULTS");
   };
 
+  /** Cancel current test and return to CONFIG */
   const cancelTest = () => {
     if (!window.confirm("Cancel this test? Your current answers will be lost."))
       return;
 
-    // restore previous config if present
     if (savedConfig) {
       setCount(savedConfig.count);
       setMinutes(savedConfig.minutes);
@@ -148,35 +148,38 @@ export default function QuizPage() {
     setMode("CONFIG");
   };
 
+  /** Reset to config (fresh state) */
   const resetToConfig = () => {
     setMode("CONFIG");
     setSubmitted(false);
     setQuestions([]);
     setAnswers({});
     setTimeRunning(false);
+    setPresetLabel(null);
   };
 
-  // one-click full exam (57 Qs • 90 min)
+  /** One-click full exam (57 Qs • 90 min) */
   const startShsatExam = async () => {
     try {
-      const res = await fetch(`/api/questions?preset=shsat57`, {
-        cache: "no-store",
-      });
-      const raw = await res.text();
-      if (!res.ok) throw new Error(raw || `HTTP ${res.status}`);
-      const data = JSON.parse(raw);
+      // Save current config so Cancel can restore it later
+      setSavedConfig({ count, minutes });
+
+      const data = await fetchJsonSafe<QuestionsPayload>(
+        `/api/questions?preset=shsat57`
+      );
       if (!data?.questions?.length) throw new Error("No questions returned.");
 
       setQuestions(data.questions);
       setAnswers({});
-      setCount(57); // reflect the configured exam size
-      setMinutes(90); // 90-minute math exam window (your choice)
+      setCount(57);
+      setMinutes(90);
       setPresetLabel("SHSAT Math Exam — 57 Questions • 90 min");
+      setSubmitted(false);
       setMode("TEST");
       setTimeRunning(true);
     } catch (e) {
       console.error("startShsatExam error:", e);
-      alert(`Could not start SHSAT exam: ${e?.message ?? e}`);
+      alert(`Could not start SHSAT exam: ${errMsg(e)}`);
     }
   };
 
@@ -195,13 +198,9 @@ export default function QuizPage() {
                 running={timeRunning}
                 onTimeUp={submit}
               />
-              {mode === "TEST" && (
+
+              {mode === "TEST" ? (
                 <div className="flex items-center gap-3">
-                  {/* <TimerDisplay
-                    durationSec={Math.max(1, Math.round(minutes * 60))}
-                    running={timeRunning}
-                    onTimeUp={submit}
-                  /> */}
                   <button
                     onClick={submit}
                     className="rounded-xl bg-black text-white px-4 py-2 text-sm shadow hover:bg-neutral-800"
@@ -216,8 +215,7 @@ export default function QuizPage() {
                     Cancel
                   </button>
                 </div>
-              )}
-              {mode !== "TEST" && (
+              ) : (
                 <button
                   onClick={resetToConfig}
                   className="rounded-xl border px-3 py-2 text-sm hover:bg-neutral-100"
@@ -234,6 +232,7 @@ export default function QuizPage() {
         {mode === "CONFIG" && (
           <section className="rounded-2xl border bg-white p-5 shadow-sm">
             <h2 className="text-lg font-semibold mb-4">Configure Quiz</h2>
+
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="grid gap-1.5">
                 <label className="text-sm text-neutral-600">
@@ -301,13 +300,11 @@ export default function QuizPage() {
             <div className="mt-5 flex flex-wrap gap-3">
               <button
                 onClick={start}
-                disabled={/* your existing checks */ false}
                 className="rounded-xl bg-black text-white px-4 py-2 text-sm shadow hover:bg-neutral-800 disabled:opacity-50"
               >
                 Start Custom Quiz
               </button>
 
-              {/* NEW: one-click official-style exam */}
               <button
                 type="button"
                 onClick={startShsatExam}
@@ -316,6 +313,12 @@ export default function QuizPage() {
               >
                 SHSAT Math Exam (57 • 90)
               </button>
+
+              {presetLabel && (
+                <span className="text-xs rounded-full border px-3 py-1 bg-neutral-50">
+                  {presetLabel}
+                </span>
+              )}
             </div>
           </section>
         )}
@@ -334,7 +337,7 @@ export default function QuizPage() {
             )}
 
             <div className="grid gap-6">
-              {questions.map((q, i) => (
+              {questions.map((q) => (
                 <QuestionCard
                   key={q.id}
                   q={q}
