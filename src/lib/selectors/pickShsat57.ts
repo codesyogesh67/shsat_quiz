@@ -1,4 +1,4 @@
-import type { Question } from "@/types";
+import type { RawQuestion, Question } from "@/types";
 
 type MixConfig = {
   total: number; // total per set
@@ -79,7 +79,7 @@ function pickN<T>(pool: T[], n: number): { picked: T[]; rest: T[] } {
 }
 
 export function pickShsat57(
-  all: Question[],
+  all: RawQuestion[],
   cfg: Partial<MixConfig> = {}
 ): Question[] {
   const C = { ...DEFAULT_CFG, ...cfg };

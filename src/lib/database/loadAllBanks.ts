@@ -2,6 +2,7 @@ import "server-only";
 import fs from "fs";
 import { promises as fsp } from "fs";
 import path from "path";
+import type { RawQuestion } from "@/types";
 
 // If you use Zod, uncomment to validate.
 // import { z } from "zod";
@@ -15,16 +16,6 @@ import path from "path";
 //   category: z.string().optional(),
 // });
 // const BankSchema = z.array(QuestionSchema);
-
-export type Question = {
-  id: string;
-  index?: number; // will be assigned later
-  type: "MULTIPLE_CHOICE" | "GRID_IN";
-  stem: string;
-  choices?: { key: string; text: string }[];
-  answer: string;
-  category?: string;
-};
 
 function resolveDatabaseDir(): string {
   const cwd = process.cwd();
@@ -42,7 +33,7 @@ function resolveDatabaseDir(): string {
 }
 export async function loadAllQuestionsFromDir(
   dir?: string
-): Promise<Question[]> {
+): Promise<RawQuestion[]> {
   const base = dir ?? resolveDatabaseDir();
   const entries = await fsp.readdir(base, { withFileTypes: true });
   const files = entries
