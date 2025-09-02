@@ -51,12 +51,10 @@ export async function GET(req: Request) {
     const selected = await pickFromAllBanks(count, randomize); // ensure it re-indexes
     return NextResponse.json({ total: selected.length, questions: selected });
   } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
     console.error("GET /api/questions error:", err);
     return NextResponse.json(
-      {
-        error: "Failed to load questions",
-        detail: String(err?.message ?? err),
-      },
+      { error: "Failed to load questions", detail },
       { status: 500 }
     );
   }
