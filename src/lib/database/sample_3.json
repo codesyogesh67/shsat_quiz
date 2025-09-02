@@ -1,0 +1,142 @@
+[
+  {
+    "id": "S3-Q1",
+    "index": 1,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Order of Operations",
+    "stem": "Evaluate: 8 + 6×(5 − 2)<sup>2</sup> ÷ 3",
+    "choices": [
+      { "key": "A", "text": "20" },
+      { "key": "B", "text": "26" },
+      { "key": "C", "text": "30" },
+      { "key": "D", "text": "44" }
+    ],
+    "answer": "B"
+  },
+  {
+    "id": "S3-Q2",
+    "index": 2,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Exponents & Square Roots",
+    "stem": "Simplify: √196 − 3<sup>2</sup>",
+    "choices": [
+      { "key": "A", "text": "3" },
+      { "key": "B", "text": "5" },
+      { "key": "C", "text": "9" },
+      { "key": "D", "text": "11" }
+    ],
+    "answer": "B"
+  },
+  {
+    "id": "S3-Q3",
+    "index": 3,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Factors and Multiples",
+    "stem": "What is the least common multiple (LCM) of 15 and 20?",
+    "choices": [
+      { "key": "A", "text": "30" },
+      { "key": "B", "text": "45" },
+      { "key": "C", "text": "60" },
+      { "key": "D", "text": "75" }
+    ],
+    "answer": "C"
+  },
+  {
+    "id": "S3-Q4",
+    "index": 4,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Equations & Inequalities",
+    "stem": "Solve: 5x − 7 = 3x + 9",
+    "choices": [
+      { "key": "A", "text": "6" },
+      { "key": "B", "text": "7" },
+      { "key": "C", "text": "8" },
+      { "key": "D", "text": "9" }
+    ],
+    "answer": "C"
+  },
+  {
+    "id": "S3-Q5",
+    "index": 5,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Ratios, Rates, Percents",
+    "stem": "A store discounts a $40 item by 25% and then charges 10% sales tax on the discounted price. What is the final price?",
+    "choices": [
+      { "key": "A", "text": "$30" },
+      { "key": "B", "text": "$33" },
+      { "key": "C", "text": "$34" },
+      { "key": "D", "text": "$36" }
+    ],
+    "answer": "B"
+  },
+  {
+    "id": "S3-Q6",
+    "index": 6,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Probability",
+    "stem": "A bag has 5 red and 3 blue marbles. Two marbles are drawn at random without replacement. What is the probability that the two marbles are different colors?",
+    "choices": [
+      { "key": "A", "text": "3/28" },
+      { "key": "B", "text": "5/28" },
+      { "key": "C", "text": "15/28" },
+      { "key": "D", "text": "3/8" }
+    ],
+    "answer": "C"
+  },
+  {
+    "id": "S3-Q7",
+    "index": 7,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Geometry",
+    "stem": "In a triangle, the angle measures are in the ratio 2:3:4. What is the measure of the largest angle?",
+    "choices": [
+      { "key": "A", "text": "40°" },
+      { "key": "B", "text": "60°" },
+      { "key": "C", "text": "80°" },
+      { "key": "D", "text": "100°" }
+    ],
+    "answer": "C"
+  },
+  {
+    "id": "S3-Q8",
+    "index": 8,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Volume & Surface Area",
+    "stem": "What is the surface area of a cube with edge length 4 cm?",
+    "choices": [
+      { "key": "A", "text": "64 cm²" },
+      { "key": "B", "text": "96 cm²" },
+      { "key": "C", "text": "128 cm²" },
+      { "key": "D", "text": "144 cm²" }
+    ],
+    "answer": "B"
+  },
+  {
+    "id": "S3-Q9",
+    "index": 9,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Combinations",
+    "stem": "From 6 toppings, how many different 2-topping pizzas can be made (order doesn’t matter)?",
+    "choices": [
+      { "key": "A", "text": "12" },
+      { "key": "B", "text": "15" },
+      { "key": "C", "text": "30" },
+      { "key": "D", "text": "720" }
+    ],
+    "answer": "B"
+  },
+  {
+    "id": "S3-Q10",
+    "index": 10,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Patterns & Abstract Thinking",
+    "stem": "Find the next term: 3, 7, 13, 21, 31, ___",
+    "choices": [
+      { "key": "A", "text": "39" },
+      { "key": "B", "text": "41" },
+      { "key": "C", "text": "43" },
+      { "key": "D", "text": "45" }
+    ],
+    "answer": "C"
+  }
+]
