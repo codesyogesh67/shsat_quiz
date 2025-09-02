@@ -11,7 +11,10 @@ import type { Mode, Question } from "@/types";
 /** ---------- Small utils ---------- */
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
-async function fetchJsonSafe<T>(url: string, init?: RequestInit): Promise<T> {
+async function fetchJsonSafe<T = unknown>(
+  url: string,
+  init?: RequestInit
+): Promise<T> {
   const res = await fetch(url, { cache: "no-store", ...init });
   const raw = await res.text(); // robust against HTML error pages
   if (!res.ok) {
@@ -25,6 +28,27 @@ async function fetchJsonSafe<T>(url: string, init?: RequestInit): Promise<T> {
 }
 
 type QuestionsPayload = { total: number; questions: Question[] };
+
+// Type guards to avoid `any`
+type WithTotal = { total: number };
+type WithQuestionsUnknown = { questions: unknown[] };
+
+function isWithTotal(v: unknown): v is WithTotal {
+  return (
+    typeof v === "object" &&
+    v !== null &&
+    "total" in v &&
+    typeof (v as Record<string, unknown>).total === "number"
+  );
+}
+function isWithQuestionsUnknown(v: unknown): v is WithQuestionsUnknown {
+  return (
+    typeof v === "object" &&
+    v !== null &&
+    "questions" in v &&
+    Array.isArray((v as Record<string, unknown>).questions)
+  );
+}
 
 /** ---------- Page Component ---------- */
 export default function QuizPage() {
@@ -55,13 +79,13 @@ export default function QuizPage() {
     let alive = true;
     (async () => {
       try {
-        const data = await fetchJsonSafe<
-          QuestionsPayload | { total?: number; questions?: unknown[] }
-        >("/api/questions?count=0");
-        const total =
-          typeof (data as any)?.total === "number"
-            ? Math.max(1, (data as any).total)
-            : Math.max(1, ((data as any)?.questions?.length as number) || 1);
+        const data = await fetchJsonSafe<unknown>("/api/questions?count=0");
+        let total = 1;
+        if (isWithTotal(data)) {
+          total = Math.max(1, data.total);
+        } else if (isWithQuestionsUnknown(data)) {
+          total = Math.max(1, data.questions.length);
+        }
         if (alive) setMaxCount(total);
       } catch {
         if (alive) setMaxCount(1);
