@@ -1,4 +1,5 @@
 import React from "react";
+import type { Question } from "@/types";
 
 const MediaRenderer = ({ media }: { media: Question["media"] }) => {
   if (!media) return null;
