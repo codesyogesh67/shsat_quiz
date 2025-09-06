@@ -422,7 +422,6 @@ export default function QuizPage() {
                 <QuestionCard
                   key={q.id}
                   q={q}
-                  index={q.index}
                   value={answers[q.id] ?? ""}
                   onChange={(val) => setAnswers((s) => ({ ...s, [q.id]: val }))}
                   reveal={mode === "RESULTS"}
