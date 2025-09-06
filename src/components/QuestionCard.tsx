@@ -11,12 +11,14 @@ const QuestionCard = ({
   onChange,
   reveal,
   isCorrect,
+  index,
 }: {
   q: Question;
   value: string;
   onChange: (v: string) => void;
   reveal: boolean;
-  isCorrect?: boolean;
+    isCorrect?: boolean;
+    index: Number;
 }) => {
   return (
     <section
