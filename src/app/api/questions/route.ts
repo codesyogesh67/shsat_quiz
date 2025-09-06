@@ -3,7 +3,7 @@ import {
   loadAllQuestionsFromDir,
   shuffle,
   pickFromAllBanks,
-} from "@/lib/database/loadAllBanks";
+} from "@/lib/database/loadAllBanks.server";
 import { pickShsat57 } from "@/lib/selectors/pickShsat57";
 import type { RawQuestion, Question } from "@/types";
 

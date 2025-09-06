@@ -3,6 +3,7 @@ import type { Question } from "@/types";
 import ChoiceGroup from "./ChoiceGroup";
 import Dot from "./Dot";
 import GridIn from "./GridIn";
+import MediaRenderer from "./MediaRenderer";
 
 const QuestionCard = ({
   q,
@@ -36,6 +37,9 @@ const QuestionCard = ({
           <div className="prose prose-neutral max-w-none">
             <div dangerouslySetInnerHTML={{ __html: q.stem }} />
           </div>
+
+          {/* NEW: render media */}
+          {q.media && <MediaRenderer media={q.media} />}
 
           <div className="mt-4">
             {q.type === "MULTIPLE_CHOICE" ? (

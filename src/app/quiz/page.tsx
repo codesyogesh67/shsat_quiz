@@ -5,11 +5,15 @@ import React, { useEffect, useMemo, useState } from "react";
 import QuestionCard from "@/components/QuestionCard";
 import TimerDisplay from "@/components/TimerDisplay";
 import { isGridCorrect } from "@/lib/helpers";
+import { examKeys } from "@/lib/data";
 
 import type { Mode, Question } from "@/types";
 
 /** ---------- Small utils ---------- */
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
+
+type ExamMeta = { label?: string; minutes?: number };
+type ExamPayload = { meta?: ExamMeta; questions: Question[] };
 
 async function fetchJsonSafe<T = unknown>(
   url: string,
@@ -102,6 +106,31 @@ export default function QuizPage() {
   }, [maxCount]);
 
   const total = questions.length;
+
+  async function startExamByKey(examKey: string) {
+    try {
+      const data = await fetchJsonSafe<ExamPayload>(
+        `/api/questions?exam=${examKey}`
+      );
+      if (!data?.questions?.length) throw new Error("No questions returned.");
+
+      // Prefer minutes from file meta, else keep current
+      const m = Math.max(1, Math.round((data.meta?.minutes ?? minutes) || 90));
+      setQuestions(data.questions);
+      setAnswers({});
+      setCount(data.questions.length);
+      setMinutes(90);
+      setPresetLabel(
+        data.meta?.label ?? examKey.replace(/_/g, " ").toUpperCase()
+      );
+      setSubmitted(false);
+      setMode("TEST");
+      setTimeRunning(true);
+    } catch (e) {
+      console.error("startExamByKey error:", e);
+      alert(`Could not start exam: ${errMsg(e)}`);
+    }
+  }
 
   function isQuestionCorrectLocal(q: Question, user?: string) {
     if (user == null || user === "") return false;
@@ -257,7 +286,7 @@ export default function QuizPage() {
           <section className="rounded-2xl border bg-white p-5 shadow-sm">
             <h2 className="text-lg font-semibold mb-4">Configure Quiz</h2>
 
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-3 items-start">
               <div className="grid gap-1.5">
                 <label className="text-sm text-neutral-600">
                   Number of Questions
@@ -346,6 +375,34 @@ export default function QuizPage() {
             </div>
           </section>
         )}
+        {mode === "CONFIG" && (
+          <section className="mt-5 rounded-2xl border bg-white p-5 shadow-sm">
+            <h2 className="text-lg font-semibold mb-4">Exam Sets</h2>
+            <p className="text-sm text-neutral-600 mb-3">
+              Pick a specific past exam to practice. These load curated JSON
+              sets from your data store.
+            </p>
+
+            <div className="flex flex-wrap gap-2">
+              {examKeys.map((key) => (
+                <button
+                  key={key}
+                  onClick={() => startExamByKey(key)}
+                  className="rounded-xl border px-3 py-2 text-sm hover:bg-neutral-100"
+                  title={`Load ${key}`}
+                >
+                  {key.replace("shsat_", "SHSAT ").toUpperCase()}
+                </button>
+              ))}
+            </div>
+
+            {presetLabel && (
+              <div className="mt-3 text-xs rounded-full border px-3 py-1 bg-neutral-50 inline-block">
+                {presetLabel}
+              </div>
+            )}
+          </section>
+        )}
 
         {mode !== "CONFIG" && (
           <>
@@ -365,6 +422,7 @@ export default function QuizPage() {
                 <QuestionCard
                   key={q.id}
                   q={q}
+                  index={q.index}
                   value={answers[q.id] ?? ""}
                   onChange={(val) => setAnswers((s) => ({ ...s, [q.id]: val }))}
                   reveal={mode === "RESULTS"}

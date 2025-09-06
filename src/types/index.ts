@@ -9,7 +9,19 @@ export type RawQuestion = {
   category?: string;
   stem: string; // can include simple HTML/markdown-like text
   choices?: Choice[]; // only for MC
-  answer: string; // "A" | "B" | ... or a numeric/fraction string like "-4" or "3/10"
+  answer: string;
+  media?: {
+    type: "image" | "graph";
+    url?: string; // for images
+    base64?: string; // optional alternative
+    xAxis?: { min: number; max: number };
+    yAxis?: { min: number; max: number };
+    shapes?: {
+      type: "line" | "polygon";
+      points: number[][];
+      fill?: string;
+    }[];
+  }; // "A" | "B" | ... or a numeric/fraction string like "-4" or "3/10"
 };
 
 // UI-delivered: index must be present
