@@ -27,6 +27,9 @@ function resolveDatabaseDir(): string {
     path.join(cwd, "app", "lib", "database"),
   ].filter(Boolean) as string[];
 
+  console.log("CWD", cwd);
+  console.log("Candidates:", candidates);
+
   for (const dir of candidates) {
     if (fs.existsSync(dir) && fs.statSync(dir).isDirectory()) return dir;
   }
