@@ -31,8 +31,9 @@ function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, n));
 }
 
+type Bucket = "algebra" | "geometry" | "statsprob" | "other";
 /** Map your fine-grained categories into buckets. */
-function bucketOf(q: Question): "algebra" | "geometry" | "statsprob" | "other" {
+function bucketOf(q: { category?: string }): Bucket {
   const c = (q.category ?? "").toLowerCase();
 
   // Algebra / Proportional reasoning
@@ -216,5 +217,6 @@ export function pickShsat57(
     ...otherPick.items,
   ].slice(0, C.total);
 
-  return combined.map((q, i) => ({ ...q, index: i + 1 }));
+  const result: Question[] = combined.map((q, i) => ({ ...q, index: i + 1 }));
+  return result;
 }
