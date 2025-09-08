@@ -2,9 +2,6 @@
   "functions": {
     "app/**/route.{js,ts}": {
       "includeFiles": "lib/database/**"
-    },
-    "api/**/*.{js,ts}": {
-      "includeFiles": "lib/database/**"
     }
   }
 }
