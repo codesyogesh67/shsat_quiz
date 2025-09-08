@@ -1,7 +1,5 @@
 {
   "functions": {
-    "app/**/route.{js,ts}": {
-      "includeFiles": "lib/database/**"
-    }
+    "src/app/**/route.ts": { "includeFiles": "src/lib/database/**" }
   }
 }
