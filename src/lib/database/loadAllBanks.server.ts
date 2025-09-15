@@ -96,5 +96,4 @@ export async function pickFromAllBanks(count: number, randomize = true) {
   const n = Math.max(1, Math.min(count, all.length));
   const base = randomize ? shuffle(all) : all.slice();
   return base.slice(0, n).map((q, i) => ({ ...q, index: i + 1 }));
-  return out;
 }
