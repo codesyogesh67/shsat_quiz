@@ -9,11 +9,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    outputFileTracingIncludes: {
-      "/(app|src|pages)/**": ["./src/lib/database/**"],
-      "app/api/questions/route": ["./src/lib/database/**"],
-    },
+  outputFileTracingIncludes: {
+    "/(app|src|pages)/**": ["./src/lib/database/**"],
+    "app/api/questions/route": ["./src/lib/database/**"],
   },
 };
 

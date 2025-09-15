@@ -80,3 +80,21 @@ export async function loadAllQuestionsFromDir(
 
   return out;
 }
+
+export function shuffle<T>(arr: T[]): T[] {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+export async function pickFromAllBanks(count: number, randomize = true) {
+  const all = await loadAllQuestionsFromDir();
+  if (all.length === 0) return [];
+  const n = Math.max(1, Math.min(count, all.length));
+  const base = randomize ? shuffle(all) : all.slice();
+  return base.slice(0, n).map((q, i) => ({ ...q, index: i + 1 }));
+  return out;
+}
