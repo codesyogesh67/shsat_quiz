@@ -33,8 +33,8 @@
   },
   
   {
-    "id": "Q62",
-    "index": 62,
+    "id": "Q61",
+    "index": 61,
     "type": "MULTIPLE_CHOICE",
     "category": "Mathematics",
     "stem": "A survey asked students what pets they have. Based on the results:\n• 20 students have cats.\n• 23 students have dogs.\n• 3 students have both dogs and cats.\n• 5 students have no dogs or cats.\nHow many students were surveyed?",
@@ -47,8 +47,8 @@
     "answer": ""
   },
   {
-    "id": "Q63",
-    "index": 63,
+    "id": "Q62",
+    "index": 62,
     "type": "MULTIPLE_CHOICE",
     "category": "Algebra",
     "stem": "The sum of two consecutive integers is −15. If 1 is added to the smaller integer and 2 is subtracted from the larger integer, what is the product of the two resulting integers?",
@@ -59,6 +59,20 @@
       { "key": "D", "text": "−48" }
     ],
     "answer": ""
+  },
+  {
+    "id": "Q63",
+    "index": 63,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Algebra",
+    "stem": "The set of possible values of m is {5, 7, 9}. What is the set of possible values of k if 2k = m + 3?",
+    "choices": [
+      { "key": "A", "text": "{3, 4, 5}" },
+      { "key": "B", "text": "{4, 5, 6}" },
+      { "key": "C", "text": "{8, 10, 12}" },
+      { "key": "D", "text": "{10, 14, 18}" }
+    ],
+    "answer": "B"
   },
   {
     "id": "Q64",
@@ -263,20 +277,7 @@
     "answer": ""
   },
 
-  {
-    "id": "Q76",
-    "index": 76,
-    "type": "MULTIPLE_CHOICE",
-    "category": "Statistics",
-    "stem": "In Centerville, 45% of the population is female, and 60% of the population commutes to work daily. Of the total Centerville population, 21% are females who commute to work daily. What percentage of the total Centerville population are males who do not commute to work daily?",
-    "choices": [
-      { "key": "E", "text": "15%" },
-      { "key": "F", "text": "16%" },
-      { "key": "G", "text": "24%" },
-      { "key": "H", "text": "39%" }
-    ],
-    "answer": ""
-  },
+  
   {
     "id": "Q77",
     "index": 77,

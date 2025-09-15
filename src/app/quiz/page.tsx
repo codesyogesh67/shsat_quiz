@@ -109,6 +109,7 @@ export default function QuizPage() {
 
   async function startExamByKey(examKey: string) {
     try {
+      console.log("examkey", examKey);
       const data = await fetchJsonSafe<ExamPayload>(
         `/api/questions?exam=${examKey}`
       );

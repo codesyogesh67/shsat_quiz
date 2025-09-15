@@ -3,6 +3,7 @@ import {
   loadAllQuestionsFromDir,
   shuffle,
   pickFromAllBanks,
+  loadExamByKey,
 } from "@/lib/database/loadAllBanks.server";
 import { pickShsat57 } from "@/lib/selectors/pickShsat57";
 import type { RawQuestion, Question } from "@/types";
@@ -13,6 +14,24 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
+
+    // explicit exam key branch
+    const examKey = url.searchParams.get("exam");
+    if (examKey) {
+      const randomize = url.searchParams.get("randomize") !== "false";
+      const { meta, questions } = await loadExamByKey(examKey);
+
+      const items = randomize ? shuffle(questions) : questions;
+      const out = items.map((q, i) => ({ ...q, index: i + 1 }));
+
+      // Keep meta if present (minutes/label, etc.)
+      return NextResponse.json({
+        meta, // e.g. { minutes: 90, label: "SHSAT 2018" }
+        total: out.length,
+        questions: out,
+      });
+    }
+
     const preset = url.searchParams.get("preset");
     const count = Number(url.searchParams.get("count") ?? "0");
     const randomize = url.searchParams.get("randomize") !== "false";
