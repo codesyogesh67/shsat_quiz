@@ -1,5 +1,5 @@
 {
   "functions": {
-    "src/app/**/route.ts": { "includeFiles": "src/lib/database/**" }
+    "src/app/api/questions/route.ts": { "includeFiles": "src/lib/database/**" }
   }
 }
