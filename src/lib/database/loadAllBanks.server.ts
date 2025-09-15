@@ -7,6 +7,62 @@ import path from "path";
 import { fileURLToPath } from "url"; // <-- add
 import type { RawQuestion, Question } from "@/types";
 
+type AnswerEntry = { index: number; answer: string };
+
+function answersFilenameForExamKey(examKey: string) {
+  const m = /^shsat_(\d{4})(?:_(\w+))?$/i.exec(examKey);
+  if (!m) return null;
+  const year = m[1];
+  const suffix = m[2] ? `_${m[2]}` : "";
+  return `answers_${year}${suffix}.json`;
+}
+
+/** Load answers JSON for an exam key and return a map { index -> answer } */
+export async function loadAnswersForExam(
+  examKey: string,
+  dir?: string
+): Promise<Record<number, string>> {
+  const base = dir ?? resolveDatabaseDir();
+  const fileBase = path.join(base, "answers"); // lib/database/answers
+
+  const fileName = answersFilenameForExamKey(examKey);
+  if (!fileName) return {};
+
+  const candidates = [
+    path.join(fileBase, fileName),
+    path.join(base, fileName), // fallback if not in /answers subfolder
+  ];
+
+  for (const p of candidates) {
+    try {
+      if (fs.existsSync(p)) {
+        const raw = await fsp.readFile(p, "utf8");
+        const parsed = JSON.parse(raw) as AnswerEntry[] | Record<string, any>;
+        // Support either an array [{index, answer}] or { answers: [...] }
+        const arr: AnswerEntry[] = Array.isArray(parsed)
+          ? parsed
+          : Array.isArray((parsed as any).answers)
+          ? (parsed as any).answers
+          : [];
+        const map: Record<number, string> = {};
+        for (const row of arr) {
+          if (
+            row &&
+            typeof row.index === "number" &&
+            (typeof row.answer === "string" || typeof row.answer === "number")
+          ) {
+            map[row.index] = String(row.answer);
+          }
+        }
+        return map;
+      }
+    } catch (e) {
+      console.warn("Skipping invalid answers file:", p, e);
+    }
+  }
+  return {};
+}
+
 export function resolveDatabaseDir(): string {
   // 1) Prefer the folder where THIS module lives (your JSONs are here)
   const byModule = path.dirname(fileURLToPath(import.meta.url));
@@ -157,5 +213,15 @@ export async function loadExamByKey(
   // Re-index for UI
   const withIndex = questions.map((q, i) => ({ ...q, index: i + 1 }));
 
-  return { meta, questions: withIndex };
+  // 🔗 NEW: load answers and merge into each question by index
+  const answersByIndex = await loadAnswersForExam(examKey, dbBase);
+  const merged: Question[] = withIndex.map((q) => {
+    const ans = answersByIndex[q.index];
+    // only fill if empty; if your JSON already has answer values, we won't overwrite them
+    return ans && (q.answer == null || q.answer === "")
+      ? { ...q, answer: ans }
+      : q;
+  });
+
+  return { meta, questions: merged };
 }

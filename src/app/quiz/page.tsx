@@ -54,6 +54,11 @@ function isWithQuestionsUnknown(v: unknown): v is WithQuestionsUnknown {
   );
 }
 
+function numFromId(id: string): number | null {
+  const m = id.match(/\d+/);
+  return m ? Number(m[0]) : null;
+}
+
 /** ---------- Page Component ---------- */
 export default function QuizPage() {
   // Config state
@@ -61,6 +66,7 @@ export default function QuizPage() {
   const [minutes, setMinutes] = useState<number>(10);
   const [randomize, setRandomize] = useState<boolean>(true);
   const [presetLabel, setPresetLabel] = useState<string | null>(null);
+  const [currentExamKey, setCurrentExamKey] = useState<string | null>(null);
 
   // Session state
   const [mode, setMode] = useState<Mode>("CONFIG");
@@ -109,7 +115,6 @@ export default function QuizPage() {
 
   async function startExamByKey(examKey: string) {
     try {
-      console.log("examkey", examKey);
       const data = await fetchJsonSafe<ExamPayload>(
         `/api/questions?exam=${examKey}`
       );
@@ -127,6 +132,8 @@ export default function QuizPage() {
       setSubmitted(false);
       setMode("TEST");
       setTimeRunning(true);
+
+      setCurrentExamKey(examKey);
     } catch (e) {
       console.error("startExamByKey error:", e);
       alert(`Could not start exam: ${errMsg(e)}`);
@@ -170,6 +177,7 @@ export default function QuizPage() {
       setPresetLabel(null);
       setMode("TEST");
       setTimeRunning(true);
+      setCurrentExamKey(null);
     } catch (e) {
       console.error("start() error:", e);
       alert(`Could not start quiz: ${errMsg(e)}`);
@@ -177,10 +185,48 @@ export default function QuizPage() {
   };
 
   /** Submit the quiz */
-  const submit = () => {
-    setSubmitted(true);
-    setTimeRunning(false);
-    setMode("RESULTS");
+  const submit = async () => {
+    try {
+      const hasEmpty = questions.some(
+        (q) => !q.answer || q.answer.trim() === ""
+      );
+      if (hasEmpty && currentExamKey) {
+        const data = await fetchJsonSafe<{
+          exam: string;
+          total: number;
+          answers: { index: number; answer: string }[];
+        }>(`/api/answers?exam=${currentExamKey}`);
+
+        // Build a lookup keyed by the *real* question number (58..114)
+        const byNumber = new Map<number, string>(
+          data.answers.map((a) => [a.index, String(a.answer)])
+        );
+
+        // Build merged array *synchronously* then commit before RESULTS
+        const merged = questions.map((q) => {
+          if (q.answer && q.answer.trim() !== "") return q;
+
+          // 1) try by displayed index (works when your JSON has 58..114)
+          let ans = byNumber.get(q.index);
+          if (!ans) {
+            // 2) fallback: pull number from id "Q70" -> 70
+            const n = numFromId(q.id);
+            if (n != null) ans = byNumber.get(n);
+          }
+          return ans ? { ...q, answer: ans } : q;
+        });
+
+        // Ensure React commits before flipping modes
+        const { flushSync } = await import("react-dom");
+        flushSync(() => setQuestions(merged));
+      }
+    } catch (e) {
+      console.warn("Could not load answer key on submit:", e);
+    } finally {
+      setSubmitted(true);
+      setTimeRunning(false);
+      setMode("RESULTS");
+    }
   };
 
   /** Cancel current test and return to CONFIG */
@@ -210,6 +256,7 @@ export default function QuizPage() {
     setAnswers({});
     setTimeRunning(false);
     setPresetLabel(null);
+    setCurrentExamKey(null);
   };
 
   /** One-click full exam (57 Qs • 90 min) */
@@ -231,6 +278,7 @@ export default function QuizPage() {
       setSubmitted(false);
       setMode("TEST");
       setTimeRunning(true);
+      setCurrentExamKey(null);
     } catch (e) {
       console.error("startShsatExam error:", e);
       alert(`Could not start SHSAT exam: ${errMsg(e)}`);

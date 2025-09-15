@@ -10,9 +10,7 @@
       "url": "/images/2018/q58.png",
       "alt": "Parallelogram PQRS with one angle marked 72° and another marked x°."
     },
-    "choices": [
-    
-    ],
+    "choices": [],
     "answer": ""
   },
   {
@@ -31,7 +29,7 @@
     "stem": "For what value of w is 4w = 2w − 8?",
     "answer": ""
   },
-  
+
   {
     "id": "Q61",
     "index": 61,
@@ -72,7 +70,7 @@
       { "key": "C", "text": "{8, 10, 12}" },
       { "key": "D", "text": "{10, 14, 18}" }
     ],
-    "answer": "B"
+    "answer": ""
   },
   {
     "id": "Q64",
@@ -277,7 +275,6 @@
     "answer": ""
   },
 
-  
   {
     "id": "Q77",
     "index": 77,
