@@ -4,10 +4,58 @@ import "server-only";
 import fs from "fs";
 import { promises as fsp } from "fs";
 import path from "path";
-import { fileURLToPath } from "url"; // <-- add
+import { fileURLToPath } from "url";
 import type { RawQuestion, Question } from "@/types";
 
+/* ------------------------- Safe JSON & helpers ------------------------- */
+
+type Json = string | number | boolean | null | Json[] | { [k: string]: Json };
+
+type Meta = Record<string, Json>;
+
 type AnswerEntry = { index: number; answer: string };
+type AnswersFile = AnswerEntry[] | { answers: AnswerEntry[] };
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function isAnswerEntry(x: unknown): x is AnswerEntry {
+  return (
+    isObject(x) &&
+    typeof x.index === "number" &&
+    (typeof x.answer === "string" || typeof x.answer === "number")
+  );
+}
+
+function parseAnswersJson(raw: string): AnswerEntry[] {
+  const parsed: unknown = JSON.parse(raw);
+
+  if (Array.isArray(parsed)) {
+    return parsed.filter(isAnswerEntry);
+  }
+
+  if (isObject(parsed)) {
+    const maybeAnswers = (parsed as { answers?: unknown }).answers;
+    if (Array.isArray(maybeAnswers)) {
+      return maybeAnswers.filter(isAnswerEntry);
+    }
+  }
+
+  return [];
+}
+
+function isQuestion(x: unknown): x is Question {
+  return (
+    isObject(x) &&
+    typeof x.id === "string" &&
+    typeof x.type === "string" &&
+    typeof x.stem === "string" &&
+    typeof x.answer === "string"
+  );
+}
+
+/* --------------------------------------------------------------------- */
 
 function answersFilenameForExamKey(examKey: string) {
   const m = /^shsat_(\d{4})(?:_(\w+))?$/i.exec(examKey);
@@ -37,22 +85,11 @@ export async function loadAnswersForExam(
     try {
       if (fs.existsSync(p)) {
         const raw = await fsp.readFile(p, "utf8");
-        const parsed = JSON.parse(raw) as AnswerEntry[] | Record<string, any>;
-        // Support either an array [{index, answer}] or { answers: [...] }
-        const arr: AnswerEntry[] = Array.isArray(parsed)
-          ? parsed
-          : Array.isArray((parsed as any).answers)
-          ? (parsed as any).answers
-          : [];
+        const arr = parseAnswersJson(raw);
+
         const map: Record<number, string> = {};
         for (const row of arr) {
-          if (
-            row &&
-            typeof row.index === "number" &&
-            (typeof row.answer === "string" || typeof row.answer === "number")
-          ) {
-            map[row.index] = String(row.answer);
-          }
+          map[row.index] = String(row.answer);
         }
         return map;
       }
@@ -113,17 +150,10 @@ export async function loadAllQuestionsFromDir(
   for (const file of files) {
     try {
       const raw = await fsp.readFile(file, "utf8");
-      const parsed = JSON.parse(raw);
+      const parsed: unknown = JSON.parse(raw);
       if (Array.isArray(parsed)) {
-        for (const q of parsed as Question[]) {
-          if (
-            q &&
-            typeof q.id === "string" &&
-            typeof q.type === "string" &&
-            typeof q.stem === "string" &&
-            typeof q.answer === "string" &&
-            !seen.has(q.id)
-          ) {
+        for (const q of parsed) {
+          if (isQuestion(q) && !seen.has(q.id)) {
             out.push({ ...q });
             seen.add(q.id);
           }
@@ -158,7 +188,7 @@ export async function pickFromAllBanks(count: number, randomize = true) {
 export async function loadExamByKey(
   examKey: string,
   dir?: string
-): Promise<{ meta?: Record<string, any>; questions: Question[] }> {
+): Promise<{ meta?: Meta; questions: Question[] }> {
   const dbBase = dir ?? resolveDatabaseDir();
 
   // Prefer a subfolder "exams" if you organize them there; otherwise fall back to dbBase.
@@ -200,24 +230,33 @@ export async function loadExamByKey(
   }
 
   const raw = await fsp.readFile(filePath, "utf8");
-  const parsed = JSON.parse(raw);
+  const parsed: unknown = JSON.parse(raw);
 
   // Support both shapes:
   // 1) { meta, questions: Question[] }
   // 2) Question[] (legacy)
   const questions: Question[] = Array.isArray(parsed)
     ? parsed
-    : parsed?.questions ?? [];
-  const meta = Array.isArray(parsed) ? undefined : parsed?.meta;
+    : isObject(parsed) &&
+      Array.isArray((parsed as { questions?: unknown }).questions)
+    ? ((parsed as { questions: unknown }).questions as unknown[]).filter(
+        isQuestion
+      )
+    : [];
+
+  const meta: Meta | undefined = Array.isArray(parsed)
+    ? undefined
+    : isObject(parsed)
+    ? ((parsed as { meta?: unknown }).meta as Meta | undefined)
+    : undefined;
 
   // Re-index for UI
   const withIndex = questions.map((q, i) => ({ ...q, index: i + 1 }));
 
-  // 🔗 NEW: load answers and merge into each question by index
+  // 🔗 load answers and merge into each question by index
   const answersByIndex = await loadAnswersForExam(examKey, dbBase);
   const merged: Question[] = withIndex.map((q) => {
     const ans = answersByIndex[q.index];
-    // only fill if empty; if your JSON already has answer values, we won't overwrite them
     return ans && (q.answer == null || q.answer === "")
       ? { ...q, answer: ans }
       : q;

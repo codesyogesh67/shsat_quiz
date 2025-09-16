@@ -5,7 +5,6 @@
     "type": "FREE_RESPONSE",
     "category": "Uncategorized",
     "stem": "How many 5-digit numbers can be created using the digits 2, 3, 5, 7, and 8 without repeating any digits within that 5-digit number?",
-    "media": { "type": "image", "url": "/images/2018/B/q58.png", "alt": "" },
     "choices": [],
     "answer": ""
   },
@@ -15,7 +14,6 @@
     "type": "FREE_RESPONSE",
     "category": "Uncategorized",
     "stem": "In the equation (147 − x) / 12 = 12, what is the value of x?",
-    "media": { "type": "image", "url": "/images/2018/B/q59.png", "alt": "" },
     "choices": [],
     "answer": ""
   },
@@ -35,7 +33,6 @@
     "type": "FREE_RESPONSE",
     "category": "Uncategorized",
     "stem": "Tyler has completed 60 pages in his French workbook. This is 20% of the total number of pages in the workbook. How many pages are in the workbook?",
-    "media": { "type": "image", "url": "/images/2018/B/q61.png", "alt": "" },
     "choices": [],
     "answer": ""
   },
@@ -55,7 +52,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "If x = 9 and y = −7, what is the value of x(x − 2y)?",
-    "media": { "type": "image", "url": "/images/2018/B/q63.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "18" },
       { "key": "B", "text": "45" },
@@ -115,7 +111,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "To make party invitations, Macie could buy a package of paper for $10.50, or she could buy x individual sheets of the same paper for $0.15 each. What is the largest value of x that would make buying the individual sheets less expensive than buying the package?",
-    "media": { "type": "image", "url": "/images/2018/B/q67.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "60" },
       { "key": "B", "text": "65" },
@@ -130,7 +125,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "At 1:00 p.m. one day, the temperature was 8 degrees above zero. During the rest of the day, the temperature fell 3 degrees per hour. What was the temperature at 7:00 p.m. that day?",
-    "media": { "type": "image", "url": "/images/2018/B/q68.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "−13°" },
       { "key": "B", "text": "−10°" },
@@ -139,14 +133,12 @@
     ],
     "answer": ""
   },
-
   {
     "id": "Q69",
     "index": 69,
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "A bag contains 75 marbles that are red, blue, or green. The ratio of red to blue marbles is 15:7, and the ratio of blue to green marbles is 7:3. If 2 blue marbles are removed and replaced with 2 green marbles, what will be the new ratio of red to green marbles?",
-    "media": { "type": "image", "url": "/images/2018/B/q69.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "3:1" },
       { "key": "B", "text": "5:1" },
@@ -176,7 +168,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "What is the least common multiple of 24, 6, and 18?",
-    "media": { "type": "image", "url": "/images/2018/B/q71.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "36" },
       { "key": "B", "text": "48" },
@@ -191,7 +182,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "One day, the Early Bird Restaurant used 15 dozen eggs for 200 breakfast customers. At this rate, approximately how many dozen eggs are needed for 300 breakfast customers?",
-    "media": { "type": "image", "url": "/images/2018/B/q72.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "20" },
       { "key": "B", "text": "23" },
@@ -206,7 +196,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "A cooler contains three types of beverages: 5 bottles of apple juice, 3 bottles of grape juice, and 6 bottles of fruit punch. What is the probability that a bottle chosen at random from this cooler is not apple juice?",
-    "media": { "type": "image", "url": "/images/2018/B/q73.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "1/9" },
       { "key": "B", "text": "5/14" },
@@ -221,7 +210,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "A large circular dinner plate has a radius of 20 centimeters. A smaller circular plate with a circumference of 20π centimeters is placed in the center of the larger dinner plate. What is the area of the part of the larger dinner plate that is not covered by the smaller plate?",
-    "media": { "type": "image", "url": "/images/2018/B/q74.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "20π sq cm" },
       { "key": "B", "text": "100π sq cm" },
@@ -266,7 +254,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "If 36/y = 4x, what is the value of x when y = 3?",
-    "media": { "type": "image", "url": "/images/2018/B/q77.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "3" },
       { "key": "B", "text": "4" },
@@ -305,7 +292,6 @@
     ],
     "answer": ""
   },
-
   {
     "id": "Q80",
     "index": 80,
@@ -327,7 +313,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "A U.S. presidential coin is an alloy of copper:zinc:manganese:nickel in the ratio 177:12:7:4 and has a mass of 8 g. What is the mass of the zinc?",
-    "media": { "type": "image", "url": "/images/2018/B/q81.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "0.28 g" },
       { "key": "B", "text": "0.48 g" },
@@ -342,7 +327,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "Jack averaged 15 points in his first 3 basketball games. In game 4 he scored 27 points. What is his average for the first 4 games?",
-    "media": { "type": "image", "url": "/images/2018/B/q82.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "15" },
       { "key": "B", "text": "17" },
@@ -357,7 +341,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "A cylindrical oil drum holds 4,320 liters when full. It is currently 1/3 full. How many kiloliters of oil must be added to fill it?",
-    "media": { "type": "image", "url": "/images/2018/B/q83.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "1.44 kL" },
       { "key": "B", "text": "2.88 kL" },
@@ -372,7 +355,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "Nicole’s current age is three times Carmen’s. If Carmen will be 17 in two years, how old was Nicole 5 years ago?",
-    "media": { "type": "image", "url": "/images/2018/B/q84.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "38 yr" },
       { "key": "B", "text": "40 yr" },
@@ -387,7 +369,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "Each week a chemical’s amount is 20% less than it was at the start of that week. What percent of the original amount remains after two weeks?",
-    "media": { "type": "image", "url": "/images/2018/B/q85.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "40%" },
       { "key": "B", "text": "60%" },
@@ -417,7 +398,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "Ann, Jack, and Lee start running laps together. Ann runs 1 lap every 2 minutes, Jack every 3 minutes, and Lee every 4 minutes. How many laps does Ann complete before all three are back at the starting line together?",
-    "media": { "type": "image", "url": "/images/2018/B/q87.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "4" },
       { "key": "B", "text": "6" },
@@ -426,14 +406,12 @@
     ],
     "answer": ""
   },
-
   {
     "id": "Q88",
     "index": 88,
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "Simplify this expression: 4(7 − 3x) − (5 − x)",
-    "media": { "type": "image", "url": "/images/2018/B/q88.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "23 − 4x" },
       { "key": "B", "text": "23 − 11x" },
@@ -478,7 +456,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "If x = 10, what is the value of the expression 5x^3 + 3x + 9 + 1/x^2 ?",
-    "media": { "type": "image", "url": "/images/2018/B/q91.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "2,539.01" },
       { "key": "B", "text": "5,039.01" },
@@ -508,7 +485,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "The Chens spend $5 of every $8 they earn on planned expenses. If the family earns $29,600 in one year, how much will they spend on planned expenses that year?",
-    "media": { "type": "image", "url": "/images/2018/B/q93.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "$1,850" },
       { "key": "B", "text": "$3,700" },
@@ -583,7 +559,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "Points P, Q, R, and S represent −3, −1, 0, and 2, respectively, on a number line. How many units is the midpoint of PQ from the midpoint of RS?",
-    "media": { "type": "image", "url": "/images/2018/B/q98.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "1" },
       { "key": "B", "text": "2" },
@@ -598,7 +573,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "There are 1,000 cubic centimeters in 1 liter, and 1,000 cubic millimeters in 1 milliliter. How many cubic millimeters are there in 1,000 cubic centimeters?",
-    "media": { "type": "image", "url": "/images/2018/B/q99.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "1,000" },
       { "key": "B", "text": "10,000" },
@@ -643,7 +617,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "Phan chose an Internet service that charges $18.00 per month plus $0.024 per minute. Deion chose an Internet service that charges $30.00 per month for unlimited usage. At the end of the month, Phan’s and Deion’s charges were identical. For how many minutes did Phan use the Internet service that month?",
-    "media": { "type": "image", "url": "/images/2018/B/q102.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "50 min" },
       { "key": "B", "text": "60 min" },
@@ -658,7 +631,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "In a sample of 50 cars at a local dealership, there are 12 red cars and 10 cars with backup cameras. Of the 12 red cars, 4 have backup cameras. If a car is selected at random from the given sample, what is the probability that both of the following are true: the car is not red and does not have a backup camera?",
-    "media": { "type": "image", "url": "/images/2018/B/q103.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "3/5" },
       { "key": "B", "text": "16/25" },
@@ -673,7 +645,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "The decimal 0.06 can be written as the fraction x/50. What is the value of x?",
-    "media": { "type": "image", "url": "/images/2018/B/q104.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "3" },
       { "key": "B", "text": "6" },
@@ -682,7 +653,6 @@
     ],
     "answer": ""
   },
-
   {
     "id": "Q105",
     "index": 105,
@@ -734,7 +704,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "In the equation above, what is the value of p?",
-    "media": { "type": "image", "url": "/images/2018/B/q108.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "2/3" },
       { "key": "B", "text": "3" },
@@ -749,7 +718,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "A ball is selected at random from a box that contains 7 black balls, 14 green balls, and 21 red balls. What is the probability that the ball selected is black?",
-    "media": { "type": "image", "url": "/images/2018/B/q109.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "1/6" },
       { "key": "B", "text": "1/5" },
@@ -764,7 +732,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "At North High School, a survey asked two questions, Question A and Question B. For each question, students could answer either “yes” or “no.” Of the 800 students who responded to the survey, 720 answered “yes” to Question A, and 640 answered “yes” to Question B. What is the least possible number of these students who could have answered “yes” to both questions?",
-    "media": { "type": "image", "url": "/images/2018/B/q110.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "80" },
       { "key": "B", "text": "160" },
@@ -794,7 +761,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "Using the conversion above, how many dalts are equal to 1 rick?",
-    "media": { "type": "image", "url": "/images/2018/B/q112.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "0.43 dalt" },
       { "key": "B", "text": "2.30 dalts" },
@@ -809,7 +775,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "There are now x cans stacked on a shelf that holds 36 cans when full. If 4 of these cans were removed, the shelf would be half full. What is the value of x?",
-    "media": { "type": "image", "url": "/images/2018/B/q113.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "14" },
       { "key": "B", "text": "16" },
@@ -824,7 +789,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "Carlos tossed a paper cup in the air 50 times and found that the probability of it landing on its side was 72%. If he tosses the cup in the air 150 more times, what is the total number of times he can expect the cup to land on its side?",
-    "media": { "type": "image", "url": "/images/2018/B/q114.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "72" },
       { "key": "B", "text": "108" },
