@@ -129,14 +129,14 @@
     "answer": ""
   },
   {
-    "id": "Q68",
-    "index": 68,
+    "id": "Q69",
+    "index": 69,
     "type": "MULTIPLE_CHOICE",
     "category": "Geometry",
     "stem": "In the pyramid above, each triangular face has the same area, and the base MNPQ is a square that measures 8 centimeters on each side. If the length of RS = 6 centimeters, what is the surface area of the pyramid excluding the base?",
     "media": {
       "type": "image",
-      "url": "/images/2018/q68.png",
+      "url": "/images/2018/q69.png",
       "alt": "Square-based pyramid with apex R and base MNPQ."
     },
     "choices": [
@@ -148,8 +148,8 @@
     "answer": ""
   },
   {
-    "id": "Q69",
-    "index": 69,
+    "id": "Q70",
+    "index": 70,
     "type": "MULTIPLE_CHOICE",
     "category": "Mathematics",
     "stem": "The perimeter of a rectangle is 510 centimeters. The ratio of the length to the width is 3:2. What are the dimensions of this rectangle?",
@@ -162,14 +162,14 @@
     "answer": ""
   },
   {
-    "id": "Q70",
-    "index": 70,
+    "id": "Q68",
+    "index": 68,
     "type": "MULTIPLE_CHOICE",
     "category": "Mathematics",
     "stem": "A researcher recorded the number of people in each vehicle that passed through a checkpoint. The table above shows the percent distribution for the 420 vehicles that passed through the checkpoint yesterday morning. How many of the 420 vehicles contained at least 3 people?",
     "media": {
       "type": "image",
-      "url": "/images/2018/q70.png",
+      "url": "/images/2018/q68.png",
       "alt": "Table showing percent of vehicles by number of occupants."
     },
     "choices": [
