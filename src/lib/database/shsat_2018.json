@@ -585,11 +585,11 @@
     "answer": ""
   },
   {
-    "id": "Q98",
-    "index": 98,
+    "id": "Q100",
+    "index": 100,
     "type": "MULTIPLE_CHOICE",
     "category": "Algebra",
-    "stem": "In the equation w = y/xz, where w, x, y, and z are positive numbers, which of these is equal to z?",
+    "stem": "In the equation w/x = y/z, where w, x, y, and z are positive numbers, which of these is equal to z?",
     "choices": [
       { "key": "A", "text": "x" },
       { "key": "B", "text": "xy" },
@@ -599,8 +599,8 @@
     "answer": ""
   },
   {
-    "id": "Q99",
-    "index": 99,
+    "id": "Q98",
+    "index": 98,
     "type": "MULTIPLE_CHOICE",
     "category": "Geometry",
     "stem": "The graph above shows the number of schools per city for five small cities (M, N, P, Q, R). Cities M and N each have 500 students per school. City P has 400 students per school. Cities Q and R each have 700 students per school. Which of the five cities has the greatest number of students?",
@@ -618,16 +618,21 @@
     "answer": ""
   },
   {
-    "id": "Q100",
-    "index": 100,
+    "id": "Q103",
+    "index": 103,
     "type": "MULTIPLE_CHOICE",
     "category": "Algebra",
-    "stem": "In the equation above, w, x, y, and z are positive numbers. Which of these is equal to z?",
+    "stem": "Mr. Blake’s biology class is divided into three sections. The same test was given to each section. The table above shows both the lowest score and the range of scores on this test for each section. What is the overall range of all scores in all three sections?",
+    "media": {
+      "type": "image",
+      "url": "/images/2018/q103.png",
+      "alt": "Mr. Blake’s biology class is divided into three sections. "
+    },
     "choices": [
-      { "key": "A", "text": "x" },
-      { "key": "B", "text": "xy" },
-      { "key": "C", "text": "w/xy" },
-      { "key": "D", "text": "xy/w" }
+      { "key": "A", "text": "25" },
+      { "key": "B", "text": "27" },
+      { "key": "C", "text": "28" },
+      { "key": "D", "text": "31" }
     ],
     "answer": ""
   },
@@ -665,8 +670,8 @@
     "answer": ""
   },
   {
-    "id": "Q103",
-    "index": 103,
+    "id": "Q99",
+    "index": 99,
     "type": "MULTIPLE_CHOICE",
     "category": "Probability",
     "stem": "A box contains 5 strawberry candies, 3 banana candies, and 2 orange candies. If Braden selects 2 candies at random from this box, without replacement, what is the probability that both candies are not banana?",
