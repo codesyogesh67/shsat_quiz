@@ -297,15 +297,16 @@
     "index": 82,
     "type": "MULTIPLE_CHOICE",
     "category": "Number Theory",
-    "stem": "What is the greatest common factor of 84 and 210?",
+    "stem": "Which of the following numbers has factors that include the smallest factor (other than 1) of 91?",
     "choices": [
-      { "key": "A", "text": "14" },
-      { "key": "B", "text": "21" },
-      { "key": "C", "text": "28" },
-      { "key": "D", "text": "42" }
+      { "key": "A", "text": "30" },
+      { "key": "B", "text": "35" },
+      { "key": "C", "text": "39" },
+      { "key": "D", "text": "44" }
     ],
-    "answer": ""
+    "answer": "B"
   },
+
   {
     "id": "Q83",
     "index": 83,
