@@ -276,7 +276,7 @@
   {
     "id": "Q80",
     "index": 80,
-    "type": "MULTIPLE_CHOICE",
+    "type": "FREE_RESPONSE",
     "category": "Statistics / Word Problem",
     "stem": "The chart shows how people get to work in Center City. Total number of people working = 15,000.\n\nDrive Alone: 49%\nBus: 10%\nWalk: 22%\nCar Pool: 15%\nBicycle: 4%\n\nHow many more people in Center City walk to work than ride their bicycle to work?",
     "choices": [],

@@ -11,14 +11,12 @@ const QuestionCard = ({
   onChange,
   reveal,
   isCorrect,
-
 }: {
   q: Question;
   value: string;
   onChange: (v: string) => void;
   reveal: boolean;
   isCorrect?: boolean;
- 
 }) => {
   return (
     <section
@@ -44,7 +42,7 @@ const QuestionCard = ({
           {q.media && <MediaRenderer media={q.media} />}
 
           <div className="mt-4">
-            {q.type === "MULTIPLE_CHOICE" ? (
+            {q.choices.length > 0 && q.type === "MULTIPLE_CHOICE" ? (
               <ChoiceGroup
                 name={`q-${q.id}`}
                 choices={q.choices!}

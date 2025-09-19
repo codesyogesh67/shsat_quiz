@@ -79,10 +79,10 @@
     "category": "Mathematics",
     "stem": "One bottle contains 500 milliliters of juice. How many liters of juice are there in 24 of these bottles?",
     "choices": [
-      { "key": "E", "text": "12 L" },
-      { "key": "F", "text": "120 L" },
-      { "key": "G", "text": "1,200 L" },
-      { "key": "H", "text": "12,000 L" }
+      { "key": "A", "text": "12 L" },
+      { "key": "B", "text": "120 L" },
+      { "key": "C", "text": "1,200 L" },
+      { "key": "D", "text": "12,000 L" }
     ],
     "answer": ""
   },
@@ -107,10 +107,10 @@
     "category": "Mathematics",
     "stem": "Jenny starts a game with twice as many marbles as Keiko. Jenny gives Keiko 5 marbles, but she still has 10 more than Keiko. How many marbles did Jenny have to start with?",
     "choices": [
-      { "key": "E", "text": "25" },
-      { "key": "F", "text": "30" },
-      { "key": "G", "text": "35" },
-      { "key": "H", "text": "40" }
+      { "key": "A", "text": "25" },
+      { "key": "B", "text": "30" },
+      { "key": "C", "text": "35" },
+      { "key": "D", "text": "40" }
     ],
     "answer": ""
   },
@@ -206,10 +206,10 @@
     "category": "Mathematics",
     "stem": "Kevin has 140 lorgs and 16 dalts. If he exchanges the lorgs and dalts for dollars according to the rates (1 dollar = 7 lorgs, 1 dollar = 0.5 dalt), how many dollars will he receive?",
     "choices": [
-      { "key": "E", "text": "$28" },
-      { "key": "F", "text": "$52" },
-      { "key": "G", "text": "$182" },
-      { "key": "H", "text": "$282" }
+      { "key": "A", "text": "$28" },
+      { "key": "B", "text": "$52" },
+      { "key": "C", "text": "$182" },
+      { "key": "D", "text": "$282" }
     ],
     "answer": ""
   },
@@ -234,10 +234,10 @@
     "category": "Algebra",
     "stem": "The sum of the numbers x, y, and z is 50. The ratio of x to y is 1:4, and the ratio of y to z is 4:5. What is the value of y?",
     "choices": [
-      { "key": "E", "text": "4" },
-      { "key": "F", "text": "8" },
-      { "key": "G", "text": "10" },
-      { "key": "H", "text": "20" }
+      { "key": "A", "text": "4" },
+      { "key": "B", "text": "8" },
+      { "key": "C", "text": "10" },
+      { "key": "D", "text": "20" }
     ],
     "answer": ""
   },
@@ -267,10 +267,10 @@
     "category": "Statistics",
     "stem": "In Centerville, 45% of the population is female, and 60% of the population commutes to work daily. Of the total Centerville population, 21% are females who commute to work daily. What percentage of the total Centerville population are males who do not commute to work daily?",
     "choices": [
-      { "key": "E", "text": "15%" },
-      { "key": "F", "text": "16%" },
-      { "key": "G", "text": "24%" },
-      { "key": "H", "text": "39%" }
+      { "key": "A", "text": "15%" },
+      { "key": "B", "text": "16%" },
+      { "key": "C", "text": "24%" },
+      { "key": "D", "text": "39%" }
     ],
     "answer": ""
   },
@@ -329,10 +329,10 @@
       "alt": "Table of quiz scores."
     },
     "choices": [
-      { "key": "E", "text": "22.5" },
-      { "key": "F", "text": "75" },
-      { "key": "G", "text": "77" },
-      { "key": "H", "text": "85" }
+      { "key": "A", "text": "22.5" },
+      { "key": "B", "text": "75" },
+      { "key": "C", "text": "77" },
+      { "key": "D", "text": "85" }
     ],
     "answer": ""
   },
@@ -606,7 +606,7 @@
     "stem": "The graph above shows the number of schools per city for five small cities (M, N, P, Q, R). Cities M and N each have 500 students per school. City P has 400 students per school. Cities Q and R each have 700 students per school. Which of the five cities has the greatest number of students?",
     "media": {
       "type": "image",
-      "url": "/images/2018/q99.png",
+      "url": "/images/2018/q98.png",
       "alt": "Bar graph showing number of schools per city."
     },
     "choices": [
@@ -690,10 +690,10 @@
     "category": "Number Theory",
     "stem": "If 3n is a positive even number, how many odd numbers are in the range from 3n up to and including 3n + 5?",
     "choices": [
-      { "key": "E", "text": "2" },
-      { "key": "F", "text": "3" },
-      { "key": "G", "text": "4" },
-      { "key": "H", "text": "5" }
+      { "key": "A", "text": "2" },
+      { "key": "B", "text": "3" },
+      { "key": "C", "text": "4" },
+      { "key": "D", "text": "5" }
     ],
     "answer": ""
   },

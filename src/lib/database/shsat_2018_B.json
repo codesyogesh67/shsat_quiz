@@ -23,7 +23,7 @@
     "type": "FREE_RESPONSE",
     "category": "Uncategorized",
     "stem": "Evaluate: |(−6) − (−5) + 4.2| − |3 − 9.6|",
-    "media": { "type": "image", "url": "/images/2018/B/q60.png", "alt": "" },
+
     "choices": [],
     "answer": ""
   },
@@ -81,7 +81,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "M = 3N = P/4 = Q + 5 = R/7 > 0. Based on the statement above, which variable has the greatest value?",
-    "media": { "type": "image", "url": "/images/2018/B/q65.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "M" },
       { "key": "B", "text": "N" },
@@ -96,7 +95,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "A roofing contractor uses shingles at a rate of 3 bundles for every 96 square feet of roof covered. At this rate, how many bundles of shingles will he need in order to cover a roof that is 416 square feet?",
-    "media": { "type": "image", "url": "/images/2018/B/q66.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "5" },
       { "key": "B", "text": "12" },
@@ -268,7 +266,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "Points X, Y, and Z are on a straight line, and Y is between X and Z. Length YZ = 3/5 XY, and length XY = 20 centimeters. What is the length of XZ?",
-    "media": { "type": "image", "url": "/images/2018/B/q78.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "12 cm" },
       { "key": "B", "text": "24 cm" },
@@ -283,7 +280,7 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "Bryana bought 1 3/4 yards of cloth at $8.00 per yard. If there was an 8% sales tax, what was the total cost of the cloth?",
-    "media": { "type": "image", "url": "/images/2018/B/q79.png", "alt": "" },
+
     "choices": [
       { "key": "A", "text": "$12.96" },
       { "key": "B", "text": "$14.08" },
@@ -383,7 +380,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "If w − 1 is an odd integer, which expression must be an even integer?",
-    "media": { "type": "image", "url": "/images/2018/B/q86.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "w + 1" },
       { "key": "B", "text": "2w − 1" },
@@ -441,7 +437,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "A large container is partially filled with n liters of water. Ito adds 10 liters of water to the container, making it 60% full. If Ito adds 6 more liters of water, the container will be 75% full. What is the value of n?",
-    "media": { "type": "image", "url": "/images/2018/B/q90.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "14" },
       { "key": "B", "text": "15" },
@@ -499,7 +494,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "A pizza shop offers a choice of 3 sizes (small, medium, and large) and 7 different toppings. Different pizzas can be created by changing the size and/or the choice of toppings. If Cody wants to order a pizza with exactly 2 different toppings, how many different pizzas can he create?",
-    "media": { "type": "image", "url": "/images/2018/B/q94.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "6" },
       { "key": "B", "text": "21" },
@@ -529,7 +523,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "A wooden box has a square base. The height of this box is 3 times the length of one side of the base. If one side of the base is 3 feet long, what is the volume of this box?",
-    "media": { "type": "image", "url": "/images/2018/B/q96.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "9 cu ft" },
       { "key": "B", "text": "27 cu ft" },
@@ -544,7 +537,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "On a bike trip, Rajiv traveled 65 kilometers in 5 hours, while Shaina traveled 72 kilometers in 4 hours. How much less was Rajiv’s mean speed, in kilometers per hour (kph), than Shaina’s?",
-    "media": { "type": "image", "url": "/images/2018/B/q97.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "1 kph" },
       { "key": "B", "text": "5 kph" },
@@ -746,7 +738,6 @@
     "type": "MULTIPLE_CHOICE",
     "category": "Uncategorized",
     "stem": "Raoul is at least 3 years older than Vahn. Which of the following inequalities gives the relationship between Raoul’s age (r) and Vahn’s age (v)?",
-    "media": { "type": "image", "url": "/images/2018/B/q111.png", "alt": "" },
     "choices": [
       { "key": "A", "text": "r − v ≥ 3" },
       { "key": "B", "text": "r − v ≤ 3" },
