@@ -42,7 +42,9 @@ const QuestionCard = ({
           {q.media && <MediaRenderer media={q.media} />}
 
           <div className="mt-4">
-            {q.choices.length > 0 && q.type === "MULTIPLE_CHOICE" ? (
+            {Array.isArray(q.choices) &&
+            q.choices.length > 0 &&
+            q.type === "MULTIPLE_CHOICE" ? (
               <ChoiceGroup
                 name={`q-${q.id}`}
                 choices={q.choices!}
