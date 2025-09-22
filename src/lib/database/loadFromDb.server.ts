@@ -2,13 +2,7 @@
 import "server-only";
 import prisma from "@/lib/prisma"; // your prisma singleton
 import type { Question as AppQuestion } from "@/types";
-
-import {
-    loadAllQuestionsFromDir,
-    shuffle,
-    pickFromAllBanks,
-    loadExamByKey,
-  } from "@/lib/database/loadAllBanks.server";
+import { whereByExamKey } from "@/lib/database/doWhere";
 
 /** Map a Prisma row to your app's Question shape */
 function toAppQuestion(row: {
@@ -38,17 +32,8 @@ function toAppQuestion(row: {
  */
 export async function getQuestionsCount(examKey?: string) {
   if (!examKey) return prisma.question.count();
-  return prisma.question.count({
-    where: {
-      OR: [
-        // if your schema has examKey:
-        // @ts-expect-error: allow if the column doesn't exist in TS types
-        { examKey },
-        // fallback for schemas without examKey (namespaced ids "exam:externalId")
-        { id: { startsWith: `${examKey}:` } },
-      ],
-    } as any,
-  });
+  const where = whereByExamKey(examKey); // fully typed
+  return prisma.question.count({ where });
 }
 
 /** Fetch questions by examKey (ordered), with simple pagination. */
@@ -61,15 +46,7 @@ export async function getQuestionsByExam(options: {
   const { examKey, limit = 50, offset = 0, includeAnswer = true } = options;
 
   const rows = await prisma.question.findMany({
-    where: {
-      OR: [
-        // if you have examKey column:
-        // @ts-expect-error see note above
-        { examKey },
-        // fallback via namespaced id
-        { id: { startsWith: `${examKey}:` } },
-      ],
-    } as any,
+    where: whereByExamKey(examKey),
     orderBy: [{ index: "asc" }, { createdAt: "asc" }],
     skip: offset,
     take: limit,
