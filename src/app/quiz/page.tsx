@@ -118,6 +118,30 @@ export default function QuizPage() {
 
   const total = questions.length;
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const qs = new URLSearchParams({ count: "0" });
+        if (selectedCategory) qs.set("category", selectedCategory);
+        const data = await fetchJsonSafe<{ total: number }>(
+          `/api/questions?${qs}`
+        );
+        if (cancelled) return;
+
+        const total = Math.max(0, Number(data?.total ?? 0));
+        setMaxCount(total);
+        // keep current count within bounds (and >=1 when there is data)
+        setCount((c) => (total > 0 ? Math.min(Math.max(1, c), total) : c));
+      } catch {
+        if (!cancelled) setMaxCount(0);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedCategory]);
+
   async function startExamByKey(examKey: string) {
     try {
       const data = await fetchJsonSafe<ExamPayload>(
@@ -171,9 +195,25 @@ export default function QuizPage() {
   /** Start a custom quiz (count/randomize) */
   const start = async () => {
     try {
+      // Build query safely
+      const qs = new URLSearchParams({
+        count: String(count),
+        randomize: String(randomize),
+      });
+
+      // Only send category when not "all"
+      if (selectedCategory) qs.set("category", selectedCategory);
+
+      // const data = await fetchJsonSafe<QuestionsPayload>(
+      //   `/api/questions?count=${count}&randomize=${randomize}`
+      // );
+
       const data = await fetchJsonSafe<QuestionsPayload>(
-        `/api/questions?count=${count}&randomize=${randomize}`
+        `/api/questions?${qs.toString()}`
       );
+      if (!data?.questions)
+        throw new Error("Malformed response from /api/questions");
+
       if (!data?.questions)
         throw new Error("Malformed response from /api/questions");
       setQuestions(data.questions);
@@ -290,6 +330,11 @@ export default function QuizPage() {
     }
   };
 
+  const categoryLabel =
+    category === "all"
+      ? "All categories"
+      : category.charAt(0).toUpperCase() + category.slice(1);
+
   return (
     <div className="min-h-screen bg-neutral-50">
       <header className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b">
@@ -360,8 +405,11 @@ export default function QuizPage() {
                   }
                   className="rounded-xl border px-3 py-2 outline-none focus:ring-2 focus:ring-black"
                 />
+
                 <p className="text-xs text-neutral-500">
-                  Max available: {maxCount}
+                  Max available
+                  {categoryLabel.length > 0 && ` (${categoryLabel})`}:{" "}
+                  {maxCount}
                 </p>
               </div>
 
