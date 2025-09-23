@@ -122,7 +122,7 @@ async function detectExamKeys(prisma: any): Promise<string[]> {
       _count: { _all: true },
     });
     return rows
-      .map((r) => r.examKey as string)
+      .map((r: { examKey: string }) => r.examKey as string)
       .filter(Boolean)
       .sort();
   } else {
@@ -131,7 +131,7 @@ async function detectExamKeys(prisma: any): Promise<string[]> {
       SELECT DISTINCT split_part(id, ':', 1) AS ek FROM "Question"
     `;
     return rows
-      .map((r) => r.ek)
+      .map((r: { ek: string }) => r.ek)
       .filter(Boolean)
       .sort();
   }
