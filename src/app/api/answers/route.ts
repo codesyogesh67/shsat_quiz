@@ -1,6 +1,7 @@
 // src/app/api/answers/route.ts
 import "server-only";
 import { NextResponse } from "next/server";
+import { Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -17,14 +18,19 @@ export async function GET(req: Request) {
     // Support both schemas:
     // 1) If you added `examKey` column, match by it
     // 2) Otherwise, fall back to namespaced id: "shsat_2018:Q58"
+
+    const where: Prisma.QuestionWhereInput = {
+      OR: [
+        // This property exists only in some schemas.
+        // Keep the ts-expect-error scoped to just this line if needed.
+        // @ts-expect-error examKey may not exist in your generated type
+        { examKey: examKey ?? undefined },
+        { id: { startsWith: `${examKey}:` } },
+      ],
+    };
+
     const rows = await prisma.question.findMany({
-      where: {
-        OR: [
-          // @ts-expect-error allow either schema
-          { examKey },
-          { id: { startsWith: `${examKey}:` } },
-        ],
-      } as any,
+      where,
       select: { index: true, answer: true },
       orderBy: { index: "asc" },
     });
