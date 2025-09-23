@@ -1,6 +1,7 @@
 import "server-only";
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import {
   getQuestionsByExam,
   getQuestionsCount,
@@ -34,9 +35,30 @@ function toAppQuestion(row: {
   };
 }
 
+type Row = {
+  id: string;
+  index: number;
+  type: string;
+  stem: string;
+  answer: string | null;
+  category: string | null;
+  choices: unknown | null;
+  media: unknown | null;
+};
+
 export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
+
+    // --- Category filter (custom quiz only) ---
+    const allowed = new Set(["algebra", "geometry", "statistics"]);
+    const categoryParam = (url.searchParams.get("category") ?? "")
+      .trim()
+      .toLowerCase();
+    const category = allowed.has(categoryParam) ? categoryParam : "";
+    const whereCategory: Prisma.QuestionWhereInput | undefined = category
+      ? { category: { equals: category, mode: "insensitive" } }
+      : undefined;
 
     // --- Case 1: explicit exam key ---
     const examKey = url.searchParams.get("exam");
@@ -55,7 +77,7 @@ export async function GET(req: Request) {
       const out = items.map((q, i) => ({ ...q, index: i + 1 }));
 
       return NextResponse.json({
-        meta: undefined, // you can add Exam meta later if you create an Exam table
+        meta: undefined,
         total: out.length,
         questions: out,
       });
@@ -64,7 +86,6 @@ export async function GET(req: Request) {
     // --- Case 2: preset "shsat57" (composition via DB) ---
     const preset = url.searchParams.get("preset");
     if (preset === "shsat57") {
-      // Pull ALL questions, then let your selector shape the 57-set
       const rows = await prisma.question.findMany({
         select: {
           id: true,
@@ -100,23 +121,51 @@ export async function GET(req: Request) {
       return NextResponse.json({ total: set.length, questions: set });
     }
 
-    // --- Case 3: custom quiz (count + randomize) ---
+    // --- Case 3: custom quiz (count + randomize + category) ---
     const count = Number(url.searchParams.get("count") ?? "0");
     const randomize = url.searchParams.get("randomize") !== "false";
+    const limit = Math.min(Math.max(count, 1), 500);
 
-    // Page boot: your UI probes maxCount via ?count=0
+    // Probe: ?count=0 → how many available after category filter
     if (!count || count <= 0) {
-      const total = await getQuestionsCount();
-      return NextResponse.json({ total, questions: [] });
+      const total = await prisma.question.count({ where: whereCategory });
+      return NextResponse.json(
+        { total, questions: [] },
+        { headers: { "x-data-source": "db" } }
+      );
     }
 
     if (randomize) {
+      if (category) {
+        // sample N from the chosen category in SQL
+        const rows = await prisma.$queryRaw<Row[]>`
+        SELECT id, "index", type, stem, answer, category, choices, media
+        FROM "Question"
+        WHERE LOWER("category") = LOWER(${category})
+        ORDER BY random()
+        LIMIT ${limit}
+      `;
+
+        const qs = rows
+          .map(toAppQuestion)
+          .map((q, i) => ({ ...q, index: i + 1 }));
+        return NextResponse.json(
+          { total: qs.length, questions: qs },
+          { headers: { "x-data-source": "db" } }
+        );
+      }
+
+      // no category: use your existing sampler
       const questions = await pickFromAllBanksDB(count);
-      return NextResponse.json({ total: questions.length, questions });
+      return NextResponse.json(
+        { total: questions.length, questions },
+        { headers: { "x-data-source": "db" } }
+      );
     }
 
-    // Non-random: first N by createdAt, then index
+    // Non-random: take first N by createdAt/index (respect category if set)
     const rows = await prisma.question.findMany({
+      where: whereCategory,
       orderBy: [{ createdAt: "asc" }, { index: "asc" }],
       take: Math.min(count, 500),
       select: {
@@ -131,13 +180,16 @@ export async function GET(req: Request) {
       },
     });
     const questions = rows.map(toAppQuestion);
-    return NextResponse.json({ total: questions.length, questions });
+    return NextResponse.json(
+      { total: questions.length, questions },
+      { headers: { "x-data-source": "db" } }
+    );
   } catch (err) {
     console.error("GET /api/questions error:", err);
     return NextResponse.json(
       {
         error: "Failed to load questions",
-        detail: String(err?.message ?? err),
+        detail: String((err as Error)?.message ?? err),
       },
       { status: 500 }
     );
