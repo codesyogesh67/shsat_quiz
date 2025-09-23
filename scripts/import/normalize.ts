@@ -38,7 +38,7 @@ export function normalizeOne(
   return {
     id: q.id,
     index: q.index,
-    type: q.type.trim(),
+    type: q.type,
     category: q.category?.trim(),
     stem: q.stem,
     answer: q.answer,
