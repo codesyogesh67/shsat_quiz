@@ -6,6 +6,14 @@ import QuestionCard from "@/components/QuestionCard";
 import TimerDisplay from "@/components/TimerDisplay";
 import { isGridCorrect } from "@/lib/helpers";
 import { examKeys } from "@/lib/data";
+import { fetchJsonSafe } from "@/lib/fetchJsonSafe";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import type { Mode, Question } from "@/types";
 
@@ -15,27 +23,19 @@ const errMsg = (e: unknown) => (e instanceof Error ? e.message : String(e));
 type ExamMeta = { label?: string; minutes?: number };
 type ExamPayload = { meta?: ExamMeta; questions: Question[] };
 
-async function fetchJsonSafe<T = unknown>(
-  url: string,
-  init?: RequestInit
-): Promise<T> {
-  const res = await fetch(url, { cache: "no-store", ...init });
-  const raw = await res.text(); // robust against HTML error pages
-  if (!res.ok) {
-    throw new Error(raw || `HTTP ${res.status}`);
-  }
-  try {
-    return JSON.parse(raw) as T;
-  } catch {
-    throw new Error("Server did not return valid JSON.");
-  }
-}
-
 type QuestionsPayload = { total: number; questions: Question[] };
+type Category = "all" | "algebra" | "geometry" | "statistics";
 
 // Type guards to avoid `any`
 type WithTotal = { total: number };
 type WithQuestionsUnknown = { questions: unknown[] };
+
+const CATEGORY_OPTIONS: { value: Category; label: string }[] = [
+  { value: "all", label: "All categories" },
+  { value: "algebra", label: "Algebra" },
+  { value: "geometry", label: "Geometry" },
+  { value: "statistics", label: "Statistics" },
+];
 
 function isWithTotal(v: unknown): v is WithTotal {
   return (
@@ -74,6 +74,11 @@ export default function QuizPage() {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [timeRunning, setTimeRunning] = useState<boolean>(false);
+
+  //category
+  const [category, setCategory] = useState<string>("");
+
+  const selectedCategory = category === "all" ? "" : category;
 
   // Remember pre-preset config so Cancel can restore it
   const [savedConfig, setSavedConfig] = useState<{
@@ -397,6 +402,29 @@ export default function QuizPage() {
                   </button>
                 </div>
               </div>
+            </div>
+
+            {/* NEW: Category selector */}
+            <div className="grid gap-1.5">
+              <label className="text-sm text-neutral-600">Category</label>
+              <Select
+                value={category}
+                onValueChange={(v) => setCategory(v as Category)}
+              >
+                <SelectTrigger className="w-[220px]">
+                  <SelectValue placeholder="All categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORY_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value || "all"} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-neutral-500">
+                Filters the pool and updates the max.
+              </p>
             </div>
 
             <div className="mt-5 flex flex-wrap gap-3">

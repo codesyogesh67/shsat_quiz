@@ -1,8 +1,8 @@
+// src/app/api/answers/route.ts
+import "server-only";
 import { NextResponse } from "next/server";
-import {
-  loadAnswersForExam,
-  resolveDatabaseDir,
-} from "@/lib/database/loadAllBanks.server";
+import { Prisma } from "@prisma/client";
+import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,19 +15,38 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Missing exam" }, { status: 400 });
     }
 
-    const base = resolveDatabaseDir();
-    const map = await loadAnswersForExam(examKey, base);
+    // Support both schemas:
+    // 1) If you added `examKey` column, match by it
+    // 2) Otherwise, fall back to namespaced id: "shsat_2018:Q58"
 
-    const answers = Object.keys(map)
-      .map((k) => ({ index: Number(k), answer: map[Number(k)] }))
-      .sort((a, b) => a.index - b.index);
+    const where: Prisma.QuestionWhereInput = {
+      OR: [
+        // This property exists only in some schemas.
+        // Keep the ts-expect-error scoped to just this line if needed.
+        // @ts-expect-error examKey may not exist in your generated type
+        { examKey: examKey ?? undefined },
+        { id: { startsWith: `${examKey}:` } },
+      ],
+    };
 
-    return NextResponse.json({ exam: examKey, total: answers.length, answers });
+    const rows = await prisma.question.findMany({
+      where,
+      select: { index: true, answer: true },
+      orderBy: { index: "asc" },
+    });
+
+    const answers = rows
+      .filter((r) => r.answer != null && String(r.answer).trim() !== "")
+      .map((r) => ({ index: r.index, answer: String(r.answer) }));
+
+    return NextResponse.json(
+      { exam: examKey, total: answers.length, answers },
+      { headers: { "x-data-source": "db" } }
+    );
   } catch (err) {
-    const detail = err instanceof Error ? err.message : String(err);
     console.error("GET /api/answers error:", err);
     return NextResponse.json(
-      { error: "Failed to load answers", detail },
+      { error: "Failed to load answers", detail: String(err?.message ?? err) },
       { status: 500 }
     );
   }

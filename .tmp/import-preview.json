@@ -1,0 +1,110 @@
+{
+  "totalPrepared": 50,
+  "files": [
+    {
+      "file": "sample_1.json",
+      "valid": 10,
+      "invalid": 0
+    },
+    {
+      "file": "sample_2.json",
+      "valid": 10,
+      "invalid": 0
+    },
+    {
+      "file": "sample_3.json",
+      "valid": 10,
+      "invalid": 0
+    },
+    {
+      "file": "sample_4.json",
+      "valid": 10,
+      "invalid": 0
+    },
+    {
+      "file": "sample_5.json",
+      "valid": 10,
+      "invalid": 0
+    }
+  ],
+  "sample": [
+    {
+      "id": "CUSTOM-Q1",
+      "index": 1,
+      "type": "MULTIPLE_CHOICE",
+      "category": "Algebra",
+      "stem": "Evaluate: 3<sup>2</sup> × 4 − 6 ÷ 3 + 5",
+      "answer": "B",
+      "choices": [
+        {
+          "key": "A",
+          "text": "37"
+        },
+        {
+          "key": "B",
+          "text": "39"
+        },
+        {
+          "key": "C",
+          "text": "41"
+        },
+        {
+          "key": "D",
+          "text": "47"
+        }
+      ]
+    },
+    {
+      "id": "CUSTOM-Q2",
+      "index": 2,
+      "type": "MULTIPLE_CHOICE",
+      "category": "Algebra",
+      "stem": "A recipe uses flour to sugar in a ratio of 5:2. If a baker uses 420 grams of flour, how many grams of sugar should be used?",
+      "answer": "B",
+      "choices": [
+        {
+          "key": "A",
+          "text": "160"
+        },
+        {
+          "key": "B",
+          "text": "168"
+        },
+        {
+          "key": "C",
+          "text": "175"
+        },
+        {
+          "key": "D",
+          "text": "210"
+        }
+      ]
+    },
+    {
+      "id": "CUSTOM-Q3",
+      "index": 3,
+      "type": "MULTIPLE_CHOICE",
+      "category": "Geometry",
+      "stem": "In △ABC, the exterior angle at C measures 128°. The measures of ∠A and ∠B are in the ratio 3:5. What is the measure of ∠B?",
+      "answer": "C",
+      "choices": [
+        {
+          "key": "A",
+          "text": "48°"
+        },
+        {
+          "key": "B",
+          "text": "60°"
+        },
+        {
+          "key": "C",
+          "text": "80°"
+        },
+        {
+          "key": "D",
+          "text": "96°"
+        }
+      ]
+    }
+  ]
+}

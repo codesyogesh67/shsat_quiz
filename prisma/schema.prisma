@@ -1,0 +1,88 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
+  directUrl    = env("DIRECT_URL")
+  relationMode = "foreignKeys"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attempts Attempt[]
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  FREE_RESPONSE
+  GRID_IN
+}
+
+model Question {
+  id          String       @id // stays as-is (existing 50 rows OK)
+  externalId  String? // original JSON id (e.g., "Q58")
+  examKey     String? // e.g., "shsat_2018", "shsat_2018_B", "random_questions"
+  index       Int
+  category    String?
+  type        QuestionType @default(MULTIPLE_CHOICE) // enum for safety
+  stem        String
+  answer      String
+  choices     Json? // MCQ options
+  media       Json? // images/graphs metadata
+  explanation String? // optional: store solution text/markdown
+  tags        String[] // optional: quick filtering (Postgres text[])
+  difficulty  Int? // optional: 1..5 or similar
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Optional: group questions by exam/paper; keep nullable so existing rows are fine
+  examId String?
+  exam   Exam?   @relation(fields: [examId], references: [id])
+
+  attempts Attempt[]
+
+
+  @@index([examKey, index])
+  @@index([examKey, externalId])
+}
+
+model Exam {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., "shsat_2023_A"
+  year      Int?
+  form      String? // e.g., "A", "B"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  questions Question[]
+}
+
+model Attempt {
+  id          String   @id @default(cuid())
+  questionId  String
+  userId      String? // null if anonymous
+  sessionId   String? // client-generated UUID for guests
+  givenAnswer String
+  isCorrect   Boolean
+  createdAt   DateTime @default(now())
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  user     User?    @relation(fields: [userId], references: [id])
+  // If you ever want only one "latest" attempt per (user or session, per question),
+  // swap history for upserts by uncommenting one of these:
+  // @@unique([questionId, userId])
+  // @@unique([questionId, sessionId])
+
+  @@index([questionId])
+  @@index([userId])
+  @@index([sessionId])
+}
