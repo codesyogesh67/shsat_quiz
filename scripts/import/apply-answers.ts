@@ -113,7 +113,7 @@ async function detectExamKeys(prisma: any): Promise<string[]> {
     FROM information_schema.columns
     WHERE table_schema='public' AND (table_name='Question' OR table_name='question');
   `
-  ).map((r) => String(r.column_name).toLowerCase());
+  ).map((r: { column_name: string }) => String(r.column_name).toLowerCase());
 
   if (cols.includes("examkey")) {
     const rows = await prisma.question.groupBy({
