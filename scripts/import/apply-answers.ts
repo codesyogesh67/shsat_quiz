@@ -26,6 +26,8 @@ if (!DB_URL) {
   process.exit(1);
 }
 
+type PgColumnRow = { column_name: string };
+
 function ensureClientGenerated() {
   const generatedIdx = path.join(
     process.cwd(),
@@ -106,7 +108,7 @@ async function getPrisma() {
 async function detectExamKeys(prisma: any): Promise<string[]> {
   // Prefer examKey column if it exists; else infer from id prefix before ':'
   const cols = (
-    await prisma.$queryRaw<any[]>`
+    await prisma.$queryRaw<PgColumnRow[]>`
     SELECT column_name
     FROM information_schema.columns
     WHERE table_schema='public' AND (table_name='Question' OR table_name='question');
