@@ -17,6 +17,13 @@ export async function GET() {
     );
   } catch (err) {
     console.error("count route error:", err);
+
+    const detail =
+      err instanceof Error
+        ? err.message
+        : typeof err === "string"
+        ? err
+        : JSON.stringify(err);
     return NextResponse.json(
       { error: "DB error", detail: String(err?.message ?? err) },
       { status: 500 }
