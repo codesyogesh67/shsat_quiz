@@ -8,8 +8,7 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.next();
   }
   if (isProtected(req)) {
-    const session = await auth();
-    return session.protect();
+    return auth.protect();
   }
 
   return NextResponse.next();
