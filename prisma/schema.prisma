@@ -11,14 +11,21 @@ datasource db {
   relationMode = "foreignKeys"
 }
 
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum Role {
+  USER
+  ADMIN
+}
 
-  attempts Attempt[]
+model User {
+  id             String    @id @default(cuid())
+  externalAuthId String    @unique // maps to Clerk user ID now; generic for future
+  email          String    @unique
+  name           String?
+  imageUrl       String?
+  role           Role      @default(USER)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  Attempt        Attempt[]
 }
 
 enum QuestionType {
@@ -49,7 +56,6 @@ model Question {
   exam   Exam?   @relation(fields: [examId], references: [id])
 
   attempts Attempt[]
-
 
   @@index([examKey, index])
   @@index([examKey, externalId])
