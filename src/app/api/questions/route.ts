@@ -13,6 +13,20 @@ import type { Question, RawQuestion } from "@/types";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+type QuestionType = "MULTIPLE_CHOICE" | "GRID_IN";
+
+function normalizeQuestionType(t: unknown): QuestionType {
+  if (typeof t !== "string") throw new Error("Invalid QuestionType");
+  const v = t
+    .trim()
+    .toUpperCase()
+    .replace(/[\s-]+/g, "_");
+  if (v === "MULTIPLE_CHOICE") return "MULTIPLE_CHOICE";
+  // Map common variants from DB → GRID_IN
+  if (v === "GRID_IN" || v === "FREE_RESPONSE" || v === "FR") return "GRID_IN";
+  throw new Error(`Unknown QuestionType: ${t}`);
+}
+
 function toAppQuestion(row: {
   id: string;
   index: number;
@@ -26,7 +40,7 @@ function toAppQuestion(row: {
   return {
     id: row.id,
     index: row.index,
-    type: row.type,
+    type: normalizeQuestionType(row.type),
     stem: row.stem,
     answer: row.answer ?? "",
     category: row.category ?? undefined,
