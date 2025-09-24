@@ -23,7 +23,7 @@ export async function GET(req: Request) {
       OR: [
         // This property exists only in some schemas.
         // Keep the ts-expect-error scoped to just this line if needed.
-        // @ts-expect-error examKey may not exist in your generated type
+
         { examKey: examKey ?? undefined },
         { id: { startsWith: `${examKey}:` } },
       ],
