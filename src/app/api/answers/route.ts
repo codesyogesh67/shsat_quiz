@@ -45,8 +45,16 @@ export async function GET(req: Request) {
     );
   } catch (err) {
     console.error("GET /api/answers error:", err);
+
+    const detail =
+      err instanceof Error
+        ? err.message
+        : typeof err === "string"
+        ? err
+        : JSON.stringify(err);
+
     return NextResponse.json(
-      { error: "Failed to load answers", detail: String(err?.message ?? err) },
+      { error: "Failed to load answers", detail },
       { status: 500 }
     );
   }
