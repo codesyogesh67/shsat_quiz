@@ -1,6 +1,6 @@
 // app/api/webhooks/clerk/route.ts
 import { NextResponse } from "next/server";
-import { headers } from "next/headers";
+
 import { Webhook } from "svix";
 import type { WebhookEvent } from "@clerk/nextjs/server"; // ✅ use Clerk’s event type
 import prisma from "@/lib/prisma";
@@ -11,13 +11,20 @@ const secret = process.env.CLERK_WEBHOOK_SECRET!;
 
 export async function POST(req: Request) {
   const payload = await req.text();
-  const h = headers();
-
+  const svixId = req.headers.get("svix-id");
+  const svixTimestamp = req.headers.get("svix-timestamp");
+  const svixSignature = req.headers.get("svix-signature");
+  if (!svixId || !svixTimestamp || !svixSignature) {
+    return NextResponse.json(
+      { ok: false, error: "Missing Svix headers" },
+      { status: 400 }
+    );
+  }
   const svixHeaders = {
-    "svix-id": h.get("svix-id")!,
-    "svix-timestamp": h.get("svix-timestamp")!,
-    "svix-signature": h.get("svix-signature")!,
-  } as Record<string, string>;
+    "svix-id": svixId,
+    "svix-timestamp": svixTimestamp,
+    "svix-signature": svixSignature,
+  };
 
   let evt: WebhookEvent; // ✅ strongly typed
   try {
