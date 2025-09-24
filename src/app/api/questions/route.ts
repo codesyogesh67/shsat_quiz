@@ -8,12 +8,10 @@ import {
   pickFromAllBanksDB,
 } from "@/lib/database/loadFromDb.server";
 import { pickShsat57 } from "@/lib/selectors/pickShsat57";
-import type { Question, RawQuestion } from "@/types";
+import type { Question, RawQuestion, QuestionType, Choice } from "@/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-type QuestionType = "MULTIPLE_CHOICE" | "GRID_IN";
 
 function normalizeQuestionType(t: unknown): QuestionType {
   if (typeof t !== "string") throw new Error("Invalid QuestionType");
@@ -22,9 +20,46 @@ function normalizeQuestionType(t: unknown): QuestionType {
     .toUpperCase()
     .replace(/[\s-]+/g, "_");
   if (v === "MULTIPLE_CHOICE") return "MULTIPLE_CHOICE";
-  // Map common variants from DB → GRID_IN
   if (v === "GRID_IN" || v === "FREE_RESPONSE" || v === "FR") return "GRID_IN";
   throw new Error(`Unknown QuestionType: ${t}`);
+}
+
+function safeParseJSON(x: unknown): unknown {
+  if (typeof x !== "string") return x;
+  try {
+    return JSON.parse(x);
+  } catch {
+    return undefined;
+  }
+}
+
+function coerceChoices(x: unknown): Choice[] | undefined {
+  const v = safeParseJSON(x);
+  if (!Array.isArray(v)) return undefined;
+  return v.every(
+    (c) =>
+      c &&
+      typeof c === "object" &&
+      typeof c.key === "string" &&
+      typeof c.text === "string"
+  )
+    ? (v as Choice[])
+    : undefined;
+}
+
+type Media = RawQuestion["media"];
+
+function coerceMedia(x: unknown): Media | undefined {
+  const v = safeParseJSON(x);
+  if (
+    v &&
+    typeof v === "object" &&
+    "type" in v &&
+    ((v as any).type === "image" || (v as any).type === "graph")
+  ) {
+    return v as Media;
+  }
+  return undefined;
 }
 
 function toAppQuestion(row: {
@@ -44,8 +79,8 @@ function toAppQuestion(row: {
     stem: row.stem,
     answer: row.answer ?? "",
     category: row.category ?? undefined,
-    choices: row.choices ?? undefined,
-    media: row.media ?? undefined,
+    choices: coerceChoices(row.choices), // ✅ Choice[] | undefined
+    media: coerceMedia(row.media), // ✅ Media | undefined
   };
 }
 
@@ -113,8 +148,9 @@ export async function GET(req: Request) {
         },
       });
 
-      const all = rows.map(toAppQuestion);
+      const all: Question[] = rows.map(toAppQuestion);
 
+      // If pickShsat57 expects RawQuestion[], Question is structurally compatible.
       const set = (pickShsat57((all as unknown) as RawQuestion[], {
         total: 57,
         gridIns: Number(url.searchParams.get("gridIns") ?? "5"),
@@ -153,13 +189,12 @@ export async function GET(req: Request) {
       if (category) {
         // sample N from the chosen category in SQL
         const rows = await prisma.$queryRaw<Row[]>`
-        SELECT id, "index", type, stem, answer, category, choices, media
-        FROM "Question"
-        WHERE LOWER("category") = LOWER(${category})
-        ORDER BY random()
-        LIMIT ${limit}
-      `;
-
+          SELECT id, "index", type, stem, answer, category, choices, media
+          FROM "Question"
+          WHERE LOWER("category") = LOWER(${category})
+          ORDER BY random()
+          LIMIT ${limit}
+        `;
         const qs = rows
           .map(toAppQuestion)
           .map((q, i) => ({ ...q, index: i + 1 }));
@@ -207,11 +242,7 @@ export async function GET(req: Request) {
         ? err
         : JSON.stringify(err);
     return NextResponse.json(
-      {
-        error: "Failed to load questions",
-        detail,
-      },
-
+      { error: "Failed to load questions", detail },
       { status: 500 }
     );
   }
