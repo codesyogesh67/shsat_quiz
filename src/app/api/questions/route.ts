@@ -4,7 +4,6 @@ import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import {
   getQuestionsByExam,
-  getQuestionsCount,
   pickFromAllBanksDB,
 } from "@/lib/database/loadFromDb.server";
 import { pickShsat57 } from "@/lib/selectors/pickShsat57";
@@ -49,17 +48,19 @@ function coerceChoices(x: unknown): Choice[] | undefined {
 
 type Media = RawQuestion["media"];
 
+const isObject = (x: unknown): x is Record<string, unknown> =>
+  typeof x === "object" && x !== null;
+
+function isMedia(v: unknown): v is Media {
+  if (!isObject(v)) return false;
+  if (!("type" in v)) return false;
+  const t = (v as { type?: unknown }).type;
+  return t === "image" || t === "graph";
+}
+
 function coerceMedia(x: unknown): Media | undefined {
-  const v = safeParseJSON(x);
-  if (
-    v &&
-    typeof v === "object" &&
-    "type" in v &&
-    ((v as any).type === "image" || (v as any).type === "graph")
-  ) {
-    return v as Media;
-  }
-  return undefined;
+  const v = safeParseJSON(x); // returns unknown
+  return isMedia(v) ? v : undefined; // ✅ no any needed
 }
 
 function toAppQuestion(row: {
