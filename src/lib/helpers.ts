@@ -1,4 +1,4 @@
-import type { Question } from "@/types";
+import type { Question, QuestionType, Choice, Media } from "@/types";
 
 function gcd(a: number, b: number): number {
   if (!b) return Math.abs(a);
@@ -43,4 +43,61 @@ function pickQuestions(
   return arr.slice(0, n).map((q, idx) => ({ ...q, index: idx + 1 }));
 }
 
-export { gcd, parseToNumber, pickQuestions, isGridCorrect };
+function normalizeQuestionType(t: unknown): QuestionType {
+  if (typeof t !== "string") throw new Error("Invalid QuestionType");
+  const v = t
+    .trim()
+    .toUpperCase()
+    .replace(/[\s-]+/g, "_");
+  if (v === "MULTIPLE_CHOICE") return "MULTIPLE_CHOICE";
+  if (v === "GRID_IN" || v === "FREE_RESPONSE" || v === "FR") return "GRID_IN";
+  throw new Error(`Unknown QuestionType: ${t}`);
+}
+
+function safeParseJSON(x: unknown): unknown {
+  if (typeof x !== "string") return x;
+  try {
+    return JSON.parse(x);
+  } catch {
+    return undefined;
+  }
+}
+
+function coerceChoices(x: unknown): Choice[] | undefined {
+  const v = safeParseJSON(x);
+  if (!Array.isArray(v)) return undefined;
+  return v.every(
+    (c) =>
+      c &&
+      typeof c === "object" &&
+      typeof c.key === "string" &&
+      typeof c.text === "string"
+  )
+    ? (v as Choice[])
+    : undefined;
+}
+
+const isObject = (x: unknown): x is Record<string, unknown> =>
+  typeof x === "object" && x !== null;
+
+function isMedia(v: unknown): v is Media {
+  if (!isObject(v)) return false;
+  if (!("type" in v)) return false;
+  const t = (v as { type?: unknown }).type;
+  return t === "image" || t === "graph";
+}
+
+function coerceMedia(x: unknown): Media | undefined {
+  const v = safeParseJSON(x); // returns unknown
+  return isMedia(v) ? v : undefined; // ✅ no any needed
+}
+
+export {
+  gcd,
+  parseToNumber,
+  pickQuestions,
+  isGridCorrect,
+  normalizeQuestionType,
+  coerceChoices,
+  coerceMedia,
+};

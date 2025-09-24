@@ -3,6 +3,11 @@ import "server-only";
 import prisma from "@/lib/prisma"; // your prisma singleton
 import type { Question as AppQuestion } from "@/types";
 import { whereByExamKey } from "@/lib/database/doWhere";
+import {
+  normalizeQuestionType,
+  coerceMedia,
+  coerceChoices,
+} from "@/lib/helpers";
 
 /** Map a Prisma row to your app's Question shape */
 function toAppQuestion(row: {
@@ -18,12 +23,12 @@ function toAppQuestion(row: {
   return {
     id: row.id,
     index: row.index,
-    type: row.type,
+    type: normalizeQuestionType(row.type),
     stem: row.stem,
     answer: row.answer ?? "",
     category: row.category ?? undefined,
-    choices: row.choices ?? undefined,
-    media: row.media ?? undefined,
+    choices: coerceChoices(row.choices), // ✅ Choice[] | undefined
+    media: coerceMedia(row.media), // ✅ Media | undefined
   };
 }
 
@@ -32,7 +37,7 @@ function toAppQuestion(row: {
  */
 export async function getQuestionsCount(examKey?: string) {
   if (!examKey) return prisma.question.count();
-  const where = whereByExamKey(examKey); // fully typed
+  const where = await whereByExamKey(examKey); // fully typed
   return prisma.question.count({ where });
 }
 
@@ -46,7 +51,7 @@ export async function getQuestionsByExam(options: {
   const { examKey, limit = 50, offset = 0, includeAnswer = true } = options;
 
   const rows = await prisma.question.findMany({
-    where: whereByExamKey(examKey),
+    where: await whereByExamKey(examKey),
     orderBy: [{ index: "asc" }, { createdAt: "asc" }],
     skip: offset,
     take: limit,
@@ -55,7 +60,7 @@ export async function getQuestionsByExam(options: {
       index: true,
       type: true,
       stem: true,
-      answer: includeAnswer ? true : false,
+      ...(includeAnswer ? { answer: true } : {}), // ✅ no `false`
       category: true,
       choices: true,
       media: true,
