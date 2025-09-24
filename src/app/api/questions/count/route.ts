@@ -24,9 +24,6 @@ export async function GET() {
         : typeof err === "string"
         ? err
         : JSON.stringify(err);
-    return NextResponse.json(
-      { error: "DB error", detail: String(err?.message ?? err) },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "DB error", detail }, { status: 500 });
   }
 }
