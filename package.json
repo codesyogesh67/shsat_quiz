@@ -7,12 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "postinstall": "prisma generate",
+    "migrate:deploy": "prisma migrate deploy",
     "db:scan": "tsx scripts/import/scan-json.ts",
     "db:prepare": "tsx scripts/import/prepare-batches.ts",
     "db:import": "tsx scripts/import/run-import.ts",
     "db:answers": "tsx scripts/import/apply-answers.ts"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.32.2",
     "@prisma/client": "^6.16.2",
     "@prisma/extension-accelerate": "^2.0.2",
     "@radix-ui/react-select": "^2.2.6",
