@@ -2,51 +2,76 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { Webhook } from "svix";
+import type { WebhookEvent } from "@clerk/nextjs/server"; // ✅ use Clerk’s event type
 import prisma from "@/lib/prisma";
+
+export const runtime = "nodejs";
 
 const secret = process.env.CLERK_WEBHOOK_SECRET!;
 
 export async function POST(req: Request) {
   const payload = await req.text();
-  const hdrs = headers();
-  const svixId = hdrs.get("svix-id")!;
-  const svixTimestamp = hdrs.get("svix-timestamp")!;
-  const svixSignature = hdrs.get("svix-signature")!;
+  const h = headers();
 
-  const wh = new Webhook(secret);
-  const evt = wh.verify(payload, {
-    "svix-id": svixId,
-    "svix-timestamp": svixTimestamp,
-    "svix-signature": svixSignature,
-  }) as any;
+  const svixHeaders = {
+    "svix-id": h.get("svix-id")!,
+    "svix-timestamp": h.get("svix-timestamp")!,
+    "svix-signature": h.get("svix-signature")!,
+  } as Record<string, string>;
 
-  const type = evt.type as string;
-  const data = evt.data;
+  let evt: WebhookEvent; // ✅ strongly typed
+  try {
+    evt = new Webhook(secret).verify(payload, svixHeaders) as WebhookEvent; // <- no `any`
+  } catch {
+    return NextResponse.json(
+      { ok: false, error: "invalid signature" },
+      { status: 400 }
+    );
+  }
 
-  if (type === "user.created" || type === "user.updated") {
-    const email = data.email_addresses?.[0]?.email_address ?? "";
+  // Optional: narrow useful fields for user.* events
+  if (evt.type === "user.created" || evt.type === "user.updated") {
+    // A lightweight shape for the parts we read:
+    const d = evt.data as {
+      id: string;
+      first_name?: string | null;
+      last_name?: string | null;
+      username?: string | null;
+      image_url?: string | null;
+      primary_email_address_id?: string | null;
+      email_addresses?: { id: string; email_address: string }[];
+    };
+
+    const email =
+      d.email_addresses?.find((e) => e.id === d.primary_email_address_id)
+        ?.email_address ??
+      d.email_addresses?.[0]?.email_address ??
+      null;
+
+    const name =
+      d.first_name || d.last_name
+        ? `${d.first_name ?? ""} ${d.last_name ?? ""}`.trim()
+        : d.username ?? null;
+
     await prisma.user.upsert({
-      where: { externalAuthId: data.id },
+      where: { externalAuthId: d.id },
       update: {
-        email,
-        name: data.first_name
-          ? `${data.first_name} ${data.last_name ?? ""}`.trim()
-          : data.username ?? null,
-        imageUrl: data.image_url ?? null,
+        email: email ?? undefined,
+        name,
+        imageUrl: d.image_url ?? null,
       },
       create: {
-        externalAuthId: data.id,
-        email,
-        name: data.first_name
-          ? `${data.first_name} ${data.last_name ?? ""}`.trim()
-          : data.username ?? null,
-        imageUrl: data.image_url ?? null,
+        externalAuthId: d.id,
+        email: email!,
+        name,
+        imageUrl: d.image_url ?? null,
       },
     });
   }
 
-  if (type === "user.deleted") {
-    await prisma.user.deleteMany({ where: { externalAuthId: data.id } });
+  if (evt.type === "user.deleted") {
+    const d = evt.data as { id: string };
+    await prisma.user.deleteMany({ where: { externalAuthId: d.id } });
   }
 
   return NextResponse.json({ ok: true });
