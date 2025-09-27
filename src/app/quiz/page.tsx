@@ -24,7 +24,13 @@ type ExamMeta = { label?: string; minutes?: number };
 type ExamPayload = { meta?: ExamMeta; questions: Question[] };
 
 type QuestionsPayload = { total: number; questions: Question[] };
-type Category = "all" | "algebra" | "geometry" | "statistics";
+type Category =
+  | "all"
+  | "algebra"
+  | "geometry"
+  | "statistics"
+  | "probability"
+  | "arithmetic";
 
 // Type guards to avoid `any`
 type WithTotal = { total: number };
@@ -35,6 +41,8 @@ const CATEGORY_OPTIONS: { value: Category; label: string }[] = [
   { value: "algebra", label: "Algebra" },
   { value: "geometry", label: "Geometry" },
   { value: "statistics", label: "Statistics" },
+  { value: "probability", label: "Probability" },
+  { value: "arithmetic", label: "Arithmetic" },
 ];
 
 function isWithTotal(v: unknown): v is WithTotal {
