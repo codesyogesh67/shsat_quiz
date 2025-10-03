@@ -2,7 +2,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,11 +20,11 @@ import {
   BookOpen,
   Lock,
 } from "lucide-react";
-import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+
+// 🔕 AUTH DISABLED:
+// import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 
 type Counts = Record<string, number>;
-
-// Map each display card to your backend slug(s)
 
 const CATEGORY_DEFS = [
   {
@@ -53,16 +52,13 @@ const CATEGORY_DEFS = [
     label: "Data & Probability",
     icon: BarChart3,
     blurb: "Tables, graphs, chance",
-    // combine two backend buckets for the badge
     slugs: ["Statistics", "Probability"] as const,
-    // choose one slug to open by default (you can swap to "probability")
     primary: "statistics" as const,
   },
   {
     label: "Word Problems",
     icon: BookOpen,
     blurb: "Translate & solve",
-    // if you later add a real 'word_problems' bucket, update this:
     slugs: [
       "Arithmetic",
       "Algebra",
@@ -70,7 +66,6 @@ const CATEGORY_DEFS = [
       "Statistics",
       "Probability",
     ] as const,
-    // pick a sensible default for now (or change to a dedicated slug later)
     primary: "arithmetic" as const,
   },
 ] as const;
@@ -80,7 +75,7 @@ export default function CategoryGrid() {
   const [counts, setCounts] = React.useState<Counts | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
-  // NEW: per-card desired count (string so empty = “all”)
+  // per-card desired count (string so empty = “all”)
   const [desired, setDesired] = React.useState<Record<string, string>>({});
 
   React.useEffect(() => {
@@ -94,13 +89,11 @@ export default function CategoryGrid() {
     };
   }, []);
 
-  // helpers
   const sum = (slugs: readonly string[]) =>
     (counts && slugs.reduce((acc, s) => acc + (counts[s] ?? 0), 0)) ?? null;
 
   const sanitizeCount = (val: string, total: number) => {
-    // empty means “all”
-    if (!val.trim()) return total;
+    if (!val.trim()) return total; // blank => all
     const n = Number(val);
     if (!Number.isFinite(n)) return total;
     return Math.max(1, Math.min(total, Math.floor(n)));
@@ -127,12 +120,20 @@ export default function CategoryGrid() {
             Target weaknesses with focused drills.
           </p>
         </div>
+
+        {/* 🔕 AUTH DISABLED:
         <SignedOut>
           <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
             <Lock className="h-3.5 w-3.5" />
             <span>Sign in to save progress</span>
           </div>
         </SignedOut>
+        */}
+        {/* Show a passive hint even when auth is disabled */}
+        <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
+          <Lock className="h-3.5 w-3.5 opacity-50" />
+          <span>Sign in later to save progress</span>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -161,7 +162,7 @@ export default function CategoryGrid() {
               <CardContent className="space-y-3">
                 <p className="text-sm text-muted-foreground">{blurb}</p>
 
-                {/* NEW: # of questions input */}
+                {/* # of questions input */}
                 <div className="grid gap-1.5">
                   <label className="text-xs text-neutral-600">
                     Number of questions
@@ -169,7 +170,6 @@ export default function CategoryGrid() {
                   <input
                     type="number"
                     min={1}
-                    // max shown if we know it; not strictly required
                     max={Math.max(1, total ?? 1)}
                     value={inputVal}
                     onChange={(e) =>
@@ -185,6 +185,7 @@ export default function CategoryGrid() {
               </CardContent>
 
               <CardFooter className="flex gap-2">
+                {/* 🔕 AUTH DISABLED:
                 <SignedIn>
                   <Button
                     size="sm"
@@ -213,10 +214,8 @@ export default function CategoryGrid() {
 
                 <SignedOut>
                   {/* pass the computed redirect so count is preserved after sign-in */}
-                  <SignInButton mode="modal" forceRedirectUrl={href}>
-                    <Button size="sm" disabled={!total}>
-                      Start
-                    </Button>
+                {/* <SignInButton mode="modal" forceRedirectUrl={href}>
+                    <Button size="sm" disabled={!total}>Start</Button>
                   </SignInButton>
                   <SignInButton
                     mode="modal"
@@ -227,6 +226,32 @@ export default function CategoryGrid() {
                     </Button>
                   </SignInButton>
                 </SignedOut>
+                */}
+
+                {/* ✅ Always-on buttons (no sign-in required) */}
+                <Button
+                  size="sm"
+                  disabled={!total}
+                  onClick={() => {
+                    if (!total) return;
+                    router.push(href);
+                  }}
+                >
+                  Start
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={!total}
+                  onClick={() => {
+                    if (!total) return;
+                    const u = new URL(href, window.location.origin);
+                    u.searchParams.set("difficulty", "adaptive");
+                    router.push(u.pathname + u.search);
+                  }}
+                >
+                  Adaptive
+                </Button>
               </CardFooter>
             </Card>
           );
