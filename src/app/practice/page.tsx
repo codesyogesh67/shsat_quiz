@@ -25,17 +25,24 @@ export default async function PracticePage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const sp = await searchParams;
+
   const mode = (sp.mode as string) ?? "diagnostic";
   const count = Number(sp.count ?? 20);
 
   // --- NEW: server-side preload if exam/preset/custom present ---
   const exam = typeof sp.exam === "string" ? sp.exam : undefined;
   const preset = typeof sp.preset === "string" ? sp.preset : undefined;
+
   const customCount =
     typeof sp.count === "string" ? Number(sp.count) : undefined;
+
   const category = typeof sp.category === "string" ? sp.category : undefined;
+
   const randomize =
     typeof sp.randomize === "string" ? sp.randomize !== "false" : true;
+
+  const minutesParam =
+    typeof sp.minutes === "string" ? Number(sp.minutes) : undefined;
 
   let initialData: {
     mode: "TEST";
@@ -46,24 +53,33 @@ export default async function PracticePage({
   } | null = null;
 
   // Build absolute URL to call your own API from RSC
-  const h = headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "https";
+  const h = await headers(); // ← await because your types return a Promise
+  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
+
+  const proto =
+    h.get("x-forwarded-proto") ??
+    (process.env.NODE_ENV === "development" ? "http" : "https");
+
   const base = `${proto}://${host}`;
 
   if (exam) {
     const res = await fetch(
       `${base}/api/questions?exam=${encodeURIComponent(exam)}`,
-      {
-        cache: "no-store",
-      }
+      { cache: "no-store" }
     );
     if (res.ok) {
       const data = (await res.json()) as ExamPayload;
       initialData = {
         mode: "TEST",
         questions: data?.questions ?? [],
-        minutes: Math.max(1, Math.round(data?.meta?.minutes ?? 90)),
+        minutes: Math.max(
+          1,
+          Math.round(
+            typeof data?.meta?.minutes === "number"
+              ? data.meta.minutes
+              : minutesParam ?? 90
+          )
+        ),
         presetLabel: data?.meta?.label ?? exam.replace(/_/g, " ").toUpperCase(),
         currentExamKey: exam,
       };
@@ -77,7 +93,7 @@ export default async function PracticePage({
       initialData = {
         mode: "TEST",
         questions: data?.questions ?? [],
-        minutes: 90,
+        minutes: Math.max(1, Math.round(minutesParam ?? 90)),
         presetLabel: "SHSAT Math Exam — 57 Questions • 90 min",
         currentExamKey: null,
       };
@@ -89,6 +105,7 @@ export default async function PracticePage({
       randomize: String(!!randomize),
     });
     if (category && category !== "all") qs.set("category", category);
+
     const res = await fetch(`${base}/api/questions?${qs.toString()}`, {
       cache: "no-store",
     });
@@ -97,7 +114,7 @@ export default async function PracticePage({
       initialData = {
         mode: "TEST",
         questions: data?.questions ?? [],
-        minutes: Number(sp.minutes ?? 15) || 15,
+        minutes: Math.max(1, Math.round(minutesParam ?? 15)),
         presetLabel: null,
         currentExamKey: null,
       };
@@ -109,7 +126,6 @@ export default async function PracticePage({
       <PracticeShell
         initialMode={mode}
         initialCount={count}
-        // NEW:
         initialData={initialData}
       />
     </div>
