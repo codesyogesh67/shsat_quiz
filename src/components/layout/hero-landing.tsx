@@ -4,28 +4,25 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-
 import { Button } from "@/components/ui/button";
 import { fetchJsonSafe } from "@/lib/fetchJsonSafe";
 import ComingSoonLink from "@/components/ComingSoonLink";
 
-// Narrow helpers for `/api/questions?count=0`
-type WithTotal = { total: number };
-type WithQuestionsUnknown = { questions: unknown[] };
-function isWithTotal(v: unknown): v is WithTotal {
+// runtime guards (no TS types)
+function isWithTotal(v) {
   return (
     typeof v === "object" &&
     v !== null &&
     "total" in v &&
-    typeof (v as any).total === "number"
+    typeof v.total === "number"
   );
 }
-function isWithQuestionsUnknown(v: unknown): v is WithQuestionsUnknown {
+function isWithQuestionsUnknown(v) {
   return (
     typeof v === "object" &&
     v !== null &&
     "questions" in v &&
-    Array.isArray((v as any).questions)
+    Array.isArray(v.questions)
   );
 }
 
@@ -58,22 +55,23 @@ export default function HeroLanding() {
     </section>
   );
 }
+
 function MiniConfigurator() {
   const router = useRouter();
 
   // inputs
-  const [count, setCount] = React.useState<number>(10);
-  const [minutes, setMinutes] = React.useState<number>(15);
+  const [count, setCount] = React.useState(10);
+  const [minutes, setMinutes] = React.useState(15);
 
   // live total across all categories
-  const [maxCount, setMaxCount] = React.useState<number>(1);
+  const [maxCount, setMaxCount] = React.useState(1);
 
   // Fetch total once
   React.useEffect(() => {
     let alive = true;
     (async () => {
       try {
-        const data = await fetchJsonSafe<unknown>("/api/questions?count=0");
+        const data = await fetchJsonSafe("/api/questions?count=0");
         let total = 1;
         if (isWithTotal(data)) total = Math.max(1, data.total);
         else if (isWithQuestionsUnknown(data))
