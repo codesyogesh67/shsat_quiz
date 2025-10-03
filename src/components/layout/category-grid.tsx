@@ -220,7 +220,7 @@ export default function CategoryGrid() {
                   </SignInButton>
                   <SignInButton
                     mode="modal"
-                    redirectUrl={`${href}&difficulty=adaptive`}
+                    forceRedirectUrl={`${href}&difficulty=adaptive`}
                   >
                     <Button size="sm" variant="outline" disabled={!total}>
                       Adaptive
