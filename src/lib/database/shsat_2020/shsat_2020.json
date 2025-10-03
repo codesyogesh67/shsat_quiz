@@ -582,7 +582,7 @@
     ],
     "answer": ""
   },
-  
+
   {
     "id": "Q102",
     "index": 102,
@@ -591,7 +591,7 @@
     "stem": "The table shows a sample of essay lengths. Based on this sample, how many students in the entire grade would be expected to write essays with at least 100 words?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q102_table.png",
+      "url": "/images/2020/q102.png",
       "alt": "Table: <100 → 6; 100–250 → 4; 251–500 → 11; >500 → 9."
     },
     "choices": [
