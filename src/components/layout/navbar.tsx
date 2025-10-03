@@ -16,7 +16,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Menu, Calculator } from "lucide-react";
 
-import ComingSoonLink from "@/components/ComingSoonLink";
+// import ComingSoonLink from "@/components/ComingSoonLink";
 
 const nav = [
   { href: "/practice", label: "Practice" },
