@@ -22,28 +22,20 @@ type ExamPayload = { meta?: ExamMeta; questions: Question[] };
 export default async function PracticePage({
   searchParams,
 }: {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const mode = (searchParams.mode as string) ?? "diagnostic";
-  const count = Number(searchParams.count ?? 20);
+  const sp = await searchParams;
+  const mode = (sp.mode as string) ?? "diagnostic";
+  const count = Number(sp.count ?? 20);
 
   // --- NEW: server-side preload if exam/preset/custom present ---
-  const exam =
-    typeof searchParams.exam === "string" ? searchParams.exam : undefined;
-  const preset =
-    typeof searchParams.preset === "string" ? searchParams.preset : undefined;
+  const exam = typeof sp.exam === "string" ? sp.exam : undefined;
+  const preset = typeof sp.preset === "string" ? sp.preset : undefined;
   const customCount =
-    typeof searchParams.count === "string"
-      ? Number(searchParams.count)
-      : undefined;
-  const category =
-    typeof searchParams.category === "string"
-      ? searchParams.category
-      : undefined;
+    typeof sp.count === "string" ? Number(sp.count) : undefined;
+  const category = typeof sp.category === "string" ? sp.category : undefined;
   const randomize =
-    typeof searchParams.randomize === "string"
-      ? searchParams.randomize !== "false"
-      : true;
+    typeof sp.randomize === "string" ? sp.randomize !== "false" : true;
 
   let initialData: {
     mode: "TEST";
@@ -105,7 +97,7 @@ export default async function PracticePage({
       initialData = {
         mode: "TEST",
         questions: data?.questions ?? [],
-        minutes: Number(searchParams.minutes ?? 15) || 15,
+        minutes: Number(sp.minutes ?? 15) || 15,
         presetLabel: null,
         currentExamKey: null,
       };
