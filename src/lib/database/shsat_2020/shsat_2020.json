@@ -572,21 +572,17 @@
     "id": "Q101",
     "index": 101,
     "type": "MULTIPLE_CHOICE",
-    "category": "Geometry (Angles in Rectangles)",
-    "stem": "The diagram above shows line segment RS intersecting a rectangle. What is the measure of angle y?",
-    "media": {
-      "type": "image",
-      "url": "/images/2020/q101.png",
-      "alt": "Rectangle cut by segment RS with given 130° and unknown y°."
-    },
+    "category": "Algebra",
+    "stem": "For what value of x is the equation (x / 5) - 4 = 3(4 - 2x) - 1 true?",
     "choices": [
-      { "key": "A", "text": "140°" },
-      { "key": "B", "text": "130°" },
-      { "key": "C", "text": "50°" },
-      { "key": "D", "text": "40°" }
+      { "key": "A", "text": "75/11" },
+      { "key": "B", "text": "75/31" },
+      { "key": "C", "text": "15/7" },
+      { "key": "D", "text": "65/31" }
     ],
     "answer": ""
   },
+  
   {
     "id": "Q102",
     "index": 102,
