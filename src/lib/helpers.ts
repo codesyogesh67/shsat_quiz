@@ -1,4 +1,8 @@
 import type { Question, QuestionType, Choice, Media } from "@/types";
+import { fetchJsonSafe } from "@/lib/fetchJsonSafe";
+
+type ExamMeta = { label?: string; minutes?: number };
+type ExamPayload = { meta?: ExamMeta; questions: Question[] };
 
 function gcd(a: number, b: number): number {
   if (!b) return Math.abs(a);
@@ -92,6 +96,44 @@ function coerceMedia(x: unknown): Media | undefined {
   return isMedia(v) ? v : undefined; // ✅ no any needed
 }
 
+async function startExamByKey(
+  examKey: string,
+  setQuestions: (q: Question[]) => void,
+  setAnswers: (a: Record<string, string>) => void,
+  setCount: (c: number) => void,
+  setMinutes: (m: number) => void,
+  setPresetLabel: (l: string | null) => void,
+  setMode: (m: "CONFIG" | "TEST" | "RESULTS") => void,
+  setTimeRunning: (r: boolean) => void,
+  setCurrentExamKey: (k: string | null) => void
+) {
+  try {
+    const data = await fetchJsonSafe<ExamPayload>(
+      `/api/questions?exam=${examKey}`
+    );
+    if (!data?.questions?.length) throw new Error("No questions returned.");
+
+    const minutes = Math.max(1, Math.round(data.meta?.minutes ?? 90));
+    setQuestions(data.questions);
+    setAnswers({});
+    setCount(data.questions.length);
+    setMinutes(minutes);
+    setPresetLabel(
+      data.meta?.label ?? examKey.replace(/_/g, " ").toUpperCase()
+    );
+    setMode("TEST");
+    setTimeRunning(true);
+    setCurrentExamKey(examKey);
+  } catch (err) {
+    console.error("startExamByKey error:", err);
+    alert(
+      `Could not start exam: ${
+        err instanceof Error ? err.message : String(err)
+      }`
+    );
+  }
+}
+
 export {
   gcd,
   parseToNumber,
@@ -100,4 +142,5 @@ export {
   normalizeQuestionType,
   coerceChoices,
   coerceMedia,
+  startExamByKey,
 };
