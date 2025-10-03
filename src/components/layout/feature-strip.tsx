@@ -15,7 +15,6 @@ import {
 import { examKeys } from "@/lib/data";
 import { Badge } from "@/components/ui/badge";
 import { Brain, LineChart, Puzzle } from "lucide-react";
-import IndeterminateLoadingBar from "@/components/IndeterminateLoadingBar";
 import { Button } from "@/components/ui/button";
 
 type Feature = {
@@ -109,10 +108,6 @@ export default function FeatureStrip() {
             >
               Custom SHSAT Math Exam (57 • 90)
             </Button>
-          </div>
-          {/* slim loading bar right under the buttons */}
-          <div className="mt-2">
-            <IndeterminateLoadingBar loading={isPending} heightClass="h-1" />
           </div>
         </div>
       </div>
