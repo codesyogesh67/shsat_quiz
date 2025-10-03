@@ -9,20 +9,21 @@ import { fetchJsonSafe } from "@/lib/fetchJsonSafe";
 import ComingSoonLink from "@/components/ComingSoonLink";
 
 // runtime guards (no TS types)
-function isWithTotal(v) {
+function isWithTotal(v: unknown) {
   return (
     typeof v === "object" &&
     v !== null &&
-    "total" in v &&
-    typeof v.total === "number"
+    "total" in (v as Record<string, unknown>) &&
+    typeof (v as Record<string, unknown>).total === "number"
   );
 }
-function isWithQuestionsUnknown(v) {
+
+function isWithQuestionsUnknown(v: unknown) {
   return (
     typeof v === "object" &&
     v !== null &&
-    "questions" in v &&
-    Array.isArray(v.questions)
+    "questions" in (v as Record<string, unknown>) &&
+    Array.isArray((v as Record<string, unknown>).questions)
   );
 }
 
@@ -69,18 +70,42 @@ function MiniConfigurator() {
   // Fetch total once
   React.useEffect(() => {
     let alive = true;
+
     (async () => {
       try {
-        const data = await fetchJsonSafe("/api/questions?count=0");
+        // fetch result as unknown
+        const raw: unknown = await fetchJsonSafe<unknown>(
+          "/api/questions?count=0"
+        );
+
         let total = 1;
-        if (isWithTotal(data)) total = Math.max(1, data.total);
-        else if (isWithQuestionsUnknown(data))
-          total = Math.max(1, data.questions.length);
+
+        // ✅ narrow type before accessing props
+        if (
+          typeof raw === "object" &&
+          raw !== null &&
+          "total" in (raw as Record<string, unknown>) &&
+          typeof (raw as Record<string, unknown>).total === "number"
+        ) {
+          total = Math.max(1, (raw as { total: number }).total);
+        } else if (
+          typeof raw === "object" &&
+          raw !== null &&
+          "questions" in (raw as Record<string, unknown>) &&
+          Array.isArray((raw as { questions: unknown[] }).questions)
+        ) {
+          total = Math.max(
+            1,
+            (raw as { questions: unknown[] }).questions.length
+          );
+        }
+
         if (alive) setMaxCount(total);
       } catch {
         if (alive) setMaxCount(1);
       }
     })();
+
     return () => {
       alive = false;
     };
