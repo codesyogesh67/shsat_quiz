@@ -213,7 +213,7 @@ export default function CategoryGrid() {
 
                 <SignedOut>
                   {/* pass the computed redirect so count is preserved after sign-in */}
-                  <SignInButton mode="modal" redirectUrl={href}>
+                  <SignInButton mode="modal" forceRedirectUrl={href}>
                     <Button size="sm" disabled={!total}>
                       Start
                     </Button>
