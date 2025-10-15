@@ -3,7 +3,7 @@
     "id": "Q58",
     "index": 58,
     "type": "FREE_RESPONSE",
-    "category": "Percents",
+    "category": "Simple Interest",
     "stem": "Ms. Li opened a retirement account with a deposit of $2,500. This account earns 4% simple interest annually. How many years will it take her to earn $500 on her $2,500 deposit?",
     "choices": [],
     "answer": ""
@@ -12,8 +12,13 @@
     "id": "Q59",
     "index": 59,
     "type": "FREE_RESPONSE",
-    "category": "Order of Operations",
+    "category": "Evaluate Expressions",
     "stem": "What is the value of the expression shown above?",
+    "media": {
+      "type": "image",
+      "url": "/images/2024/q59.png",
+      "alt": "Expression for Question 59"
+    },
     "choices": [],
     "answer": ""
   },
@@ -21,8 +26,13 @@
     "id": "Q60",
     "index": 60,
     "type": "FREE_RESPONSE",
-    "category": "Algebra",
-    "stem": "Solve for x: 7(x + 3) − 2(2x + 1) = 13",
+    "category": "Solve Linear Equations",
+    "stem": "Solve for x.",
+    "media": {
+      "type": "image",
+      "url": "/images/2024/q60.png",
+      "alt": "Equation for Question 60"
+    },
     "choices": [],
     "answer": ""
   },
@@ -30,12 +40,12 @@
     "id": "Q61",
     "index": 61,
     "type": "FREE_RESPONSE",
-    "category": "Geometry",
+    "category": "Angles & Perpendicular Lines",
     "stem": "In the figure above, line l is perpendicular to line n. What is the value of x?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q61.png",
-      "alt": "Lines l, m, n with a 35° angle and an unknown angle x° indicated."
+      "url": "/images/2024/q61.png",
+      "alt": "Two perpendicular lines with labeled angles; solve for x"
     },
     "choices": [],
     "answer": ""
@@ -44,21 +54,27 @@
     "id": "Q62",
     "index": 62,
     "type": "FREE_RESPONSE",
-    "category": "Statistics",
+    "category": "Statistics: Mean",
     "stem": "The mean value of 8 numbers is 17. Three of these numbers (9, 11, and 20) are discarded. What is the mean of the 5 remaining numbers?",
     "choices": [],
     "answer": ""
   },
+
   {
     "id": "Q63",
     "index": 63,
     "type": "MULTIPLE_CHOICE",
-    "category": "Exponents",
-    "stem": "3^4 + 7^4 =",
+    "category": "Powers & Place Value",
+    "stem": "Select the answer to the expression shown in the test booklet.",
+    "media": {
+      "type": "image",
+      "url": "/images/2024/q63.png",
+      "alt": "Numeric expression for Question 63"
+    },
     "choices": [
       { "key": "A", "text": "40" },
       { "key": "B", "text": "370" },
-      { "key": "C", "text": "2482" },
+      { "key": "C", "text": "2,482" },
       { "key": "D", "text": "10,000" }
     ],
     "answer": ""
@@ -67,13 +83,12 @@
     "id": "Q64",
     "index": 64,
     "type": "MULTIPLE_CHOICE",
-    "category": "Fractions",
-    "stem": "In one week, 1 3/4 inches of rain fell on Monday, 2 2/3 inches fell on Tuesday, and 7/8 inch fell on Wednesday. How many inches of rain fell during those three days?",
+    "category": "Fractions & Sums",
+    "stem": "In one week, 1 3/4 inches of rain fell on Monday, 2 2/3 inches fell on Tuesday, and 7/8 fell on Wednesday. How many inches of rain fell during those three days?",
+
     "choices": [
       { "key": "A", "text": "5 7/24" },
-
       { "key": "B", "text": "5 1/24" },
-
       { "key": "C", "text": "3 4/5" },
       { "key": "D", "text": "3 1/2" }
     ],
@@ -83,13 +98,13 @@
     "id": "Q65",
     "index": 65,
     "type": "MULTIPLE_CHOICE",
-    "category": "Percents",
-    "stem": "An alarm bell will ring when the pressurized gas in a cylinder reaches an internal pressure that is 215% of the maximum allowable pressure. If the maximum allowable pressure is 220 pounds per square inch, at what pressure, in pounds per square inch, will the alarm bell ring?",
+    "category": "Linear Models (Wage + Commission)",
+    "stem": "Jamel works at a computer store. He is paid an hourly rate plus a 15% commission on all computer products he sells. Last week, Jamel was paid $802.50 for working 30 hours and selling $1,250.00 worth of computer products. What is Jamel’s hourly rate?",
     "choices": [
-      { "key": "A", "text": "435" },
-      { "key": "B", "text": "473" },
-      { "key": "C", "text": "583" },
-      { "key": "D", "text": "10,000" }
+      { "key": "A", "text": "$20.50/hr" },
+      { "key": "B", "text": "$26.75/hr" },
+      { "key": "C", "text": "$33.00/hr" },
+      { "key": "D", "text": "$37.65/hr" }
     ],
     "answer": ""
   },
@@ -97,7 +112,7 @@
     "id": "Q66",
     "index": 66,
     "type": "MULTIPLE_CHOICE",
-    "category": "Time",
+    "category": "Rates & Time",
     "stem": "A revolving sign makes 1 complete revolution every 90 minutes. If the sign starts moving at 2:30 p.m., at what time will the sign complete 8 revolutions?",
     "choices": [
       { "key": "A", "text": "1:00 a.m." },
@@ -112,11 +127,11 @@
     "index": 67,
     "type": "MULTIPLE_CHOICE",
     "category": "Number Line & Midpoints",
-    "stem": "Points Y and Z are not shown on the number line. If X is the midpoint of \\(\\overline{WZ}\\), and Y is the midpoint of \\(\\overline{WY}\\), where on the number line would point Z be located?",
+    "stem": "Points Y and Z are not shown on the number line. If X is the midpoint of WZ, and Y is the midpoint of WY, where on the number line would point Z be located?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q67.png",
-      "alt": "Number line 0–10 with W and X shown; find Z given midpoint relations."
+      "url": "/images/2024/q67.png",
+      "alt": "Number line with W and X shown; find Z using midpoint relations"
     },
     "choices": [
       { "key": "A", "text": "2" },
@@ -130,12 +145,12 @@
     "id": "Q68",
     "index": 68,
     "type": "MULTIPLE_CHOICE",
-    "category": "Equations & Fractions",
+    "category": "Exponents & Evaluation",
     "stem": "What value of n makes the equation above true?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q68.png",
-      "alt": "Equation shown above: 81 = 10/9."
+      "url": "/images/2024/q68.png",
+      "alt": "Equation in n for Question 68"
     },
     "choices": [
       { "key": "A", "text": "1" },
@@ -149,8 +164,8 @@
     "id": "Q69",
     "index": 69,
     "type": "MULTIPLE_CHOICE",
-    "category": "Algebra (Parity)",
-    "stem": "If n is an integer and n^3 is an even number, which expression must also represent an even number?",
+    "category": "Parity (Even/Odd)",
+    "stem": "If n is an integer and 3n + 3 is an even number, which expression must also represent an even number?",
     "choices": [
       { "key": "A", "text": "5n + 1" },
       { "key": "B", "text": "4n + 5" },
@@ -163,13 +178,13 @@
     "id": "Q70",
     "index": 70,
     "type": "MULTIPLE_CHOICE",
-    "category": "Number Theory (Factors/Sums)",
+    "category": "Number Theory: Factors & Sums",
     "stem": "The product of two positive integers is 65. Which number could be the sum of the two integers?",
     "choices": [
-      { "key": "A", "text": "18" },
-      { "key": "B", "text": "24" },
-      { "key": "C", "text": "65" },
-      { "key": "D", "text": "70" }
+      { "key": "A", "text": "5" },
+      { "key": "B", "text": "18" },
+      { "key": "C", "text": "24" },
+      { "key": "D", "text": "52" }
     ],
     "answer": ""
   },
@@ -178,7 +193,7 @@
     "index": 71,
     "type": "MULTIPLE_CHOICE",
     "category": "Integers & Inequalities",
-    "stem": "If n is an odd integer that is less than −3.25, what is the greatest possible value of n?",
+    "stem": "If n is an odd integer that is less than 0, what is the greatest possible value of n?",
     "choices": [
       { "key": "A", "text": "−1" },
       { "key": "B", "text": "−2" },
@@ -191,13 +206,27 @@
     "id": "Q72",
     "index": 72,
     "type": "MULTIPLE_CHOICE",
-    "category": "Rates & Averages",
-    "stem": "Mikah’s history assignment is to read 420 pages. He planned to do the assignment in 6 hours. He read the first 160 pages in 2 hours. What is the mean number of pages he must read per hour during the next 4 hours in order to complete the assignment according to plan?",
+    "category": "Data & Box Plots",
+    "stem": "A swim instructor used the box plot to display the distribution of the ages of students who signed up for swim lessons. Which statement about the distribution of ages is true?",
+    "media": {
+      "type": "image",
+      "url": "/images/2024/q72.png",
+      "alt": "Box plot of student ages"
+    },
     "choices": [
-      { "key": "A", "text": "60" },
-      { "key": "B", "text": "65" },
-      { "key": "C", "text": "70" },
-      { "key": "D", "text": "75" }
+      { "key": "A", "text": "The data contain an outlier." },
+      {
+        "key": "B",
+        "text": "Approximately half the students are exactly 9 years old."
+      },
+      {
+        "key": "C",
+        "text": "Approximately one-fourth of the students are at least 10 years old."
+      },
+      {
+        "key": "D",
+        "text": "The interquartile range is 3 greater than the range of the data."
+      }
     ],
     "answer": ""
   },
@@ -205,8 +234,9 @@
     "id": "Q73",
     "index": 73,
     "type": "MULTIPLE_CHOICE",
-    "category": "Fractions",
-    "stem": "Between which two consecutive integers is the fraction 29/7?",
+    "category": "Fractions & Estimation",
+    "stem": "Between which two consecutive integers is the fraction 29 / 7 ?",
+
     "choices": [
       { "key": "A", "text": "2 and 3" },
       { "key": "B", "text": "3 and 4" },
@@ -219,18 +249,13 @@
     "id": "Q74",
     "index": 74,
     "type": "MULTIPLE_CHOICE",
-    "category": "Geometry",
-    "stem": "In the figure above, △PQR is isosceles with PQ = PR. If ∠Q = 40°, what is the measure of ∠R?",
-    "media": {
-      "type": "image",
-      "url": "/images/2020/q74.png",
-      "alt": "Triangle PQR with PQ = PR and angle Q labeled 40°."
-    },
+    "category": "Percent Discounts & Sales Tax",
+    "stem": "A customer wants to buy a pair of hiking boots. The original price is $85.75. The store offers 15% off, and the customer has a coupon for an additional 25% off the sale price. The tax rate is 8.5%. What is the final cost of the boots, including tax, to the nearest cent?",
     "choices": [
-      { "key": "A", "text": "40°" },
-      { "key": "B", "text": "50°" },
-      { "key": "C", "text": "70°" },
-      { "key": "D", "text": "80°" }
+      { "key": "A", "text": "$55.82" },
+      { "key": "B", "text": "$59.08" },
+      { "key": "C", "text": "$59.32" },
+      { "key": "D", "text": "$63.17" }
     ],
     "answer": ""
   },
@@ -238,22 +263,28 @@
     "id": "Q75",
     "index": 75,
     "type": "MULTIPLE_CHOICE",
-    "category": "Measurement",
-    "stem": "Joseph is 5 feet 9 inches tall, and Roberto is 6 feet 4.5 inches tall. What is the difference in height, in inches, between Roberto and Joseph?",
+    "category": "Percent of Earnings",
+    "stem": "Sheila is saving money for her summer vacation. She starts the summer with a balance of $90.00 and plans to save 15% of her earnings each week. She earns the same amount each week. After 12 weeks, Sheila has saved a total of $472.59. How much money does Sheila earn each week?",
     "choices": [
-      { "key": "A", "text": "4.5" },
-      { "key": "B", "text": "5.5" },
-      { "key": "C", "text": "6.5" },
-      { "key": "D", "text": "7.5" }
+      { "key": "A", "text": "$212.55" },
+      { "key": "B", "text": "$262.55" },
+      { "key": "C", "text": "$302.55" },
+      { "key": "D", "text": "$312.55" }
     ],
     "answer": ""
   },
+
   {
     "id": "Q76",
     "index": 76,
     "type": "MULTIPLE_CHOICE",
-    "category": "Ratios & Proportions",
-    "stem": "For what value of x is the proportion x:35 = 20:28 true?",
+    "category": "Proportions",
+    "stem": "For what value of x is the proportion shown above true?",
+    "media": {
+      "type": "image",
+      "url": "/images/2024/q76.png",
+      "alt": "Proportion involving x"
+    },
     "choices": [
       { "key": "A", "text": "27" },
       { "key": "B", "text": "25" },
@@ -266,13 +297,18 @@
     "id": "Q77",
     "index": 77,
     "type": "MULTIPLE_CHOICE",
-    "category": "Algebraic Expressions",
-    "stem": "Simplify: (3² × 8²) ÷ (2³ × 2²)",
+    "category": "Geometry (Figure-based)",
+    "stem": "Solve the problem shown in the figure.",
+    "media": {
+      "type": "image",
+      "url": "/images/2024/q77.png",
+      "alt": "Figure for Question 77"
+    },
     "choices": [
-      { "key": "A", "text": "12" },
-      { "key": "B", "text": "18" },
-      { "key": "C", "text": "24" },
-      { "key": "D", "text": "36" }
+      { "key": "A", "text": "" },
+      { "key": "B", "text": "" },
+      { "key": "C", "text": "" },
+      { "key": "D", "text": "68" }
     ],
     "answer": ""
   },
@@ -280,13 +316,13 @@
     "id": "Q78",
     "index": 78,
     "type": "MULTIPLE_CHOICE",
-    "category": "Percents",
-    "stem": "Anya contributed $1,200 toward the purchase of a $2,000 computer. Her brother contributed $240 toward the same computer. Her parents provided the rest of the money. What percentage of the total cost did Anya’s parents pay?",
+    "category": "Percent Tax / Unit Price",
+    "stem": "A soccer coach purchased 15 pairs of cleats for team members and spent a total of $805.95, including tax. If the tax rate is 8%, what is the price of each pair of cleats before tax?",
     "choices": [
-      { "key": "A", "text": "24%" },
-      { "key": "B", "text": "28%" },
-      { "key": "C", "text": "32%" },
-      { "key": "D", "text": "36%" }
+      { "key": "A", "text": "$49.43" },
+      { "key": "B", "text": "$49.75" },
+      { "key": "C", "text": "$53.73" },
+      { "key": "D", "text": "$58.03" }
     ],
     "answer": ""
   },
@@ -294,13 +330,13 @@
     "id": "Q79",
     "index": 79,
     "type": "MULTIPLE_CHOICE",
-    "category": "Number Theory",
-    "stem": "The numbers m, n, p, and q are different, and each is equal to one of the numbers 1, 2, 3, 6, or 12. If m/2 = q/6 = n/1 = p/2, what is the value of p?",
+    "category": "Number Theory & Exponents",
+    "stem": "The numbers m, n, p, and q are different, and each is equal to one of the numbers 1, 2, 3, 6, or 12. If 2m = 6q = 1/2 n = p, what is the value of p?",
     "choices": [
-      { "key": "A", "text": "1" },
-      { "key": "B", "text": "2" },
-      { "key": "C", "text": "3" },
-      { "key": "D", "text": "6" }
+      { "key": "A", "text": "2" },
+      { "key": "B", "text": "3" },
+      { "key": "C", "text": "6" },
+      { "key": "D", "text": "12" }
     ],
     "answer": ""
   },
@@ -309,12 +345,12 @@
     "index": 80,
     "type": "MULTIPLE_CHOICE",
     "category": "Probability",
-    "stem": "If a person chooses a number at random from the set {0.1, 0.01, 0.001, 0.0001, 0.00001}, what is the probability that the chosen number is less than 0.005?",
+    "stem": "If a person chooses a number at random from the set {0.1, 0.01, 0.001, 0.0001, 0.00001}, what is the probability that the number is less than 0.005?",
     "choices": [
       { "key": "A", "text": "1/5" },
       { "key": "B", "text": "2/5" },
       { "key": "C", "text": "3/5" },
-      { "key": "D", "text": "4/5" }
+      { "key": "D", "text": "2/3" }
     ],
     "answer": ""
   },
@@ -322,13 +358,18 @@
     "id": "Q81",
     "index": 81,
     "type": "MULTIPLE_CHOICE",
-    "category": "Percents",
-    "stem": "Lemont answered 6 out of 40 questions on a test incorrectly. What percentage of the questions did he answer correctly?",
+    "category": "Probability",
+    "stem": "A student uses Spinner R and Spinner T to generate a list of two- digit numbers.Spinner R determines the digit in the tensplace, and Spinner T determines the digit in the ones place. What is the probability that the two- digit number determined by spinning each spinner one time is a prime number?",
+    "media": {
+      "type": "image",
+      "url": "/images/2024/q81.png",
+      "alt": "Spinner R for tens, Spinner T for ones"
+    },
     "choices": [
-      { "key": "A", "text": "60%" },
-      { "key": "B", "text": "70%" },
-      { "key": "C", "text": "75%" },
-      { "key": "D", "text": "85%" }
+      { "key": "A", "text": "3/8" },
+      { "key": "B", "text": "5/12" },
+      { "key": "C", "text": "3/5" },
+      { "key": "D", "text": "5/8" }
     ],
     "answer": ""
   },
@@ -336,18 +377,18 @@
     "id": "Q82",
     "index": 82,
     "type": "MULTIPLE_CHOICE",
-    "category": "Geometry",
+    "category": "Geometry: Intersecting Lines",
     "stem": "Lines j and k intersect at point Q, and h is a straight line. What is the value of x?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q82.png",
-      "alt": "Lines j and k intersect at Q; line h is straight; angle x is marked."
+      "url": "/images/2024/q82.png",
+      "alt": "Intersecting lines j and k at Q; h straight line"
     },
     "choices": [
-      { "key": "A", "text": "100°" },
-      { "key": "B", "text": "108°" },
-      { "key": "C", "text": "135°" },
-      { "key": "D", "text": "158°" }
+      { "key": "A", "text": "55" },
+      { "key": "B", "text": "45" },
+      { "key": "C", "text": "35" },
+      { "key": "D", "text": "30" }
     ],
     "answer": ""
   },
@@ -355,13 +396,18 @@
     "id": "Q83",
     "index": 83,
     "type": "MULTIPLE_CHOICE",
-    "category": "Number Properties",
+    "category": "Algebraic Reasoning",
     "stem": "Which statement must be true if x is a whole number greater than or equal to 1?",
+    "media": {
+      "type": "image",
+      "url": "/images/2024/q83.png",
+      "alt": "Intersecting lines j and k at Q; h straight line"
+    },
     "choices": [
-      { "key": "A", "text": "x/x = 1" },
-      { "key": "B", "text": "x + x > x" },
-      { "key": "C", "text": "x − x = x" },
-      { "key": "D", "text": "x² < x" }
+      { "key": "A", "text": "" },
+      { "key": "B", "text": "" },
+      { "key": "C", "text": "" },
+      { "key": "D", "text": "" }
     ],
     "answer": ""
   },
@@ -369,8 +415,8 @@
     "id": "Q84",
     "index": 84,
     "type": "MULTIPLE_CHOICE",
-    "category": "Probability",
-    "stem": "A basket contains red balls, green balls, and white balls. There are 12 red balls in the basket. The probability of randomly choosing a red ball is 1 in 3. If the probability of randomly choosing a green ball is 1 in 4, how many green balls are in the basket?",
+    "category": "Probability & Ratios",
+    "stem": "A basket contains red balls, green balls, and white balls. There are 12 red balls. The probability of randomly choosing a red ball is 1 in 3. If the probability of randomly choosing a green ball is 1 in 4, how many green balls are in the basket?",
     "choices": [
       { "key": "A", "text": "3" },
       { "key": "B", "text": "8" },
@@ -383,12 +429,12 @@
     "id": "Q85",
     "index": 85,
     "type": "MULTIPLE_CHOICE",
-    "category": "Rates & Conversions",
+    "category": "Rates & Unit Conversion",
     "stem": "It took Lars 2 hours to ride his bicycle 48 kilometers. What was his average speed in miles per hour? (Use the approximation 1 mile = 1.6 kilometers.)",
     "choices": [
-      { "key": "A", "text": "15.0" },
-      { "key": "B", "text": "30.0" },
-      { "key": "C", "text": "35" },
+      { "key": "A", "text": "1.5" },
+      { "key": "B", "text": "15.0" },
+      { "key": "C", "text": "30.0" },
       { "key": "D", "text": "38.4" }
     ],
     "answer": ""
@@ -397,13 +443,13 @@
     "id": "Q86",
     "index": 86,
     "type": "MULTIPLE_CHOICE",
-    "category": "Number Properties (Divisibility)",
+    "category": "Divisibility",
     "stem": "Integer x is evenly divisible by 3. Which expression below is also evenly divisible by 3?",
     "choices": [
-      { "key": "A", "text": "x^2 + 1" },
-      { "key": "B", "text": "x^3 − 5" },
-      { "key": "C", "text": "x^4 − 1" },
-      { "key": "D", "text": "x^4 + 6" }
+      { "key": "A", "text": "2x + 1" },
+      { "key": "B", "text": "3x - 5" },
+      { "key": "C", "text": "4x - 1" },
+      { "key": "D", "text": "4x + 6" }
     ],
     "answer": ""
   },
@@ -425,12 +471,12 @@
     "id": "Q88",
     "index": 88,
     "type": "MULTIPLE_CHOICE",
-    "category": "Modular Arithmetic",
+    "category": "Modular Arithmetic (Clockwise Steps)",
     "stem": "The arrow starts on Space P and moves clockwise around the circle. It moves through one space each minute. What space will the arrow point to in 100 minutes?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q88.png",
-      "alt": "Circle with spaces P, Q, R, S, T, U; arrow starts at P."
+      "url": "/images/2024/q88.png",
+      "alt": "Circular board with spaces P, R, S, T, U"
     },
     "choices": [
       { "key": "A", "text": "R" },
@@ -444,13 +490,13 @@
     "id": "Q89",
     "index": 89,
     "type": "MULTIPLE_CHOICE",
-    "category": "Combinatorics",
+    "category": "Combinations",
     "stem": "Mei-Ling is one of 6 members of a committee. If 2 members of that committee are selected to go to a conference, how many of the possible pairs of members would include Mei-Ling?",
     "choices": [
       { "key": "A", "text": "5" },
       { "key": "B", "text": "6" },
       { "key": "C", "text": "10" },
-      { "key": "D", "text": "15" }
+      { "key": "D", "text": "12" }
     ],
     "answer": ""
   },
@@ -459,11 +505,11 @@
     "index": 90,
     "type": "MULTIPLE_CHOICE",
     "category": "Algebraic Expressions",
-    "stem": "If m = 5 and t = −1, what is the value of the expression shown above?",
+    "stem": "If m = 5 and t = -1, what is the value of the expression shown?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q90.png",
-      "alt": "Algebraic expression in m and t as shown in the test booklet."
+      "url": "/images/2024/q90.png",
+      "alt": "Algebraic expression in m"
     },
     "choices": [
       { "key": "A", "text": "−9" },
@@ -473,16 +519,17 @@
     ],
     "answer": ""
   },
+
   {
     "id": "Q91",
     "index": 91,
     "type": "MULTIPLE_CHOICE",
-    "category": "Geometry",
+    "category": "Geometry: Parallelogram Angles",
     "stem": "In the parallelogram above, what is the value of x + y?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q91.png",
-      "alt": "Parallelogram with angles labeled 56°, x°, and y°."
+      "url": "/images/2024/q91.png",
+      "alt": "Parallelogram with labeled angles x and y"
     },
     "choices": [
       { "key": "A", "text": "112" },
@@ -496,15 +543,15 @@
     "id": "Q92",
     "index": 92,
     "type": "MULTIPLE_CHOICE",
-    "category": "Number Line",
-    "stem": "On the number line above, point L (not shown) is located on line segment \\(\\overline{JK}\\) so that \\(\\overline{JL} = \\tfrac{2}{3}\\,\\overline{JK}\\). What is the position of point L?",
+    "category": "Number Line & Ratios",
+    "stem": "On the number line above, point L (not shown) is located on line segment JK so that JL = 2/3 LK. What is the position of point L?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q92.png",
-      "alt": "Number line with tick marks at −6, −4, −2, 0, 2, 4, 6 and endpoints labeled K (left) and J (right)."
+      "url": "/images/2024/q92.png",
+      "alt": "Number line with points J and K labeled"
     },
     "choices": [
-      { "key": "A", "text": "−2" },
+      { "key": "A", "text": "-2" },
       { "key": "B", "text": "0" },
       { "key": "C", "text": "2" },
       { "key": "D", "text": "4" }
@@ -515,7 +562,7 @@
     "id": "Q93",
     "index": 93,
     "type": "MULTIPLE_CHOICE",
-    "category": "Percents / Word Problems",
+    "category": "Percents & Part-Whole",
     "stem": "Josef and Mai divided some stamps between themselves. Josef got 60% of the stamps. If Josef received 500 more stamps than Mai, how many stamps did Josef receive?",
     "choices": [
       { "key": "A", "text": "300" },
@@ -529,12 +576,12 @@
     "id": "Q94",
     "index": 94,
     "type": "MULTIPLE_CHOICE",
-    "category": "Geometry (Circles)",
+    "category": "Geometry: Circle Area & Circumference",
     "stem": "The shaded sector of the circle shown above has an area of 18π square feet. What is the circumference of the circle?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q94.png",
-      "alt": "Circle with a 45° shaded sector."
+      "url": "/images/2024/q94.png",
+      "alt": "Circle with a shaded sector labeled"
     },
     "choices": [
       { "key": "A", "text": "144π ft" },
@@ -542,18 +589,18 @@
       { "key": "C", "text": "18π ft" },
       { "key": "D", "text": "9π ft" }
     ],
-    "answer": "B"
+    "answer": ""
   },
   {
     "id": "Q95",
     "index": 95,
     "type": "MULTIPLE_CHOICE",
-    "category": "Inequalities / Number Line",
-    "stem": "Which graph represents the solution to −3x − 7 > −4?",
+    "category": "Inequalities on the Number Line",
+    "stem": "Which graph represents the solution to the inequality shown?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q95.png",
-      "alt": "Four number-line graphs labeled A–D."
+      "url": "/images/2024/q95.png",
+      "alt": "Four number line graphs labeled A–D and an inequality"
     },
     "choices": [
       { "key": "A", "text": "Graph A" },
@@ -561,7 +608,7 @@
       { "key": "C", "text": "Graph C" },
       { "key": "D", "text": "Graph D" }
     ],
-    "answer": "C"
+    "answer": ""
   },
   {
     "id": "Q96",
@@ -581,13 +628,13 @@
     "id": "Q97",
     "index": 97,
     "type": "MULTIPLE_CHOICE",
-    "category": "Linear Equations",
+    "category": "Forming Equations",
     "stem": "Ken has k video games, and Jeff has j video games. If Ken gives 6 video games to Jeff, Ken will have twice as many video games as Jeff. Which equation shows the relationship between k and j?",
     "choices": [
-      { "key": "A", "text": "k − 6 = 2(j + 6)" },
-      { "key": "B", "text": "k − 6 = 2j + 6" },
-      { "key": "C", "text": "2(k − 6) = j" },
-      { "key": "D", "text": "2(k − 6) = j + 6" }
+      { "key": "A", "text": "k - 6 = 2(j + 6)" },
+      { "key": "B", "text": "k - 6 = 2j + 6" },
+      { "key": "C", "text": "2(k - 6) = j" },
+      { "key": "D", "text": "2(k - 6) = j + 6" }
     ],
     "answer": ""
   },
@@ -605,13 +652,12 @@
     ],
     "answer": ""
   },
-
   {
     "id": "Q99",
     "index": 99,
     "type": "MULTIPLE_CHOICE",
-    "category": "Number Theory",
-    "stem": "{1, 2, 3, 4, 5, …, 198, 199, 200} — How many members of the set shown are multiples of 6 but not multiples of 9?",
+    "category": "Multiples",
+    "stem": "How many members of the set {1,2,3,...,198,199,200} are multiples of 6 but not multiples of 9?",
     "choices": [
       { "key": "A", "text": "11" },
       { "key": "B", "text": "13" },
@@ -630,7 +676,7 @@
       { "key": "A", "text": "0.08" },
       { "key": "B", "text": "80" },
       { "key": "C", "text": "800" },
-      { "key": "D", "text": "8000" }
+      { "key": "D", "text": "8,000" }
     ],
     "answer": ""
   },
@@ -638,33 +684,33 @@
     "id": "Q101",
     "index": 101,
     "type": "MULTIPLE_CHOICE",
-    "category": "Algebra",
-    "stem": "For what value of x is the equation (x / 5) - 4 = 3(4 - 2x) - 1 true?",
+    "category": "Radicals / Algebra",
+    "stem": "For what value of x is the equation x/5 - 4 = 3(4 - 2x) true?",
+
     "choices": [
       { "key": "A", "text": "75/11" },
-      { "key": "B", "text": "75/31" },
+      { "key": "B", "text": "71/31" },
       { "key": "C", "text": "15/7" },
       { "key": "D", "text": "65/31" }
     ],
     "answer": ""
   },
-
   {
     "id": "Q102",
     "index": 102,
     "type": "MULTIPLE_CHOICE",
-    "category": "Statistics (Sampling & Proportions)",
-    "stem": "The table shows a sample of essay lengths. Based on this sample, how many students in the entire grade would be expected to write essays with at least 100 words?",
+    "category": "Angles in Rectangles & Transversals",
+    "stem": "The diagram above shows line segment RS intersecting a rectangle. What is the measure of angle y?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q102.png",
-      "alt": "Table: <100 → 6; 100–250 → 4; 251–500 → 11; >500 → 9."
+      "url": "/images/2024/q102.png",
+      "alt": "Rectangle intersected by segment RS with angle y labeled"
     },
     "choices": [
-      { "key": "A", "text": "20" },
-      { "key": "B", "text": "30" },
-      { "key": "C", "text": "100" },
-      { "key": "D", "text": "120" }
+      { "key": "A", "text": "140°" },
+      { "key": "B", "text": "130°" },
+      { "key": "C", "text": "50°" },
+      { "key": "D", "text": "40°" }
     ],
     "answer": ""
   },
@@ -672,12 +718,12 @@
     "id": "Q103",
     "index": 103,
     "type": "MULTIPLE_CHOICE",
-    "category": "Statistics (Sampling & Proportions)",
-    "stem": "All 150 students in Grade 8 at a school are assigned to write an essay on the same topic. A teacher records the number of words in a sample as shown in the table above. Based on this sample, how many students in the entire grade would be expected to write essays with at least 100 words?",
+    "category": "Statistics & Sampling",
+    "stem": "All 150 students in Grade 8 wrote essays. Based on the sample table of essay lengths, how many students in the entire grade would be expected to write essays with at least 100 words?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q103_table.png",
-      "alt": "Same essay-length table as referenced."
+      "url": "/images/2024/q103.png",
+      "alt": "Frequency table of essay word counts"
     },
     "choices": [
       { "key": "A", "text": "20" },
@@ -691,7 +737,7 @@
     "id": "Q104",
     "index": 104,
     "type": "MULTIPLE_CHOICE",
-    "category": "Percents",
+    "category": "Decimals to Percent",
     "stem": "Which percentage is closest in value to 0.0099?",
     "choices": [
       { "key": "A", "text": "0%" },
@@ -705,13 +751,16 @@
     "id": "Q105",
     "index": 105,
     "type": "MULTIPLE_CHOICE",
-    "category": "Averages",
-    "stem": "Anita played 3 games and had a mean score of 140. Tariq played 2 games and had a mean score of 90. What was the mean of the scores for all 5 of these games?",
+    "category": "Box Plot & IQR",
+    "stem": "The manager of a shipping company recorded the weights, in pounds, of the last 9 packages the company shipped. The manager displayed the distribution of the weights in a box plot with the five-number summary shown below: minimum: 29, first quartile: 31, median: 42, third quartile: 73, maximum: 98. Which statement about the distribution of weights is supported by the box plot the manager created?",
     "choices": [
-      { "key": "A", "text": "100" },
-      { "key": "B", "text": "115" },
-      { "key": "C", "text": "120" },
-      { "key": "D", "text": "230" }
+      { "key": "A", "text": "The minimum, 29, is an outlier." },
+      { "key": "B", "text": "The maximum, 98, is an outlier." },
+      { "key": "C", "text": "The interquartile range of the data is 11." },
+      {
+        "key": "D",
+        "text": "The interquartile range and the median are equal."
+      }
     ],
     "answer": ""
   },
@@ -720,12 +769,12 @@
     "id": "Q106",
     "index": 106,
     "type": "MULTIPLE_CHOICE",
-    "category": "Similar Figures / Area",
+    "category": "Similarity & Area",
     "stem": "In the figure above, the shaded rectangle is similar to the outer rectangle. The length of the outer rectangle is 4 feet, and the perimeter of the outer rectangle is 14 feet. If the width of the shaded rectangle is 2 feet, what is the area of the shaded rectangle?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q106.png",
-      "alt": "Two similar rectangles; outer length 4 ft; inner shaded width 2 ft."
+      "url": "/images/2024/q106.png",
+      "alt": "Outer and inner similar rectangles with dimensions"
     },
     "choices": [
       { "key": "A", "text": "5 1/3 sq ft" },
@@ -739,7 +788,7 @@
     "id": "Q107",
     "index": 107,
     "type": "MULTIPLE_CHOICE",
-    "category": "Volume / Unit Conversion",
+    "category": "Volume",
     "stem": "A rectangular concrete driveway is 30 feet long, 8 feet wide, and 6 inches thick. What is the volume of the concrete?",
     "choices": [
       { "key": "A", "text": "44 cu ft" },
@@ -753,22 +802,26 @@
     "id": "Q108",
     "index": 108,
     "type": "MULTIPLE_CHOICE",
-    "category": "Number Theory (GCF)",
-    "stem": "The greatest common factor of 24 and x is 8. How many possible values for x are greater than 10 and less than 70?",
+    "category": "Box Plot & IQR",
+    "stem": "At a carnival, visitors can win a prize if an employee cannot correctly guess their age. The box plot below displays data about the ages he recorded. What is the interquartile range of the box plot?",
+    "media": {
+      "type": "image",
+      "url": "/images/2024/q108.png",
+      "alt": "Box plot of ages guessed"
+    },
     "choices": [
-      { "key": "A", "text": "8" },
-      { "key": "B", "text": "7" },
-      { "key": "C", "text": "6" },
-      { "key": "D", "text": "5" }
+      { "key": "A", "text": "7" },
+      { "key": "B", "text": "9" },
+      { "key": "C", "text": "10" },
+      { "key": "D", "text": "11" }
     ],
     "answer": ""
   },
-
   {
     "id": "Q109",
     "index": 109,
     "type": "MULTIPLE_CHOICE",
-    "category": "Rates",
+    "category": "Relative Speed / Laps",
     "stem": "Vicente and Carla each ran 8 laps around a track. They started at the same time and place. If Vicente ran 1.5 times as fast as Carla, how many laps did Carla have left to finish when Vicente finished his 8th lap?",
     "choices": [
       { "key": "A", "text": "2 1/2" },
@@ -778,17 +831,15 @@
     ],
     "answer": ""
   },
-
   {
     "id": "Q110",
     "index": 110,
     "type": "MULTIPLE_CHOICE",
-    "category": "Probability",
+    "category": "Compound Probability",
     "stem": "At West College, students are randomly assigned to one of 20 dormitories and one of 6 dining rooms. Kharleen likes 6 of the dormitories and 2 of the dining rooms. What is the probability that she is assigned to both a dormitory and a dining room that she likes?",
     "choices": [
       { "key": "A", "text": "10%" },
       { "key": "B", "text": "12%" },
-
       { "key": "C", "text": "19%" },
       { "key": "D", "text": "38%" }
     ],
@@ -798,7 +849,7 @@
     "id": "Q111",
     "index": 111,
     "type": "MULTIPLE_CHOICE",
-    "category": "Distance–Rate–Time",
+    "category": "Rates & Time",
     "stem": "A train travels 2,200 miles from Phoenix to New York City. The train covers the first 240 miles in 5 hours. If the train continues to travel at this rate, how many more hours will it take to reach New York City? Round your answer to the nearest whole hour.",
     "choices": [
       { "key": "A", "text": "46" },
@@ -812,7 +863,7 @@
     "id": "Q112",
     "index": 112,
     "type": "MULTIPLE_CHOICE",
-    "category": "Integers",
+    "category": "Consecutive Integers",
     "stem": "What is the least of four consecutive integers whose sum is 58?",
     "choices": [
       { "key": "A", "text": "1" },
@@ -827,20 +878,25 @@
     "index": 113,
     "type": "MULTIPLE_CHOICE",
     "category": "Inequalities / Number Line",
-    "stem": "If all possible values of x are indicated by the shaded part of the number line above, which number line best shows all possible values of 1/x?",
+    "stem": "If all possible values of x are indicated by the shaded part of the number line above, which number line best shows all possible values of the transformed expression?",
     "media": {
       "type": "image",
-      "url": "/images/2020/q113.png",
-      "alt": "Number line with shaded solution set for x; choose number line for 1/x."
+      "url": "/images/2024/q113.png",
+      "alt": "Given shaded number line and four answer number lines"
     },
-    "choices": [],
+    "choices": [
+      { "key": "A", "text": "Number line A" },
+      { "key": "B", "text": "Number line B" },
+      { "key": "C", "text": "Number line C" },
+      { "key": "D", "text": "Number line D" }
+    ],
     "answer": ""
   },
   {
     "id": "Q114",
     "index": 114,
     "type": "MULTIPLE_CHOICE",
-    "category": "Probability",
+    "category": "Probability (Independent Trials)",
     "stem": "Chanelle selects a marble from a container and then returns it to the container. When she does this 3 times, the probability of choosing a red marble all 3 times is 1/216. Based on this information, what is the probability of Chanelle choosing a red marble the first time she selects a marble?",
     "choices": [
       { "key": "A", "text": "1/72" },

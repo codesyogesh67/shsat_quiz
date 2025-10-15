@@ -1,0 +1,936 @@
+[
+  {
+    "id": "Q58",
+    "index": 58,
+    "type": "FREE_RESPONSE",
+    "category": "Geometry (Circle Area)",
+    "stem": "The figure below shows a circle with a hole in the middle. The outer diameter of the circle is 1 1/4 inches. The diameter of the hole is 1/4 inch. What is the area of the shaded region, to the nearest hundredth of a square inch?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q58.png",
+      "alt": "Circle with outer diameter 1 1/4 inches and an inner circular hole with diameter 1/4 inch."
+    },
+    "choices": [],
+    "answer": ""
+  },
+  {
+    "id": "Q59",
+    "index": 59,
+    "type": "FREE_RESPONSE",
+    "category": "Algebra (Linear Equations)",
+    "stem": "A homeowner has a budget of $135 for the installation of a light fixture. An electrician charges $60 per hour plus a one-time trip charge of $45. What is the greatest amount of time, in hours, the electrician can work on the installation while staying within the homeowner’s budget? Write your answer as a decimal.",
+
+    "choices": [],
+    "answer": ""
+  },
+  {
+    "id": "Q60",
+    "index": 60,
+    "type": "FREE_RESPONSE",
+    "category": "Statistics (Range)",
+    "stem": "The list shows the daily low temperatures in a city during six days in the winter: 7°F, 4°F, 1°F, −2°F, −5°F, 3°F. What is the difference between the lowest and highest temperatures, in degrees Fahrenheit, for the six days?",
+
+    "choices": [],
+    "answer": ""
+  },
+  {
+    "id": "Q61",
+    "index": 61,
+    "type": "FREE_RESPONSE",
+    "category": "Ratios & Unit Price",
+    "stem": "A grocery store sells 1-gallon containers of milk for $3.99. The store also sells orange juice in a 6-pack of 5.5-fluid-ounce bottles for $1.79. Suppose the store wants to sell its orange juice in gallon containers instead. To the nearest dollar, how much more would a gallon of orange juice cost than a gallon of milk?",
+
+    "choices": [],
+    "answer": ""
+  },
+  {
+    "id": "Q62",
+    "index": 62,
+    "type": "FREE_RESPONSE",
+    "category": "Statistics (Box Plot)",
+    "stem": "The box plot shows the average monthly high temperatures in New York City for 12 months. What is the difference between the range and the interquartile range of the temperature data?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q62.png",
+      "alt": "Box plot displaying average monthly high temperatures in New York City across 12 months."
+    },
+    "choices": [],
+    "answer": ""
+  },
+  {
+    "id": "Q63",
+    "index": 63,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Number Theory (Prime Factorization)",
+    "stem": "What is the prime factorization of 756?",
+
+    "choices": [
+      { "key": "A", "text": "2² • 3² • 21" },
+      { "key": "B", "text": "2² • 3 • 7 • 9" },
+      { "key": "C", "text": "2² • 7 • 27" },
+      { "key": "D", "text": "2² • 3³ • 7" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q64",
+    "index": 64,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Algebra (Exponents)",
+    "stem": "What is the value of x²y⁶ ÷ (x y²) if x = −2 and y = 2?",
+
+    "choices": [
+      { "key": "A", "text": "−64" },
+      { "key": "B", "text": "−32" },
+      { "key": "C", "text": "16" },
+      { "key": "D", "text": "32" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q65",
+    "index": 65,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Algebra (Linear Equations)",
+    "stem": "If (8 ÷ m) + 4 = 20, what is the value of m?",
+
+    "choices": [
+      { "key": "A", "text": "1/3" },
+      { "key": "B", "text": "1/2" },
+      { "key": "C", "text": "2" },
+      { "key": "D", "text": "3" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q66",
+    "index": 66,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Algebra (Linear Equations)",
+    "stem": "6x = x − 1,680. What is the value of x?",
+
+    "choices": [
+      { "key": "A", "text": "336" },
+      { "key": "B", "text": "240" },
+      { "key": "C", "text": "−240" },
+      { "key": "D", "text": "−336" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q67",
+    "index": 67,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Arithmetic (Finance)",
+    "stem": "A person buys a used car with a down payment of $1,200 and makes monthly payments of $275 for 3 years. What is the total amount the person pays for the car?",
+
+    "choices": [
+      { "key": "A", "text": "$2,025" },
+      { "key": "B", "text": "$9,900" },
+      { "key": "C", "text": "$11,100" },
+      { "key": "D", "text": "$13,500" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q68",
+    "index": 68,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Geometry (Parallelogram Angles)",
+    "stem": "In the parallelogram above, what is the value of x?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q68.png",
+      "alt": "Parallelogram with adjacent angles labeled 3x° and 2x°."
+    },
+    "choices": [
+      { "key": "A", "text": "36" },
+      { "key": "B", "text": "18" },
+      { "key": "C", "text": "6" },
+      { "key": "D", "text": "5" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q69",
+    "index": 69,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Algebra (Linear Relationships)",
+    "stem": "A bus begins its trip with R occupants (including the driver). At each of the 20 stops, 3 people get on and no one leaves. If there are 3 times as many bus occupants at the end of the 20th stop as there are at the end of the 4th stop, how many occupants did the bus have immediately after the 10th stop?",
+
+    "choices": [
+      { "key": "A", "text": "12" },
+      { "key": "B", "text": "24" },
+      { "key": "C", "text": "30" },
+      { "key": "D", "text": "42" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q70",
+    "index": 70,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Algebra (Expressions)",
+    "stem": "Jay sold n tickets. Pilar sold three times as many tickets as Jay did. Together, Jay and Pilar sold ten more tickets than Amie sold. Which expression shows how many tickets Amie sold?",
+
+    "choices": [
+      { "key": "A", "text": "10 − 4n" },
+      { "key": "B", "text": "3n² + 10" },
+      { "key": "C", "text": "4n + 10" },
+      { "key": "D", "text": "4n − 10" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q71",
+    "index": 71,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Algebra (Inequalities)",
+    "stem": "−12 > 6x. For what values of x is the inequality true?",
+
+    "choices": [
+      { "key": "A", "text": "x > −6" },
+      { "key": "B", "text": "x < −6" },
+      { "key": "C", "text": "x < −2" },
+      { "key": "D", "text": "x > −2" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q72",
+    "index": 72,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Algebra (Solve for a Variable)",
+    "stem": "If 5(x − 6y) = 50y, what is the value of x in terms of y?",
+
+    "choices": [
+      { "key": "A", "text": "16y" },
+      { "key": "B", "text": "15y" },
+      { "key": "C", "text": "11 2/5 y" },
+      { "key": "D", "text": "11y" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q73",
+    "index": 73,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Geometry (Scale Drawings & Perimeter)",
+    "stem": "A scale drawing of a new pool is shown. All the corners are right angles. Scale: 1/2 in. = 25 ft. What is the perimeter of the actual pool?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q73.png",
+      "alt": "Rectilinear pool outline with sides labeled 6 in., 3 in., 2 in., 5 in.; all right angles."
+    },
+    "choices": [
+      { "key": "A", "text": "550 ft" },
+      { "key": "B", "text": "800 ft" },
+      { "key": "C", "text": "1,100 ft" },
+      { "key": "D", "text": "1,500 ft" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q74",
+    "index": 74,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Rate & Time",
+    "stem": "Maria rides her bicycle to school at a constant speed of 15 miles per hour. If the distance to school is 6 miles, how many minutes will it take Maria to get to school?",
+
+    "choices": [
+      { "key": "A", "text": "10" },
+      { "key": "B", "text": "15" },
+      { "key": "C", "text": "24" },
+      { "key": "D", "text": "30" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q75",
+    "index": 75,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Geometry (Parallel Lines & Angles)",
+    "stem": "In the figure, n ∥ p. Straight line m intersects both lines. If the marked angle is 73°, what is the value of r?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q75.png",
+      "alt": "Two parallel lines cut by a transversal with an angle of 73°; another angle labeled r."
+    },
+    "choices": [
+      { "key": "A", "text": "17" },
+      { "key": "B", "text": "117" },
+      { "key": "C", "text": "163" },
+      { "key": "D", "text": "173" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q76",
+    "index": 76,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Geometry (Area of Parallelogram)",
+    "stem": "On parallelogram PQRS, the length of QT is 18 centimeters. What is the area of the parallelogram?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q76.png",
+      "alt": "Parallelogram PQRS with base labeled 34 cm, side 22 cm, and altitude QT marked 18 cm."
+    },
+    "choices": [
+      { "key": "A", "text": "112 sq cm" },
+      { "key": "B", "text": "396 sq cm" },
+      { "key": "C", "text": "612 sq cm" },
+      { "key": "D", "text": "748 sq cm" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q77",
+    "index": 77,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Arithmetic (Multi-step)",
+    "stem": "Allison has 5 stamp albums with 576 stamps in each album. If she transfers her stamp collection to 6 albums, each holding 378 stamps, how many stamps will be left over?",
+
+    "choices": [
+      { "key": "A", "text": "198" },
+      { "key": "B", "text": "612" },
+      { "key": "C", "text": "620" },
+      { "key": "D", "text": "632" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q78",
+    "index": 78,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Number Operations (Rounding & Order)",
+    "stem": "Start with the number 135.28 and perform the steps: (1) Multiply by 10. (2) Add 0.5. (3) Drop the digits after the decimal point. (4) Divide by 10. What is the result?",
+
+    "choices": [
+      { "key": "A", "text": "13.5" },
+      { "key": "B", "text": "135" },
+      { "key": "C", "text": "135.2" },
+      { "key": "D", "text": "135.3" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q79",
+    "index": 79,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Algebra (Absolute Value & Powers)",
+    "stem": "If x = −2, what is the value of |x + x² + x³| − |x + 2x + 3x| ?",
+
+    "choices": [
+      { "key": "A", "text": "−18" },
+      { "key": "B", "text": "−6" },
+      { "key": "C", "text": "−2" },
+      { "key": "D", "text": "2" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q80",
+    "index": 80,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Number Operations (Fractions)",
+    "stem": "3 + (−3) ÷ [3 − (−3)] =",
+
+    "choices": [
+      { "key": "A", "text": "−1" },
+      { "key": "B", "text": "0" },
+      { "key": "C", "text": "1/6" },
+      { "key": "D", "text": "1" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q81",
+    "index": 81,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Number Operations (Decimals)",
+    "stem": "12.96 ÷ 0.08 =",
+
+    "choices": [
+      { "key": "A", "text": "1.62" },
+      { "key": "B", "text": "16.2" },
+      { "key": "C", "text": "162" },
+      { "key": "D", "text": "1,620" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q82",
+    "index": 82,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Geometry (Coordinate Geometry)",
+    "stem": "What is the distance between the midpoints of MN and RS on the number line shown?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q82.png",
+      "alt": "Number line 0–8 with points M, R, S, N marked."
+    },
+    "choices": [
+      { "key": "A", "text": "1/2 unit" },
+      { "key": "B", "text": "1 unit" },
+      { "key": "C", "text": "1 1/2 units" },
+      { "key": "D", "text": "2 units" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q83",
+    "index": 83,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Algebra (Signs of Expressions)",
+    "stem": "If s is a positive integer and t is a negative integer, which of the expressions must be positive? I. s − t  II. s·t²  III. s·t",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q83.png",
+      "alt": "If s is a positive integer and t is a negative integer"
+    },
+    "choices": [
+      { "key": "A", "text": "II only" },
+      { "key": "B", "text": "I and II only" },
+      { "key": "C", "text": "II and III only" },
+      { "key": "D", "text": "I, II, and III" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q84",
+    "index": 84,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Number Operations (Fractions)",
+    "stem": "What is the value of (−3/4)(−2/5) ?",
+
+    "choices": [
+      { "key": "A", "text": "−7/20" },
+      { "key": "B", "text": "−3/10" },
+      { "key": "C", "text": "3/10" },
+      { "key": "D", "text": "7/20" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q85",
+    "index": 85,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Arithmetic (Transactions Table)",
+    "stem": "The table shows income and expenses in a bicycle shop on one day. The sum of all transactions was $70. What is the value of p?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q85.png",
+      "alt": "Table: Paid employees $120×4 (expense), Sold 2 bicycles $400×2 (income), Sold clothing $95 (income), Bought new door $500 (expense), Sold bike parts p (income)."
+    },
+    "choices": [
+      { "key": "A", "text": "−$275" },
+      { "key": "B", "text": "−$85" },
+      { "key": "C", "text": "$70" },
+      { "key": "D", "text": "$155" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q86",
+    "index": 86,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Measurement (Length)",
+    "stem": "Dakota has four yardsticks and two 12-inch rulers. If she lays all four yardsticks and both rulers end-to-end, what is the maximum number of feet she can measure accurately at once?",
+
+    "choices": [
+      { "key": "A", "text": "12 ft" },
+      { "key": "B", "text": "14 ft" },
+      { "key": "C", "text": "16 ft" },
+      { "key": "D", "text": "18 ft" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q87",
+    "index": 87,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Ratios & Proportions",
+    "stem": "In a fruit basket, the ratio of apples to oranges is the same as the ratio of cherries to walnuts. If there are 6 oranges, 16 cherries, and 48 walnuts, how many apples are there?",
+
+    "choices": [
+      { "key": "A", "text": "2" },
+      { "key": "B", "text": "3" },
+      { "key": "C", "text": "18" },
+      { "key": "D", "text": "38" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q88",
+    "index": 88,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Ratios",
+    "stem": "In a showing of an artist’s works, the ratio of the number of paintings, drawings, and photographs is 3:5:4. If the number of drawings is 45, what is the total number of photographs and paintings shown?",
+
+    "choices": [
+      { "key": "A", "text": "36" },
+      { "key": "B", "text": "63" },
+      { "key": "C", "text": "84" },
+      { "key": "D", "text": "108" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q89",
+    "index": 89,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Ratios & Unit Rates (Fractions)",
+    "stem": "For each 3/8 foot of curtain width, 5/6 yard of fabric is needed to make ruffles. How many yards of fabric are needed per foot of curtain width?",
+
+    "choices": [
+      { "key": "A", "text": "5/16 yd" },
+      { "key": "B", "text": "29/24 yd" },
+      { "key": "C", "text": "20/9 yd" },
+      { "key": "D", "text": "7/2 yd" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q90",
+    "index": 90,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Functions (Proportional Relationships)",
+    "stem": "Which straight line is the graph of a proportional relationship?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q90.png",
+      "alt": "Coordinate grid with lines MS, VP, VQ, TR drawn; origin shown."
+    },
+    "choices": [
+      { "key": "A", "text": "⟷MS" },
+      { "key": "B", "text": "⟷VP" },
+      { "key": "C", "text": "⟷VQ" },
+      { "key": "D", "text": "⟷TR" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q91",
+    "index": 91,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Graph Interpretation",
+    "stem": "Some friends are buying bags of ice for a picnic. The graph shows the cost of the ice (dollars) versus weight (pounds). Which statement about a point on the graph is true?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q91.png",
+      "alt": "Graph of ice cost (0–3 dollars) vs weight (0–20 lb) passing through the origin with linear trend."
+    },
+    "choices": [
+      {
+        "key": "A",
+        "text": "The point (20, 3) means that 3 lb of ice costs $20.00."
+      },
+      {
+        "key": "B",
+        "text": "The point (1, 0.15) means that 1 bag of ice costs $0.15."
+      },
+      {
+        "key": "C",
+        "text": "The point (10, 1.5) means that 10 lb of ice costs $1.50."
+      },
+      {
+        "key": "D",
+        "text": "The point (0, 0) means that 0 lb of ice will be needed if 0 people go to the picnic."
+      }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q92",
+    "index": 92,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Graph Interpretation (Rate)",
+    "stem": "A clerk enters information on a computer. The graph shows the relationship between time (hours) and the number of keystrokes. What is the meaning of the point (1.5, 10500) on the graph?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q92.png",
+      "alt": "Graph of keystrokes vs time with marked point at (1.5, 10500)."
+    },
+    "choices": [
+      {
+        "key": "A",
+        "text": "The clerk makes 10,500 keystrokes in each 1 hr of entering information."
+      },
+      {
+        "key": "B",
+        "text": "The clerk makes 10,500 keystrokes in each 1.5 hr of entering information."
+      },
+      {
+        "key": "C",
+        "text": "The clerk makes 15,750 keystrokes in each 1 hr of entering information."
+      },
+      {
+        "key": "D",
+        "text": "The clerk makes 15,750 keystrokes in each 1.5 hr of entering information."
+      }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q93",
+    "index": 93,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Number Theory (Divisibility)",
+    "stem": "When the three-digit whole number 27? is divided by 3 or by 4, the remainder is zero. What is the missing digit?",
+
+    "choices": [
+      { "key": "A", "text": "0" },
+      { "key": "B", "text": "2" },
+      { "key": "C", "text": "3" },
+      { "key": "D", "text": "6" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q94",
+    "index": 94,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Percent of a Whole (Circle Graph)",
+    "stem": "Based on the circle graph, how many pounds of milk and eggs does the average American consume each year?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q94.png",
+      "alt": "Circle graph of annual food consumption totaling 1,840 lb with sector 'Milk and eggs' labeled x%."
+    },
+    "choices": [
+      { "key": "A", "text": "300" },
+      { "key": "B", "text": "368" },
+      { "key": "C", "text": "460" },
+      { "key": "D", "text": "552" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q95",
+    "index": 95,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Percent",
+    "stem": "Out of 2,000 high school seniors, 191 were enrolled in the Honor Society. What percentage of the entire group were in the Honor Society?",
+
+    "choices": [
+      { "key": "A", "text": "0.955%" },
+      { "key": "B", "text": "1.91%" },
+      { "key": "C", "text": "9.55%" },
+      { "key": "D", "text": "19.1%" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q96",
+    "index": 96,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Percent (Two-way Table)",
+    "stem": "The table shows the number of people who visited Brookside Zoo in one day. The largest of the four groups made up what percentage of all visitors on that day?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q96.png",
+      "alt": "Table: Children—Male 360, Female 340; Adults—Male 210, Female 290."
+    },
+    "choices": [
+      { "key": "A", "text": "30%" },
+      { "key": "B", "text": "28%" },
+      { "key": "C", "text": "24%" },
+      { "key": "D", "text": "17%" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q97",
+    "index": 97,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Probability (Experimental → Theoretical)",
+    "stem": "A bag contains 40 tiles that are either red, green, or blue. A tile is selected and replaced 120 times; 18 of those times a red tile is selected. Based on this information, what is the most likely number of red tiles in the bag?",
+
+    "choices": [
+      { "key": "A", "text": "6" },
+      { "key": "B", "text": "15" },
+      { "key": "C", "text": "18" },
+      { "key": "D", "text": "30" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q98",
+    "index": 98,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Proportions (Pie Chart → Estimate)",
+    "stem": "If 100 individuals will attend the museum next week, what is the best estimate (based on last year’s attendance) of the number of children who will be in that group?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q98.png",
+      "alt": "Table: Children 1,750; Adults 2,250; Seniors 1,000; Total 5,000."
+    },
+    "choices": [
+      { "key": "A", "text": "30" },
+      { "key": "B", "text": "34" },
+      { "key": "C", "text": "35" },
+      { "key": "D", "text": "50" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q99",
+    "index": 99,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Probability (Combinations & Tree Diagram)",
+    "stem": "A teacher will randomly select 3 students for a committee, choosing from Classroom A or B with each selection. What is the probability that exactly 2 are from A and 1 from B (in any order)?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q99.png",
+      "alt": "Tree diagram with choices A or B at each of three selections."
+    },
+    "choices": [
+      { "key": "A", "text": "1/8" },
+      { "key": "B", "text": "3/8" },
+      { "key": "C", "text": "1/2" },
+      { "key": "D", "text": "3/4" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q100",
+    "index": 100,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Probability (With Replacement)",
+    "stem": "A bag contains 15 marbles: 11 blue and 4 red. Sarah picks one marble at random, replaces it, then picks again. What is the probability that she picks a red marble both times?",
+
+    "choices": [
+      { "key": "A", "text": "16/225" },
+      { "key": "B", "text": "16/121" },
+      { "key": "C", "text": "8/15" },
+      { "key": "D", "text": "121/225" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q101",
+    "index": 101,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Counting (Multiplication Principle)",
+    "stem": "Anita is assigned to report on 1 topic in each of 4 subjects shown in the table. How many different sets of 4 reports are possible?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q101.png",
+      "alt": "Table of subject choices: Geography (5), English (3), Science (1), Math (2 examples/topics)."
+    },
+    "choices": [
+      { "key": "A", "text": "10" },
+      { "key": "B", "text": "24" },
+      { "key": "C", "text": "30" },
+      { "key": "D", "text": "44" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q102",
+    "index": 102,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Probability (Cards)",
+    "stem": "A deck of 52 cards has 13 hearts. Sara holds 12 cards, 3 of which are hearts. From the remaining deck, what is the probability that a randomly drawn card is a heart?",
+
+    "choices": [
+      { "key": "A", "text": "1/10" },
+      { "key": "B", "text": "1/4" },
+      { "key": "C", "text": "3/13" },
+      { "key": "D", "text": "1/3" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q103",
+    "index": 103,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Probability (Most Likely Event)",
+    "stem": "The table shows the probability of randomly picking each flavor of candy from a bowl. Which flavor is most likely to be picked?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q103.png",
+      "alt": "Table: Butterscotch 0.57, Lemon 0.095, Maple 0.125, Strawberry 0.21."
+    },
+    "choices": [
+      { "key": "A", "text": "butterscotch" },
+      { "key": "B", "text": "lemon" },
+      { "key": "C", "text": "maple" },
+      { "key": "D", "text": "strawberry" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q104",
+    "index": 104,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Algebra (Solve Formula)",
+    "stem": "The formula p = (1/r)w + f gives pages p for a book with w words, r words per page, and f front pages. Solve the formula for w.",
+
+    "choices": [
+      { "key": "A", "text": "w = r(p − f)" },
+      { "key": "B", "text": "w = (1/r) p + f" },
+      { "key": "C", "text": "w = f + rp" },
+      { "key": "D", "text": "w = r + p + f" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q105",
+    "index": 105,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Statistics (Proportion Estimate)",
+    "stem": "A shipment contains 170 boxes. In a random sample of 20 boxes, 8 have damage and the others are undamaged. Based on this sample, what is the best prediction of the number of undamaged boxes in the shipment, not including the sampled boxes?",
+
+    "choices": [
+      { "key": "A", "text": "60" },
+      { "key": "B", "text": "68" },
+      { "key": "C", "text": "90" },
+      { "key": "D", "text": "102" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q106",
+    "index": 106,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Algebra (Inequalities)",
+    "stem": "Marcus scores at least 25 points per game. He averages 8 free throws (1 point each). If b is the number of 2-point baskets, 2b + 8 ≥ 25. What is the number of 2-point baskets Marcus needs to make to reach at least 25 points, assuming he makes his mean free throws?",
+
+    "choices": [
+      { "key": "A", "text": "b ≤ 8" },
+      { "key": "B", "text": "b ≥ 9" },
+      { "key": "C", "text": "b ≥ 16" },
+      { "key": "D", "text": "b ≤ 25" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q107",
+    "index": 107,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Arithmetic (Linear Cost Model)",
+    "stem": "Mailing cost is $0.55 for the first ounce plus $0.15 for each additional ounce. Nadia paid $1.00 to mail a letter. What was the weight, in ounces, of the letter?",
+
+    "choices": [
+      { "key": "A", "text": "1.4" },
+      { "key": "B", "text": "1.5" },
+      { "key": "C", "text": "3" },
+      { "key": "D", "text": "4" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q108",
+    "index": 108,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Unit Rate",
+    "stem": "The table shows the cost of oranges. What is the unit rate (cost per orange)?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q108.png",
+      "alt": "Table: 4 → $1.80; 6 → $2.70; 9 → $4.05."
+    },
+    "choices": [
+      { "key": "A", "text": "$0.45" },
+      { "key": "B", "text": "$0.90" },
+      { "key": "C", "text": "$1.35" },
+      { "key": "D", "text": "$1.80" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q109",
+    "index": 109,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Proportional Relationships",
+    "stem": "The total number of bottles of water b is proportional to the number of players n, with constant of proportionality p. Which equation represents the relationship?",
+
+    "choices": [
+      { "key": "A", "text": "b = pn" },
+      { "key": "B", "text": "b = p + n" },
+      { "key": "C", "text": "b + n = p" },
+      { "key": "D", "text": "b + n + p = 1" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q110",
+    "index": 110,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Percent Change",
+    "stem": "Malik earns $10/hour and changes to $12/hour. What is the percent increase in his hourly pay?",
+
+    "choices": [
+      { "key": "A", "text": "2%" },
+      { "key": "B", "text": "20%" },
+      { "key": "C", "text": "83%" },
+      { "key": "D", "text": "120%" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q111",
+    "index": 111,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Measurement (Unit Conversion)",
+    "stem": "A rain gauge shows 10 centimeters of rain. If 1 inch ≈ 2.5 centimeters, about how many inches of rain fell?",
+
+    "choices": [
+      { "key": "A", "text": "1" },
+      { "key": "B", "text": "2.5" },
+      { "key": "C", "text": "4" },
+      { "key": "D", "text": "10" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q112",
+    "index": 112,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Proportional Relationships (Constant of Proportionality)",
+    "stem": "The height of a plant (mm) is proportional to the days it has grown. The plant grows 20 mm in 8 days. What is the constant of proportionality in mm per day?",
+
+    "choices": [
+      { "key": "A", "text": "0.4" },
+      { "key": "B", "text": "2.5" },
+      { "key": "C", "text": "12" },
+      { "key": "D", "text": "20" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q113",
+    "index": 113,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Proportional Relationships (Tables)",
+    "stem": "Which table shows a proportional relationship?",
+    "media": {
+      "type": "image",
+      "url": "/images/2023/q113.png",
+      "alt": "Four small x–y tables labeled A–D with different (x,y) pairs, including rows with x=0."
+    },
+    "choices": [
+      { "key": "A", "text": "Table A" },
+      { "key": "B", "text": "Table B" },
+      { "key": "C", "text": "Table C" },
+      { "key": "D", "text": "Table D" }
+    ],
+    "answer": ""
+  },
+  {
+    "id": "Q114",
+    "index": 114,
+    "type": "MULTIPLE_CHOICE",
+    "category": "Geometry (Circumference)",
+    "stem": "Terry wants to pour cement around the edge of a circular patio with radius 5 feet. What is the distance around the edge (use 3.14 for π)?",
+
+    "choices": [
+      { "key": "A", "text": "15.7" },
+      { "key": "B", "text": "31.4" },
+      { "key": "C", "text": "49.3" },
+      { "key": "D", "text": "78.5" }
+    ],
+    "answer": ""
+  }
+]
