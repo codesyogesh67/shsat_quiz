@@ -1,21 +1,25 @@
 // src/app/api/exams/start/route.ts
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { getAuth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import { pickRandom57Ids } from "@/lib/selectors/pickRandom57";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  const { userId: clerkUserId } = await getAuth(req); // ✅ must be awaited
+  // Clerk v5: auth() returns context for the current request
+  const { userId: clerkUserId } = await auth();
+
   const {
     examKey,
     mode = "full",
     minutes = 90,
-  } = await req.json().catch(() => ({}));
+  } = (await req.json().catch(() => ({}))) as {
+    examKey?: string;
+    mode?: "full" | string;
+    minutes?: number;
+  };
 
-  // 🔑 Map Clerk user → local DB user.id (or null for guest)
   const dbUserId = clerkUserId
     ? (
         await prisma.user.findUnique({
@@ -25,7 +29,6 @@ export async function POST(req: Request) {
       )?.id ?? null
     : null;
 
-  // Select 57 random question IDs or use fixed set
   const questionIds =
     examKey && examKey.startsWith("shsat_")
       ? (
@@ -41,7 +44,7 @@ export async function POST(req: Request) {
 
   const session = await prisma.session.create({
     data: {
-      userId: dbUserId ?? null,
+      userId: dbUserId,
       examKey: examKey ?? "random-57",
       label: "SHSAT Practice",
       mode,
