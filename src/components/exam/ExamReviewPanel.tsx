@@ -19,10 +19,25 @@ import QuestionView from "@/components/practice/QuestionView";
 import type { ExamResultsData } from "./ExamResults";
 import type { ExamQuestion } from "./useExamController";
 
+/* ---------- Types to match QuestionView (practice) ---------- */
+/* If you already export these from a shared file, import them instead. */
+type PracticeChoice = { key: string; text: string };
+type PracticeMedia = { type: "image"; url: string; alt?: string } | null;
+type PracticeQuestion = {
+  id: string;
+  index?: number;
+  type: "MULTIPLE_CHOICE" | "FREE_RESPONSE";
+  category?: string | null;
+  stem: string;
+  media?: PracticeMedia;
+  choices?: PracticeChoice[];
+  answer?: string; // QuestionView accepts this, but we won't rely on it
+};
+
 type ReviewFilter = "wrong" | "all" | "correct" | "flagged";
 
 type Props = {
-  q: ExamQuestion; // current question in review
+  q: ExamQuestion; // current exam question
   currentIdx: number; // index in the *filtered* nav list
   navList: number[]; // indices of questions being reviewed (in order)
   reviewFilter: ReviewFilter;
@@ -38,6 +53,19 @@ type Props = {
   onBackToResults: () => void;
   onToggleFlag: () => void;
 };
+
+/* ---------- Adapter: ExamQuestion -> PracticeQuestion ---------- */
+function toPracticeQuestion(q: ExamQuestion): PracticeQuestion {
+  return {
+    id: q.id,
+    type: q.type, // assumes same union: "MULTIPLE_CHOICE" | "FREE_RESPONSE"
+    category: q.category ?? null,
+    stem: q.stem,
+    media: q.media ?? null,
+    choices: q.choices ?? undefined,
+    // DO NOT pass q.answer here; in review we show `gold` from results
+  };
+}
 
 export default function ExamReviewPanel({
   q,
@@ -62,13 +90,20 @@ export default function ExamReviewPanel({
   const perQ = results?.perQuestion ?? [];
 
   const currentUser = answers[q.id] ?? null;
-  const currentGold =
-    perQ.find((r) => r.id === q.id)?.gold ?? (q as any)?.answer ?? null;
+
+  // Pull the official correct answer ("gold") from results only
+  const match = perQ.find((r) => r.id === q.id);
+  const currentGold: string | undefined =
+    (match?.gold ?? null) != null ? (match!.gold as string) : undefined;
+
   const isCorrect =
-    perQ.find((r) => r.id === q.id)?.correct ??
+    match?.correct ??
     (currentUser != null && currentGold != null && currentUser === currentGold);
 
   const isFlagged = !!flags[q.id];
+
+  // Convert ExamQuestion to the shape QuestionView expects
+  const questionForView: PracticeQuestion = toPracticeQuestion(q);
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
@@ -90,12 +125,11 @@ export default function ExamReviewPanel({
         <CardContent className="space-y-4">
           <QuestionView
             mode="review"
-            question={q}
+            question={questionForView}
             value={currentUser ?? ""}
-            gold={currentGold ?? undefined}
-            // In review mode, inputs are typically read-only. If your QuestionView
-            // supports it, keep it read-only. Otherwise, just render like test mode.
-            onChange={() => {}}
+            gold={currentGold}
+            // keep as no-ops but with correct signatures for TS
+            onChange={(_: string) => {}}
             onClear={() => {}}
             onFlag={onToggleFlag}
           />

@@ -1,4 +1,4 @@
-export type QuestionType = "MULTIPLE_CHOICE" | "GRID_IN";
+export type QuestionType = "MULTIPLE_CHOICE" | "FREE_RESPONSE";
 export type Choice = { key: string; text: string };
 export type Mode = "CONFIG" | "TEST" | "RESULTS";
 export type Media = RawQuestion["media"];

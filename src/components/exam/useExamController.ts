@@ -7,7 +7,7 @@ import { saveAnswer, submitExam } from "@/lib/exams-client";
 
 export type ExamQuestion = {
   id: string;
-  type: "MULTIPLE_CHOICE" | "FREE_RESPONSE" | "GRID_IN";
+  type: "MULTIPLE_CHOICE" | "FREE_RESPONSE";
   category?: string | null;
   stem: string;
   // DB stores media/choices as Json; your server already shaped them to this:
