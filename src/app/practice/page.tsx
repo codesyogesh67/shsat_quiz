@@ -1,23 +1,15 @@
 // app/practice/page.tsx
+import { redirect } from "next/navigation";
+import prisma from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
 import PracticeShell from "@/components/practice/PracticeShell";
-import { headers } from "next/headers";
+import { pickRandom57Ids } from "@/lib/selectors/pickRandom57";
 
-// Types matching your Question shape in PracticeShell
-type Choice = { key: string; text: string };
-type Media = { type: "image"; url: string; alt?: string } | null;
-type Question = {
-  id: string;
-  index?: number;
-  type: "MULTIPLE_CHOICE" | "FREE_RESPONSE";
-  category?: string | null;
-  stem: string;
-  media?: Media;
-  choices?: Choice[];
-  answer?: string;
-};
-
-type ExamMeta = { label?: string; minutes?: number };
-type ExamPayload = { meta?: ExamMeta; questions: Question[] };
+function toInt(v: string | string[] | undefined, d: number) {
+  if (!v) return d;
+  const n = Number(Array.isArray(v) ? v[0] : v);
+  return Number.isFinite(n) ? n : d;
+}
 
 export default async function PracticePage({
   searchParams,
@@ -26,107 +18,105 @@ export default async function PracticePage({
 }) {
   const sp = await searchParams;
 
+  // Legacy/practice params you already support
   const mode = (sp.mode as string) ?? "diagnostic";
-  const count = Number(sp.count ?? 20);
+  const count = toInt(sp.count, 20);
 
-  // --- NEW: server-side preload if exam/preset/custom present ---
-  const exam = typeof sp.exam === "string" ? sp.exam : undefined;
-  const preset = typeof sp.preset === "string" ? sp.preset : undefined;
-
+  // NEW: exam-style params that should go to /exam/[sessionId]
+  const examKey = typeof sp.exam === "string" ? sp.exam : undefined; // e.g. "shsat_2018" or "random"
+  const preset = typeof sp.preset === "string" ? sp.preset : undefined; // e.g. "shsat57"
+  const minutes = toInt(sp.minutes, 90);
   const customCount =
-    typeof sp.count === "string" ? Number(sp.count) : undefined;
-
+    typeof sp.count === "string" ? toInt(sp.count, 57) : undefined;
   const category = typeof sp.category === "string" ? sp.category : undefined;
-
   const randomize =
     typeof sp.randomize === "string" ? sp.randomize !== "false" : true;
 
-  const minutesParam =
-    typeof sp.minutes === "string" ? Number(sp.minutes) : undefined;
+  // If the URL is targeting an "exam flow", create a Session and redirect.
+  if (examKey || preset === "shsat57" || customCount) {
+    // Map Clerk user → local DB user (or guest)
+    const { userId: clerkUserId } = await auth();
+    const dbUserId = clerkUserId
+      ? (
+          await prisma.user.findUnique({
+            where: { externalAuthId: clerkUserId },
+            select: { id: true },
+          })
+        )?.id ?? null
+      : null;
 
-  let initialData: {
-    mode: "TEST";
-    questions: Question[];
-    minutes: number;
-    presetLabel: string | null;
-    currentExamKey: string | null;
-  } | null = null;
+    let questionIds: string[] = [];
 
-  // Build absolute URL to call your own API from RSC
-  const h = await headers(); // ← await because your types return a Promise
-  const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
-
-  const proto =
-    h.get("x-forwarded-proto") ??
-    (process.env.NODE_ENV === "development" ? "http" : "https");
-
-  const base = `${proto}://${host}`;
-
-  if (exam) {
-    const res = await fetch(
-      `${base}/api/questions?exam=${encodeURIComponent(exam)}`,
-      { cache: "no-store" }
-    );
-    if (res.ok) {
-      const data = (await res.json()) as ExamPayload;
-      initialData = {
-        mode: "TEST",
-        questions: data?.questions ?? [],
-        minutes: Math.max(
-          1,
-          Math.round(
-            typeof data?.meta?.minutes === "number"
-              ? data.meta.minutes
-              : minutesParam ?? 90
-          )
-        ),
-        presetLabel: data?.meta?.label ?? exam.replace(/_/g, " ").toUpperCase(),
-        currentExamKey: exam,
-      };
+    if (examKey) {
+      if (examKey === "random") {
+        // Random pool; if you want category-aware random, add a custom picker
+        const ids = await pickRandom57Ids();
+        const n = Math.max(1, Math.min(customCount ?? 57, ids.length));
+        questionIds = ids.slice(0, n);
+      } else {
+        // Fixed past paper (e.g., "shsat_2018")
+        const qs = await prisma.question.findMany({
+          where: { examKey },
+          select: { id: true, index: true },
+          orderBy: { index: "asc" },
+        });
+        const n = Math.max(1, Math.min(customCount ?? qs.length, qs.length));
+        questionIds = qs.slice(0, n).map((q) => q.id);
+      }
+    } else if (preset === "shsat57") {
+      // Your legacy “57 questions / 90 min” preset
+      const ids = await pickRandom57Ids();
+      questionIds = ids.slice(0, 57);
+    } else if (customCount) {
+      // Custom random practice from your pool; category/randomize kept for parity (basic version)
+      if (category && category !== "all") {
+        const qs = await prisma.question.findMany({
+          where: { category },
+          select: { id: true },
+        });
+        const pool = qs.map((q) => q.id);
+        if (randomize) pool.sort(() => Math.random() - 0.5);
+        questionIds = pool.slice(
+          0,
+          Math.max(1, Math.min(customCount, pool.length))
+        );
+      } else {
+        const all = await prisma.question.findMany({ select: { id: true } });
+        const pool = all.map((q) => q.id);
+        if (randomize) pool.sort(() => Math.random() - 0.5);
+        questionIds = pool.slice(
+          0,
+          Math.max(1, Math.min(customCount, pool.length))
+        );
+      }
     }
-  } else if (preset === "shsat57") {
-    const res = await fetch(`${base}/api/questions?preset=shsat57`, {
-      cache: "no-store",
-    });
-    if (res.ok) {
-      const data = (await res.json()) as { questions: Question[] };
-      initialData = {
-        mode: "TEST",
-        questions: data?.questions ?? [],
-        minutes: Math.max(1, Math.round(minutesParam ?? 90)),
-        presetLabel: "SHSAT Math Exam — 57 Questions • 90 min",
-        currentExamKey: null,
-      };
-    }
-  } else if (customCount) {
-    // Optional: server-preload custom too, to avoid any flash
-    const qs = new URLSearchParams({
-      count: String(Math.max(1, customCount)),
-      randomize: String(!!randomize),
-    });
-    if (category && category !== "all") qs.set("category", category);
 
-    const res = await fetch(`${base}/api/questions?${qs.toString()}`, {
-      cache: "no-store",
-    });
-    if (res.ok) {
-      const data = (await res.json()) as { questions: Question[] };
-      initialData = {
-        mode: "TEST",
-        questions: data?.questions ?? [],
-        minutes: Math.max(1, Math.round(minutesParam ?? 15)),
-        presetLabel: null,
-        currentExamKey: null,
-      };
+    if (!questionIds.length) {
+      // Nothing to serve; fall back to PracticeShell
+    } else {
+      const session = await prisma.session.create({
+        data: {
+          userId: dbUserId, // FK to your internal User.id or null for guest
+          examKey: examKey ?? (preset === "shsat57" ? "random-57" : "custom"),
+          label: "SHSAT Practice",
+          mode: "full",
+          minutes,
+          scoreTotal: questionIds.length,
+          questionIds,
+        },
+      });
+
+      redirect(`/exam/${session.id}`);
     }
   }
 
+  // If no exam params, keep your existing PracticeShell page
   return (
     <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 md:px-10 lg:px-20 xl:px-28 py-6">
       <PracticeShell
         initialMode={mode}
         initialCount={count}
-        initialData={initialData}
+        initialData={null}
       />
     </div>
   );

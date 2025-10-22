@@ -2,7 +2,7 @@
   {
     "id": "Q58",
     "index": 58,
-    "type": "MULTIPLE_CHOICE",
+    "type": "GRID_IN",
     "category": "Geometry",
     "stem": "In the figure above, PQRS is a parallelogram. What is the value of x?",
     "media": {
@@ -10,7 +10,7 @@
       "url": "/images/2018/q58.png",
       "alt": "Parallelogram PQRS with one angle marked 72° and another marked x°."
     },
-    "choices": [],
+
     "answer": ""
   },
   {
@@ -33,29 +33,19 @@
   {
     "id": "Q61",
     "index": 61,
-    "type": "MULTIPLE_CHOICE",
+    "type": "GRID_IN",
     "category": "Mathematics",
     "stem": "A survey asked students what pets they have. Based on the results:\n• 20 students have cats.\n• 23 students have dogs.\n• 3 students have both dogs and cats.\n• 5 students have no dogs or cats.\nHow many students were surveyed?",
-    "choices": [
-      { "key": "A", "text": "41" },
-      { "key": "B", "text": "42" },
-      { "key": "C", "text": "45" },
-      { "key": "D", "text": "51" }
-    ],
+
     "answer": ""
   },
   {
     "id": "Q62",
     "index": 62,
-    "type": "MULTIPLE_CHOICE",
+    "type": "GRID_IN",
     "category": "Algebra",
     "stem": "The sum of two consecutive integers is −15. If 1 is added to the smaller integer and 2 is subtracted from the larger integer, what is the product of the two resulting integers?",
-    "choices": [
-      { "key": "A", "text": "−60" },
-      { "key": "B", "text": "−56" },
-      { "key": "C", "text": "−54" },
-      { "key": "D", "text": "−48" }
-    ],
+
     "answer": ""
   },
   {

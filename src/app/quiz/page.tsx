@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import QuestionCard from "@/components/QuestionCard";
 import TimerDisplay from "@/components/TimerDisplay";
@@ -96,6 +97,16 @@ export default function QuizPage() {
 
   // How many questions are available (caps the "count" input)
   const [maxCount, setMaxCount] = useState<number>(1);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const exam = params.get("exam");
+    const preset = params.get("preset");
+    if (exam) startExamByKey(exam);
+    // your existing function
+    else if (preset === "shsat57") startShsatExam();
+    else if (params.has("count")) start(); // custom quiz
+  }, []);
 
   // Fetch available total once on mount
   useEffect(() => {
