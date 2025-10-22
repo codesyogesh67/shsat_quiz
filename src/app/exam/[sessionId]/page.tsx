@@ -1,19 +1,15 @@
-// app/exam/[sessionId]/page.tsx
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import ExamShell from "@/components/exam/ExamShell";
 import type { ExamQuestion } from "@/components/exam/useExamController";
-
-export const runtime = "nodejs";
-// Optional while debugging auth/cookies/caching:
-// export const dynamic = "force-dynamic";
+import type { Question } from "@prisma/client";
 
 function orderByFrozen<T extends { id: string }>(
   ids: string[],
   rows: T[]
 ): T[] {
   const pos = new Map(ids.map((id, i) => [id, i]));
-  return [...rows].sort((a, b) => pos.get(a.id)! - pos.get(b.id)!);
+  return [...rows].sort((a, b) => (pos.get(a.id) ?? 0) - (pos.get(b.id) ?? 0));
 }
 
 export default async function ExamSessionPage({
@@ -22,22 +18,13 @@ export default async function ExamSessionPage({
   params: Promise<{ sessionId: string }>;
 }) {
   const { sessionId } = await params;
+
   const session = await prisma.session.findUnique({
     where: { id: sessionId },
-    select: {
-      id: true,
-      minutes: true,
-      questionIds: true,
-      submittedAt: true,
-    },
+    select: { id: true, minutes: true, questionIds: true, submittedAt: true },
   });
-
   if (!session) notFound();
 
-  // You can choose to block already-submitted attempts:
-  // if (session.submittedAt) notFound();
-
-  // Fetch only the questions in this frozen set
   const qs = await prisma.question.findMany({
     where: { id: { in: session.questionIds } },
     select: {
@@ -50,18 +37,17 @@ export default async function ExamSessionPage({
       examKey: true,
     },
   });
-
   if (!qs.length) notFound();
 
   const questions: ExamQuestion[] = orderByFrozen(session.questionIds, qs).map(
-    (q) => ({
+    (q: Question) => ({
       id: q.id,
-      type: q.type as any, // aligns with your enum type
+      type: q.type as ExamQuestion["type"],
       category: q.category,
       stem: q.stem,
-      media: q.media as any,
-      choices: q.choices as any,
-      examSet: q.examKey,
+      media: q.media as ExamQuestion["media"],
+      choices: q.choices as ExamQuestion["choices"],
+      examSet: q.examKey ?? undefined,
     })
   );
 
@@ -71,7 +57,6 @@ export default async function ExamSessionPage({
         sessionId={session.id}
         minutes={session.minutes ?? 90}
         questions={questions}
-        // If you later implement resume, pass initialAnswers/flags/seconds here
       />
     </div>
   );
