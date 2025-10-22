@@ -19,13 +19,15 @@ enum Role {
 model User {
   id             String    @id @default(cuid())
   externalAuthId String    @unique // maps to Clerk user ID now; generic for future
-  email          String    @unique
+  email          String?   @unique
   name           String?
   imageUrl       String?
   role           Role      @default(USER)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   Attempt        Attempt[]
+
+  sessions Session[] @relation("UserSessions")
 }
 
 enum QuestionType {
@@ -70,25 +72,57 @@ model Exam {
   updatedAt DateTime @updatedAt
 
   questions Question[]
+
+  sessions Session[]
 }
 
 model Attempt {
-  id          String   @id @default(cuid())
-  questionId  String
-  userId      String? // null if anonymous
-  sessionId   String? // client-generated UUID for guests
-  givenAnswer String
-  isCorrect   Boolean
-  createdAt   DateTime @default(now())
+  id              String    @id @default(cuid())
+  sessionId       String // ✅ required: every answer belongs to a session
+  questionId      String
+  userId          String? // stays optional (guest until claimed)
+  givenAnswer     String?
+  isCorrect       Boolean?
+  flagged         Boolean   @default(false) // ✅ mark for review
+  timeSpentSec    Int       @default(0) // ✅ cumulative
+  firstAnsweredAt DateTime?
+  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime  @default(now())
 
+  session  Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
   user     User?    @relation(fields: [userId], references: [id])
-  // If you ever want only one "latest" attempt per (user or session, per question),
-  // swap history for upserts by uncommenting one of these:
-  // @@unique([questionId, userId])
-  // @@unique([questionId, sessionId])
 
+  // ✅ exactly one attempt row per (session, question)
+  @@unique([sessionId, questionId])
   @@index([questionId])
   @@index([userId])
   @@index([sessionId])
+}
+
+model Session {
+  id           String    @id @default(cuid())
+  userId       String?
+  examId       String?
+  examKey      String?
+  label        String?
+  mode         String
+  startedAt    DateTime  @default(now())
+  submittedAt  DateTime?
+  scoreCorrect Int       @default(0)
+  scoreTotal   Int       @default(0)
+  minutes      Int?
+
+  questionIds            String[] @db.Text
+  progressCount          Int      @default(0)
+  flagsCount             Int      @default(0)
+  serverSecondsRemaining Int?
+
+  user User? @relation("UserSessions", fields: [userId], references: [id])
+  exam Exam? @relation(fields: [examId], references: [id])
+
+  attempts Attempt[]
+
+  @@index([userId])
+  @@index([examKey])
 }
