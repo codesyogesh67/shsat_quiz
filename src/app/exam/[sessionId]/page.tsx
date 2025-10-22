@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import ExamShell from "@/components/exam/ExamShell";
 import type { ExamQuestion } from "@/components/exam/useExamController";
-import type { Question } from "@prisma/client";
+import type { Prisma } from "@prisma/client"; // ✅ use Prisma types
 
 function orderByFrozen<T extends { id: string }>(
   ids: string[],
@@ -11,6 +11,20 @@ function orderByFrozen<T extends { id: string }>(
   const pos = new Map(ids.map((id, i) => [id, i]));
   return [...rows].sort((a, b) => (pos.get(a.id) ?? 0) - (pos.get(b.id) ?? 0));
 }
+
+// 🔒 strongly type your select
+const questionSelect = {
+  id: true,
+  type: true,
+  category: true,
+  stem: true,
+  media: true,
+  choices: true,
+  examKey: true,
+} as const;
+
+// 🎯 derive the exact row type returned by that select
+type DBQuestion = Prisma.QuestionGetPayload<{ select: typeof questionSelect }>;
 
 export default async function ExamSessionPage({
   params,
@@ -27,24 +41,17 @@ export default async function ExamSessionPage({
 
   const qs = await prisma.question.findMany({
     where: { id: { in: session.questionIds } },
-    select: {
-      id: true,
-      type: true,
-      category: true,
-      stem: true,
-      media: true,
-      choices: true,
-      examKey: true,
-    },
+    select: questionSelect,
   });
   if (!qs.length) notFound();
 
   const questions: ExamQuestion[] = orderByFrozen(session.questionIds, qs).map(
-    (q: Question) => ({
+    (q: DBQuestion) => ({
       id: q.id,
       type: q.type as ExamQuestion["type"],
       category: q.category,
       stem: q.stem,
+      // If these are Prisma.JsonValue, cast or add a narrow helper if you prefer
       media: q.media as ExamQuestion["media"],
       choices: q.choices as ExamQuestion["choices"],
       examSet: q.examKey ?? undefined,
