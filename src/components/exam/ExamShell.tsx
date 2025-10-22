@@ -71,7 +71,11 @@ export default function ExamShell({
     initialFlags,
     initialSecondsLeft,
   });
-
+  const answersForMap: Record<string, string> = React.useMemo(() => {
+    const out: Record<string, string> = {};
+    for (const [k, v] of Object.entries(answers)) out[k] = v ?? "";
+    return out;
+  }, [answers]);
   // -------- Results --------
   if (submitted && results && !reviewing) {
     const examLabel = "SHSAT Practice"; // or pass via parent if you want the set name
@@ -131,12 +135,6 @@ export default function ExamShell({
     currentIdx + 1
   } / ${total} · Answered ${answeredCount}`;
   const currentId = q?.id;
-
-  const answersForMap: Record<string, string> = React.useMemo(() => {
-    const out: Record<string, string> = {};
-    for (const [k, v] of Object.entries(answers)) out[k] = v ?? "";
-    return out;
-  }, [answers]);
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_280px]">
