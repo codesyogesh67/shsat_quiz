@@ -13,7 +13,8 @@ import ExamTopBar from "./ExamTopBar";
 import ExamResults from "./ExamResults";
 import ExamReviewPanel from "./ExamReviewPanel";
 
-import { useExamController, type ExamQuestion } from "./useExamController";
+import { useExamController } from "./useExamController";
+import type { ExamQuestion } from "./useExamController";
 
 type Props = {
   sessionId: string;
@@ -77,7 +78,16 @@ export default function ExamShell({
     return (
       <ExamResults
         examSet={examLabel}
-        results={results}
+        results={{
+          ...results,
+          byCategory: results?.byCategory ?? {},
+          perQuestion:
+            results?.perQuestion?.map(({ user, gold, ...rest }) => ({
+              ...rest,
+              user: user ?? undefined, // null → undefined
+              gold: gold ?? undefined, // null → undefined
+            })) ?? [],
+        }}
         flags={flags}
         onReview={(filter) => startReview(filter)}
         onRetake={() => router.push("/practice")} // adjust route as you like
@@ -87,14 +97,23 @@ export default function ExamShell({
   }
 
   // -------- Review --------
-  if (submitted && results && reviewing && q) {
-    return (
+  {
+    submitted && results && reviewing && q && (
       <ExamReviewPanel
         q={q}
         currentIdx={currentIdx}
         navList={navList}
         reviewFilter={reviewFilter}
-        results={results}
+        results={{
+          ...results,
+          byCategory: results.byCategory ?? {}, // ensure object
+          perQuestion:
+            results.perQuestion?.map(({ user, gold, ...rest }) => ({
+              ...rest,
+              user: user ?? undefined, // null -> undefined if needed
+              gold: gold ?? undefined, // null -> undefined if needed
+            })) ?? [],
+        }}
         answers={answers}
         flags={flags}
         onPrev={prev}
@@ -108,8 +127,16 @@ export default function ExamShell({
   }
 
   // -------- Active Exam --------
-  const answeredMeta = `Question ${currentIdx + 1} / ${total} · Answered ${answeredCount}`;
+  const answeredMeta = `Question ${
+    currentIdx + 1
+  } / ${total} · Answered ${answeredCount}`;
   const currentId = q?.id;
+
+  const answersForMap: Record<string, string> = React.useMemo(() => {
+    const out: Record<string, string> = {};
+    for (const [k, v] of Object.entries(answers)) out[k] = v ?? "";
+    return out;
+  }, [answers]);
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_280px]">
@@ -129,7 +156,7 @@ export default function ExamShell({
             <QuestionView
               mode="test"
               question={q}
-              value={currentId ? (answers[currentId] ?? "") : ""}
+              value={currentId ? answers[currentId] ?? "" : ""}
               onChange={(val) => currentId && setAnswer(currentId, val)}
               onClear={() => currentId && clearAnswer(currentId)}
               onFlag={() => currentId && toggleFlag(currentId)}
@@ -180,7 +207,7 @@ export default function ExamShell({
         <QuestionMap
           questions={questions}
           currentIdx={currentIdx}
-          answers={answers}
+          answers={answersForMap} // 👈 normalized (no nulls)
           flags={flags}
           onJump={go}
         />
