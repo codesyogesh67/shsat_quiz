@@ -195,14 +195,18 @@ export function useExamController({
     queueSave(qid, { answer: val });
   }
   function clearAnswer(qid: string) {
-    setAnswers(({ [qid]: _, ...rest }) => rest as any);
+    setAnswers((prev) => {
+      const next: Record<string, string | null> = { ...prev };
+      delete next[qid];
+      return next;
+    });
     queueSave(qid, { answer: null });
   }
   function toggleFlag(qid: string) {
-    setFlags((f) => {
-      const next = !f[qid];
-      queueSave(qid, { flagged: next });
-      return { ...f, [qid]: next };
+    setFlags((prev) => {
+      const next = { ...prev, [qid]: !prev[qid] };
+      queueSave(qid, { flagged: next[qid] });
+      return next;
     });
   }
 

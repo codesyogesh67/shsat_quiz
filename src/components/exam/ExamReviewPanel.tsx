@@ -126,9 +126,9 @@ export default function ExamReviewPanel({
           <QuestionView
             mode="review"
             question={questionForView}
-            value={currentUser ?? ""}
-            gold={currentGold}
-            // keep as no-ops but with correct signatures for TS
+            value={currentUser ?? ""} // still required by the component
+            correctAnswer={currentGold} // ✅ rename from gold → correctAnswer
+            userAnswer={currentUser ?? undefined} // optional but nice to pass in review
             onChange={(_: string) => {}}
             onClear={() => {}}
             onFlag={onToggleFlag}
