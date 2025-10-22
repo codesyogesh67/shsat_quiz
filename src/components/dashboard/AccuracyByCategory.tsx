@@ -22,6 +22,9 @@ export function AccuracyByCategory({ data }: { data: CategoryStat[] }) {
     category: d.category,
     accuracy: Math.round(d.accuracy * 100),
   }));
+
+  const tooltipFormatter = (value: number | string): React.ReactNode =>
+    `${value}%`;
   return (
     <Card className="shadow-sm">
       <CardHeader>
@@ -36,7 +39,8 @@ export function AccuracyByCategory({ data }: { data: CategoryStat[] }) {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="category" tick={{ fontSize: 12 }} />
             <YAxis unit="%" />
-            <RTooltip formatter={(v: any) => `${v}%`} />
+            <RTooltip formatter={tooltipFormatter} />
+
             <Bar dataKey="accuracy" radius={[6, 6, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>

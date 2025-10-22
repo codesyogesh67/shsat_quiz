@@ -26,6 +26,8 @@ export function ScoresOverTime({ exams }: { exams: ExamResult[] }) {
       date: fmtDate(e.dateISO),
       score: Math.round((e.accuracy || 0) * 100),
     }));
+  const tooltipFormatter = (value: number | string): React.ReactNode =>
+    `${value}%`;
   return (
     <Card className="shadow-sm">
       <CardHeader>
@@ -38,7 +40,7 @@ export function ScoresOverTime({ exams }: { exams: ExamResult[] }) {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="date" />
             <YAxis unit="%" />
-            <RTooltip formatter={(v: any) => `${v}%`} />
+            <RTooltip formatter={tooltipFormatter} />
             <Line type="monotone" dataKey="score" strokeWidth={2} dot />
           </LineChart>
         </ResponsiveContainer>
