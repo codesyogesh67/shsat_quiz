@@ -27,25 +27,31 @@ const SETS = [
   { key: "shsat_2024", label: "SHSAT 2024" },
 ] as const;
 
+type SetKey = typeof SETS[number]["key"];
+
 const DEFAULT_COUNT = 57;
 const DEFAULT_MINUTES = 90;
 
 export default function ExamPicker({
   defaultSet = "random",
 }: {
-  defaultSet?: typeof SETS[number]["key"];
+  defaultSet?: SetKey;
 }) {
   const router = useRouter();
-  const [setKey, setSetKey] = React.useState(defaultSet);
+  const [setKey, setSetKey] = React.useState<SetKey>(defaultSet);
   const [loading, setLoading] = React.useState(false);
   const [resumeId, setResumeId] = React.useState<string | null>(null);
 
-  // Discover an active session (if signed in)
   React.useEffect(() => {
     getActive()
       .then((j) => setResumeId(j?.sessionId ?? null))
       .catch(() => {});
   }, []);
+
+  // Narrow string -> SetKey safely
+  function isSetKey(v: string): v is SetKey {
+    return SETS.some((s) => s.key === v);
+  }
 
   const onStart = async () => {
     setLoading(true);
@@ -62,13 +68,16 @@ export default function ExamPicker({
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
-      {/* Main card */}
       <Card className="shadow-sm">
         <CardContent className="p-6 space-y-6">
-          {/* Exam set selector */}
           <div className="space-y-2">
             <Label htmlFor="exam-set">Exam set</Label>
-            <Select value={setKey} onValueChange={setSetKey}>
+            <Select
+              value={setKey}
+              onValueChange={(v) => {
+                if (isSetKey(v)) setSetKey(v);
+              }}
+            >
               <SelectTrigger id="exam-set">
                 <SelectValue placeholder="Choose set" />
               </SelectTrigger>
@@ -84,7 +93,6 @@ export default function ExamPicker({
 
           <Separator />
 
-          {/* Fixed settings summary */}
           <div className="grid gap-4 sm:grid-cols-3">
             <SummaryItem
               icon={<ListChecks className="h-4 w-4" aria-hidden />}
@@ -103,7 +111,6 @@ export default function ExamPicker({
             />
           </div>
 
-          {/* Actions */}
           <div className="flex flex-wrap gap-2 pt-2">
             <Button
               className="w-full sm:w-auto"
@@ -113,7 +120,6 @@ export default function ExamPicker({
               {loading ? "Starting…" : "Start exam"}
             </Button>
 
-            {/* Uncomment to show resume button when an active session exists */}
             {/* {resumeId && (
               <Button
                 variant="outline"
