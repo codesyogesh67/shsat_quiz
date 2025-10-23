@@ -4,7 +4,6 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectTrigger,
@@ -12,12 +11,14 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { startExam, getActive } from "@/lib/exams-client";
+import { Clock, ListChecks, BookOpen } from "lucide-react";
 
 const SETS = [
   { key: "random", label: "Random (57Q / 90m)" },
   { key: "shsat_2018", label: "SHSAT 2018" },
-
   { key: "shsat_2019", label: "SHSAT 2019" },
   { key: "shsat_2020", label: "SHSAT 2020" },
   { key: "shsat_2021", label: "SHSAT 2021" },
@@ -26,23 +27,20 @@ const SETS = [
   { key: "shsat_2024", label: "SHSAT 2024" },
 ] as const;
 
+const DEFAULT_COUNT = 57;
+const DEFAULT_MINUTES = 90;
+
 export default function ExamPicker({
   defaultSet = "random",
-  defaultCount = 57,
-  defaultMinutes = 90,
 }: {
-  defaultSet?: string;
-  defaultCount?: number;
-  defaultMinutes?: number;
+  defaultSet?: typeof SETS[number]["key"];
 }) {
   const router = useRouter();
   const [setKey, setSetKey] = React.useState(defaultSet);
-  const [count, setCount] = React.useState(defaultCount);
-  const [minutes, setMinutes] = React.useState(defaultMinutes);
   const [loading, setLoading] = React.useState(false);
   const [resumeId, setResumeId] = React.useState<string | null>(null);
 
-  // Try to discover an active session (for signed-in users)
+  // Discover an active session (if signed in)
   React.useEffect(() => {
     getActive()
       .then((j) => setResumeId(j?.sessionId ?? null))
@@ -52,11 +50,7 @@ export default function ExamPicker({
   const onStart = async () => {
     setLoading(true);
     try {
-      // NOTE: backend currently uses examKey + minutes; if you want variable "count",
-      // add it to /api/exams/start and handle it there.
       const res = await startExam(setKey === "random" ? undefined : setKey);
-      // If you want to support custom minutes/count:
-      // await startExam(setKey, { minutes, count })
       router.push(`/exam/${res.sessionId}`);
     } catch (e) {
       console.error(e);
@@ -67,78 +61,92 @@ export default function ExamPicker({
   };
 
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
-      <div className="space-y-2 sm:col-span-2">
-        <Label>Exam set</Label>
-        <Select value={setKey} onValueChange={setSetKey}>
-          <SelectTrigger>
-            <SelectValue placeholder="Choose set" />
-          </SelectTrigger>
-          <SelectContent>
-            {SETS.map((s) => (
-              <SelectItem key={s.key} value={s.key}>
-                {s.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+    <div className="mx-auto w-full max-w-3xl space-y-6">
+      {/* Main card */}
+      <Card className="shadow-sm">
+        <CardContent className="p-6 space-y-6">
+          {/* Exam set selector */}
+          <div className="space-y-2">
+            <Label htmlFor="exam-set">Exam set</Label>
+            <Select value={setKey} onValueChange={setSetKey}>
+              <SelectTrigger id="exam-set">
+                <SelectValue placeholder="Choose set" />
+              </SelectTrigger>
+              <SelectContent>
+                {SETS.map((s) => (
+                  <SelectItem key={s.key} value={s.key}>
+                    {s.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-      <div className="space-y-2">
-        <Label>Minutes</Label>
-        <Input
-          type="number"
-          min={10}
-          max={180}
-          value={minutes}
-          onChange={(e) =>
-            setMinutes(clamp(+e.target.value || defaultMinutes, 10, 180))
-          }
-        />
-      </div>
+          <Separator />
 
-      <div className="space-y-2">
-        <Label>Questions</Label>
-        <Input
-          type="number"
-          min={10}
-          max={100}
-          value={count}
-          onChange={(e) =>
-            setCount(clamp(+e.target.value || defaultCount, 10, 100))
-          }
-        />
-        <p className="text-xs text-muted-foreground">
-          (Tip: if you want this to affect the backend, we can extend
-          <code className="px-1">/api/exams/start</code> to accept a{" "}
-          <code>count</code>.)
-        </p>
-      </div>
+          {/* Fixed settings summary */}
+          <div className="grid gap-4 sm:grid-cols-3">
+            <SummaryItem
+              icon={<ListChecks className="h-4 w-4" aria-hidden />}
+              label="Questions"
+              value={`${DEFAULT_COUNT}`}
+            />
+            <SummaryItem
+              icon={<Clock className="h-4 w-4" aria-hidden />}
+              label="Time limit"
+              value={`${DEFAULT_MINUTES} min`}
+            />
+            <SummaryItem
+              icon={<BookOpen className="h-4 w-4" aria-hidden />}
+              label="Mode"
+              value="Full exam"
+            />
+          </div>
 
-      <div className="sm:col-span-2 flex items-end gap-2">
-        <Button
-          className="w-full sm:w-auto"
-          onClick={onStart}
-          disabled={loading}
-        >
-          {loading ? "Starting…" : "Start exam"}
-        </Button>
+          {/* Actions */}
+          <div className="flex flex-wrap gap-2 pt-2">
+            <Button
+              className="w-full sm:w-auto"
+              onClick={onStart}
+              disabled={loading}
+            >
+              {loading ? "Starting…" : "Start exam"}
+            </Button>
 
-        {resumeId && (
-          <Button
-            variant="outline"
-            className="w-full sm:w-auto"
-            onClick={() => router.push(`/exam/${resumeId}`)}
-            disabled={loading}
-          >
-            Continue active exam
-          </Button>
-        )}
-      </div>
+            {/* Uncomment to show resume button when an active session exists */}
+            {/* {resumeId && (
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto"
+                onClick={() => router.push(`/exam/${resumeId}`)}
+                disabled={loading}
+              >
+                Continue active exam
+              </Button>
+            )} */}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
 
-function clamp(n: number, lo: number, hi: number) {
-  return Math.max(lo, Math.min(hi, n));
+function SummaryItem({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
+      <div className="rounded-md border p-2">{icon}</div>
+      <div className="space-y-0.5">
+        <div className="text-xs text-muted-foreground">{label}</div>
+        <div className="text-sm font-medium">{value}</div>
+      </div>
+    </div>
+  );
 }
