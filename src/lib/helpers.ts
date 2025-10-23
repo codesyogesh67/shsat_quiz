@@ -54,7 +54,7 @@ function normalizeQuestionType(t: unknown): QuestionType {
     .toUpperCase()
     .replace(/[\s-]+/g, "_");
   if (v === "MULTIPLE_CHOICE") return "MULTIPLE_CHOICE";
-  if (v === "GRID_IN" || v === "FREE_RESPONSE" || v === "FR") return "GRID_IN";
+  if (v === "FREE_RESPONSE" || v === "FR") return "FREE_RESPONSE";
   throw new Error(`Unknown QuestionType: ${t}`);
 }
 

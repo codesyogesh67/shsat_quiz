@@ -94,7 +94,7 @@ export function pickShsat57(
   });
 
   // Pools by type
-  const gridPool = bank.filter((q) => q.type === "GRID_IN");
+  const gridPool = bank.filter((q) => q.type === "FREE_RESPONSE");
   const mcPool = bank.filter((q) => q.type === "MULTIPLE_CHOICE");
 
   if (gridPool.length < C.gridIns && C.strictGridIns) {
