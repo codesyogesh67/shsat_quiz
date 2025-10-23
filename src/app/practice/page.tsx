@@ -1,39 +1,69 @@
 // app/practice/page.tsx
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import PracticeShell from "@/components/practice/PracticeShell";
-import { pickRandom57Ids } from "@/lib/selectors/pickRandom57";
+import prisma from "@/lib/prisma";
 
-function toInt(v: string | string[] | undefined, d: number) {
-  if (!v) return d;
-  const n = Number(Array.isArray(v) ? v[0] : v);
-  return Number.isFinite(n) ? n : d;
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import {
+  Timer as TimerIcon,
+  Shuffle as ShuffleIcon,
+  ListChecks,
+} from "lucide-react";
+
+import RandomConfigurator from "@/components/practice/RandomConfigurator";
+
+export const dynamic = "force-dynamic";
+
+// ✅ Hardcoded categories
+const CATEGORIES = [
+  "Algebra",
+  "Arithmetic",
+  "Geometry",
+  "Data & Probability",
+  "Word Problems",
+];
+
+// (Optional) Show available counts per category to help users choose
+async function getCategoryCounts() {
+  const results = await Promise.all(
+    CATEGORIES.map(async (cat) => {
+      const count = await prisma.question.count({ where: { category: cat } });
+      return [cat, count] as const;
+    })
+  );
+  return Object.fromEntries(results) as Record<string, number>;
 }
 
-export default async function PracticePage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const sp = await searchParams;
+export default async function PracticeHubPage() {
+  const counts = await getCategoryCounts();
 
-  // Legacy/practice params you already support
-  const mode = (sp.mode as string) ?? "diagnostic";
-  const count = toInt(sp.count, 20);
+  // Server action for Category Practice
+  async function startCategoryPractice(formData: FormData) {
+    "use server";
 
-  // NEW: exam-style params that should go to /exam/[sessionId]
-  const examKey = typeof sp.exam === "string" ? sp.exam : undefined; // e.g. "shsat_2018" or "random"
-  const preset = typeof sp.preset === "string" ? sp.preset : undefined; // e.g. "shsat57"
-  const minutes = toInt(sp.minutes, 90);
-  const customCount =
-    typeof sp.count === "string" ? toInt(sp.count, 57) : undefined;
-  const category = typeof sp.category === "string" ? sp.category : undefined;
-  const randomize =
-    typeof sp.randomize === "string" ? sp.randomize !== "false" : true;
+    const category = String(formData.get("category") || "");
+    const count = Math.max(1, Number(formData.get("count") || 20));
+    const minutes = Math.max(1, Number(formData.get("minutes") || 45));
 
-  // If the URL is targeting an "exam flow", create a Session and redirect.
-  if (examKey || preset === "shsat57" || customCount) {
     // Map Clerk user → local DB user (or guest)
     const { userId: clerkUserId } = await auth();
     const dbUserId = clerkUserId
@@ -45,79 +75,157 @@ export default async function PracticePage({
         )?.id ?? null
       : null;
 
-    let questionIds: string[] = [];
+    // Fetch pool by category (randomized)
+    const qs = await prisma.question.findMany({
+      where: { category },
+      select: { id: true },
+    });
 
-    if (examKey) {
-      if (examKey === "random") {
-        // Random pool; if you want category-aware random, add a custom picker
-        const ids = await pickRandom57Ids();
-        const n = Math.max(1, Math.min(customCount ?? 57, ids.length));
-        questionIds = ids.slice(0, n);
-      } else {
-        // Fixed past paper (e.g., "shsat_2018")
-        const qs = await prisma.question.findMany({
-          where: { examKey },
-          select: { id: true, index: true },
-          orderBy: { index: "asc" },
-        });
-        const n = Math.max(1, Math.min(customCount ?? qs.length, qs.length));
-        questionIds = qs.slice(0, n).map((q) => q.id);
-      }
-    } else if (preset === "shsat57") {
-      // Your legacy “57 questions / 90 min” preset
-      const ids = await pickRandom57Ids();
-      questionIds = ids.slice(0, 57);
-    } else if (customCount) {
-      // Custom random practice from your pool; category/randomize kept for parity (basic version)
-      if (category && category !== "all") {
-        const qs = await prisma.question.findMany({
-          where: { category },
-          select: { id: true },
-        });
-        const pool = qs.map((q) => q.id);
-        if (randomize) pool.sort(() => Math.random() - 0.5);
-        questionIds = pool.slice(
-          0,
-          Math.max(1, Math.min(customCount, pool.length))
-        );
-      } else {
-        const all = await prisma.question.findMany({ select: { id: true } });
-        const pool = all.map((q) => q.id);
-        if (randomize) pool.sort(() => Math.random() - 0.5);
-        questionIds = pool.slice(
-          0,
-          Math.max(1, Math.min(customCount, pool.length))
-        );
-      }
-    }
+    const pool = qs.map((q) => q.id).sort(() => Math.random() - 0.5);
+    const questionIds = pool.slice(0, Math.min(count, pool.length));
 
     if (!questionIds.length) {
-      // Nothing to serve; fall back to PracticeShell
-    } else {
-      const session = await prisma.session.create({
-        data: {
-          userId: dbUserId, // FK to your internal User.id or null for guest
-          examKey: examKey ?? (preset === "shsat57" ? "random-57" : "custom"),
-          label: "SHSAT Practice",
-          mode: "full",
-          minutes,
-          scoreTotal: questionIds.length,
-          questionIds,
-        },
-      });
-
-      redirect(`/exam/${session.id}`);
+      redirect("/practice");
     }
+
+    const session = await prisma.session.create({
+      data: {
+        userId: dbUserId,
+        examKey: "custom",
+        label: `${category} Practice`,
+        mode: "full",
+        minutes,
+        scoreTotal: questionIds.length,
+        questionIds,
+      },
+    });
+
+    redirect(`/exam/${session.id}`);
   }
 
-  // If no exam params, keep your existing PracticeShell page
   return (
-    <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 md:px-10 lg:px-20 xl:px-28 py-6">
-      <PracticeShell
-        initialMode={mode}
-        initialCount={count}
-        initialData={null}
-      />
+    <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 md:px-10 lg:px-16 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">Practice</h1>
+        <p className="text-muted-foreground mt-2">
+          Choose how you want to practice: a quick randomized set, or focused
+          drills by category.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Quick Random (Configurable) */}
+        <Card className="rounded-2xl">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center">
+                <ShuffleIcon className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle>Quick Random</CardTitle>
+                <CardDescription>
+                  Configure a randomized set and start instantly.
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+
+          <CardContent className="grid gap-6">
+            <RandomConfigurator />
+          </CardContent>
+
+          <CardFooter className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <TimerIcon className="h-4 w-4" />
+              <span>Timed session</span>
+            </div>
+          </CardFooter>
+        </Card>
+
+        {/* Practice by Category – now embedded here */}
+        <Card className="rounded-2xl">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center">
+                <ListChecks className="h-5 w-5" />
+              </div>
+              <div>
+                <CardTitle>Practice by Category</CardTitle>
+                <CardDescription>
+                  Target a topic (Algebra, Geometry, Data & Probability, …).
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+
+          <form action={startCategoryPractice}>
+            <CardContent className="grid gap-6">
+              {/* Category */}
+              <div className="grid gap-2">
+                <Label htmlFor="category">Category</Label>
+                <Select name="category" required>
+                  <SelectTrigger id="category">
+                    <SelectValue placeholder="Choose a category…" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES.map((c) => (
+                      <SelectItem
+                        key={c}
+                        value={c}
+                        // Disable if no questions available
+                        disabled={(counts[c] ?? 0) === 0}
+                      >
+                        {c}
+                        {(counts[c] ?? 0) > 0
+                          ? `  ·  ${counts[c]} Qs`
+                          : "  ·  None"}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Count & Minutes */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="count">Question count</Label>
+                  <Input
+                    id="count"
+                    name="count"
+                    type="number"
+                    min={1}
+                    defaultValue={20}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="minutes">Minutes</Label>
+                  <Input
+                    id="minutes"
+                    name="minutes"
+                    type="number"
+                    min={1}
+                    defaultValue={45}
+                  />
+                </div>
+              </div>
+            </CardContent>
+
+            <CardFooter className="mt-8 flex items-center justify-between">
+              <div className="text-sm text-muted-foreground">
+                Pick category, set count & time
+              </div>
+              <Button type="submit">Start Practice</Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
+
+      <Separator className="my-8" />
+
+      <div className="text-xs text-muted-foreground">
+        Tip: Categories with “None” are disabled until you add questions for
+        them.
+      </div>
     </div>
   );
 }
