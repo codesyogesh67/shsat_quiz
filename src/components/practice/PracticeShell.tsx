@@ -36,6 +36,19 @@ import QuestionView from "./QuestionView";
 import QuestionMap from "./QuestionMap";
 import TopicPicker from "./TopicPicker";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter as DlgFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { v4 as uuid } from "uuid";
+
 type Choice = { key: string; text: string };
 type Media =
   | { type: "image"; url: string; alt?: string }
@@ -60,7 +73,8 @@ const DIAGNOSTIC_SECONDS = 12 * 60; // 12 minutes
 export default function PracticeShell({
   initialMode,
     initialCount,
-    initialData,
+  initialData,
+    defaultEmail
 
 }: {
     initialMode: string;
@@ -72,9 +86,11 @@ export default function PracticeShell({
       presetLabel: string | null;
       currentExamKey: string | null;
     } | null;
+    defaultEmail?: string;
   }) {
   const router = useRouter();
   const sp = useSearchParams();
+  const [sessionId] = React.useState(() => uuid());
 
   // Derived mode flags
   const mode = (sp.get("mode") as string) ?? initialMode ?? "diagnostic";
@@ -110,6 +126,13 @@ export default function PracticeShell({
     byCategory: Record<string, { correct: number; total: number }>;
     perQuestion?: PerQ[];
   }>(null);
+
+//email dialog state
+  const [emailOpen, setEmailOpen] = React.useState(false);
+const [emailTo, setEmailTo] = React.useState(defaultEmail ?? "");
+const [emailSending, setEmailSending] = React.useState(false);
+const [emailError, setEmailError] = React.useState<string | null>(null);
+const [emailSent, setEmailSent] = React.useState(false);
 
   // Review mode
   const [reviewing, setReviewing] = React.useState(false);
@@ -203,7 +226,43 @@ export default function PracticeShell({
     return () => {
       ignore = true;
     };
-  }, [sp, initialMode, initialCount,initialData]);
+    }, [sp, initialMode, initialCount, initialData]);
+  
+  
+    async function sendReportEmail() {
+      if (!results) return;
+      setEmailSending(true);
+      setEmailError(null);
+      setEmailSent(false);
+    
+      try {
+        const payload = {
+          to: emailTo,
+          examSet: isDiagnostic
+            ? "Diagnostic"
+            : (category ? `Practice — ${category}` : "Practice"),
+          results, // contains correct/total/byCategory/perQuestion
+        };
+    
+        const res = await fetch("/api/email/exam-report", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+    
+        if (!res.ok) {
+          const j = await res.json().catch(() => ({}));
+          throw new Error(j?.error || `Failed with ${res.status}`);
+        }
+    
+        setEmailSent(true);
+        setTimeout(() => setEmailOpen(false), 900);
+      } catch (e: any) {
+        setEmailError(e?.message || "Failed to send email");
+      } finally {
+        setEmailSending(false);
+      }
+    }
 
   // Timer (only in Diagnostic and while active)
   React.useEffect(() => {
@@ -335,39 +394,43 @@ export default function PracticeShell({
     return { correct, total, byCategory, perQuestion };
   }
 
-  async function handleSubmit(_autoFromTimer: boolean) {
-    if (submitted) return;
-    setSubmitted(true);
+  // update handleSubmit to include sessionId + examKey + correct mode
+async function handleSubmit(_autoFromTimer: boolean) {
+  if (submitted) return;
+  setSubmitted(true);
 
-    try {
-      const r = await fetch("/api/sessions/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mode: isDiagnostic ? "DIAGNOSTIC" : "TOPIC",
-          category: isTopic ? category : undefined,
-          questionIds: questions.map((q) => q.id),
-          answers,
-          startedAt,
-        }),
-      });
-      if (r.ok) {
-        const j = await r.json();
-        const srv = j?.results;
-        if (srv) {
-          if (!srv.perQuestion) {
-            const local = scoreLocally();
-            srv.perQuestion = local.perQuestion;
-          }
-          setResults(srv);
-          return;
+  try {
+    const r = await fetch("/api/sessions/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId,                                    // 👈 NEW
+        mode: isDiagnostic ? "DIAGNOSTIC" : (isTopic ? "TOPIC" : "TEST"),
+        category: isTopic ? category : undefined,
+        examKey,                                      // 👈 NEW (null for random/diagnostic)
+        questionIds: questions.map((q) => q.id),
+        answers,
+        startedAt,
+      }),
+    });
+
+    if (r.ok) {
+      const j = await r.json();
+      const srv = j?.results;
+      if (srv) {
+        if (!srv.perQuestion) {
+          const local = scoreLocally();
+          srv.perQuestion = local.perQuestion;
         }
+        setResults(srv);
+        return;
       }
-    } catch {
-      // ignore, fall back to local
     }
-    setResults(scoreLocally());
+  } catch {
+    // ignore, fall back to local
   }
+  setResults(scoreLocally());
+}
 
   function startReview(
     filter: "all" | "wrong" | "correct" | "flagged"
@@ -497,6 +560,49 @@ export default function PracticeShell({
           >
             Review flagged
           </Button>
+
+ {/* +++++++++ NEW: Send via email + dialog +++++++++ */}
+ <Dialog open={emailOpen} onOpenChange={setEmailOpen}>
+    <DialogTrigger asChild>
+      <Button variant="secondary">Send report via email</Button>
+    </DialogTrigger>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Send report</DialogTitle>
+        <DialogDescription>
+          Enter a recipient email and we’ll send this exam summary.
+        </DialogDescription>
+      </DialogHeader>
+
+      <div className="space-y-3">
+        <div className="grid gap-2">
+          <Label htmlFor="report-email">Recipient email</Label>
+          <Input
+            id="report-email"
+            type="email"
+            placeholder="student@school.com"
+            value={emailTo}
+            onChange={(e) => setEmailTo(e.target.value)}
+          />
+        </div>
+        {emailError && (
+          <p className="text-sm text-destructive">Error: {emailError}</p>
+        )}
+        {emailSent && (
+          <p className="text-sm text-green-600">Sent! Check the inbox shortly.</p>
+        )}
+      </div>
+
+      <DlgFooter>
+        <Button onClick={sendReportEmail} disabled={!emailTo || emailSending}>
+          {emailSending ? "Sending..." : "Send"}
+        </Button>
+      </DlgFooter>
+    </DialogContent>
+  </Dialog>
+
+
+
           <div className="ml-auto flex gap-2">
             <Button
               onClick={() =>
