@@ -8,6 +8,12 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { ReviewRow } from "@/app/review/[sessionId]/page";
 
+type ReviewTab = "all" | "wrong" | "correct" | "flagged";
+
+function isReviewTab(v: string): v is ReviewTab {
+  return v === "all" || v === "wrong" || v === "correct" || v === "flagged";
+}
+
 export default function ReviewClient({
   sessionMeta,
   rows,
@@ -69,7 +75,10 @@ export default function ReviewClient({
 
       {/* sticky tabs */}
       <div className="sticky top-16 z-10 bg-background/80 backdrop-blur">
-        <Tabs value={tab} onValueChange={(v) => setTab(v as any)}>
+        <Tabs
+          value={tab}
+          onValueChange={(v) => setTab(isReviewTab(v) ? v : "all")}
+        >
           <TabsList>
             <TabsTrigger value="all">
               All <Count n={rows.length} />
