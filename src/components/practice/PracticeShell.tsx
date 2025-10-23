@@ -35,24 +35,10 @@ import {
 import QuestionView from "./QuestionView";
 import QuestionMap from "./QuestionMap";
 import TopicPicker from "./TopicPicker";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter as DlgFooter,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { v4 as uuid } from "uuid";
 
 type Choice = { key: string; text: string };
-type Media =
-  | { type: "image"; url: string; alt?: string }
-  | null;
+type Media = { type: "image"; url: string; alt?: string } | null;
 
 export type Question = {
   id: string;
@@ -68,29 +54,31 @@ export type Question = {
 type Answers = Record<string, string>; // qid -> choiceKey or numeric string
 type PerQ = { id: string; correct: boolean; user?: string; gold?: string };
 
-const DIAGNOSTIC_SECONDS = 12 * 60; // 12 minutes
-
 export default function PracticeShell({
   initialMode,
-    initialCount,
+  initialCount,
   initialData,
-    defaultEmail
-
+  defaultEmail, // kept in props for compatibility; unused now
 }: {
-    initialMode: string;
-    initialCount: number;
-    initialData?: {
-      mode: "TEST";
-      questions: Question[];
-      minutes: number;
-      presetLabel: string | null;
-      currentExamKey: string | null;
-    } | null;
-    defaultEmail?: string;
-  }) {
+  initialMode: string;
+  initialCount: number;
+  initialData?:
+    | {
+        mode: "TEST";
+        questions: Question[];
+        minutes: number;
+        presetLabel: string | null;
+        currentExamKey: string | null;
+      }
+    | null;
+  defaultEmail?: string;
+}) {
   const router = useRouter();
   const sp = useSearchParams();
   const [sessionId] = React.useState(() => uuid());
+
+  // if server hydrated a test, expose examKey for submit payload
+  const examKey = initialData?.currentExamKey ?? null;
 
   // Derived mode flags
   const mode = (sp.get("mode") as string) ?? initialMode ?? "diagnostic";
@@ -100,14 +88,14 @@ export default function PracticeShell({
   const sessionLabel = isDiagnostic
     ? "Diagnostic"
     : `Practice${category ? ` — ${category}` : ""}`;
-  
-    const minutesParam = React.useMemo(() => {
-      const raw = sp.get("minutes");
-      const m = raw ? Number(raw) : NaN;
-      return Number.isFinite(m) && m > 0 ? Math.min(300, Math.floor(m)) : null;
-    }, [sp]);
-  
-    const DEFAULT_SECONDS = (minutesParam ?? 12) * 60; // fallback to 12 min
+
+  const minutesParam = React.useMemo(() => {
+    const raw = sp.get("minutes");
+    const m = raw ? Number(raw) : NaN;
+    return Number.isFinite(m) && m > 0 ? Math.min(300, Math.floor(m)) : null;
+  }, [sp]);
+
+  const DEFAULT_SECONDS = (minutesParam ?? 12) * 60; // fallback to 12 min
 
   // State
   const [loading, setLoading] = React.useState(true);
@@ -127,22 +115,14 @@ export default function PracticeShell({
     perQuestion?: PerQ[];
   }>(null);
 
-//email dialog state
-  const [emailOpen, setEmailOpen] = React.useState(false);
-const [emailTo, setEmailTo] = React.useState(defaultEmail ?? "");
-const [emailSending, setEmailSending] = React.useState(false);
-const [emailError, setEmailError] = React.useState<string | null>(null);
-const [emailSent, setEmailSent] = React.useState(false);
-
   // Review mode
   const [reviewing, setReviewing] = React.useState(false);
   const [reviewFilter, setReviewFilter] =
-      React.useState<"all" | "wrong" | "correct" | "flagged">("wrong");
-    
-    // hydrate immediately if server sent initialData ---
+    React.useState<"all" | "wrong" | "correct" | "flagged">("wrong");
+
+  // hydrate immediately if server sent initialData
   React.useEffect(() => {
     if (!initialData) return;
-    // We are starting directly in TEST mode from server
     setQuestions(initialData.questions ?? []);
     setAnswers({});
     setFlags({});
@@ -153,20 +133,16 @@ const [emailSent, setEmailSent] = React.useState(false);
     setStartedAt(Date.now());
 
     const fromInitial = Math.max(1, Math.round(initialData.minutes * 60));
-    setSecondsLeft((minutesParam ? minutesParam * 60 : fromInitial));
-    setLoading(false); // skip loader
-    // DIAGNOSTIC_SECONDS timer applies only to diagnostic flows; for exam sets we keep your current 12-min timer logic (or you can set minutes here if you time non-diagnostic too)
-    // If you want to time non-diagnostic sessions using `initialData.minutes`, replace DIAGNOSTIC_SECONDS here accordingly.
-  }, [initialData,minutesParam]);
-    
+    setSecondsLeft(minutesParam ? minutesParam * 60 : fromInitial);
+    setLoading(false);
+  }, [initialData, minutesParam]);
 
   // Fetch questions when ready
-    React.useEffect(() => {
-      
-        if (initialData?.mode === "TEST") {
-            // Already hydrated by server; do not fetch.
-            return;
-          }
+  React.useEffect(() => {
+    if (initialData?.mode === "TEST") {
+      // Already hydrated by server; do not fetch.
+      return;
+    }
     let ignore = false;
     const count = Number(sp.get("count") ?? initialCount ?? 20);
     const modeQ = (sp.get("mode") as string) ?? initialMode ?? "diagnostic";
@@ -226,43 +202,7 @@ const [emailSent, setEmailSent] = React.useState(false);
     return () => {
       ignore = true;
     };
-    }, [sp, initialMode, initialCount, initialData]);
-  
-  
-    async function sendReportEmail() {
-      if (!results) return;
-      setEmailSending(true);
-      setEmailError(null);
-      setEmailSent(false);
-    
-      try {
-        const payload = {
-          to: emailTo,
-          examSet: isDiagnostic
-            ? "Diagnostic"
-            : (category ? `Practice — ${category}` : "Practice"),
-          results, // contains correct/total/byCategory/perQuestion
-        };
-    
-        const res = await fetch("/api/email/exam-report", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-    
-        if (!res.ok) {
-          const j = await res.json().catch(() => ({}));
-          throw new Error(j?.error || `Failed with ${res.status}`);
-        }
-    
-        setEmailSent(true);
-        setTimeout(() => setEmailOpen(false), 900);
-      } catch (e: any) {
-        setEmailError(e?.message || "Failed to send email");
-      } finally {
-        setEmailSending(false);
-      }
-    }
+  }, [sp, initialMode, initialCount, initialData]);
 
   // Timer (only in Diagnostic and while active)
   React.useEffect(() => {
@@ -394,47 +334,45 @@ const [emailSent, setEmailSent] = React.useState(false);
     return { correct, total, byCategory, perQuestion };
   }
 
-  // update handleSubmit to include sessionId + examKey + correct mode
-async function handleSubmit(_autoFromTimer: boolean) {
-  if (submitted) return;
-  setSubmitted(true);
+  // submit (includes sessionId + examKey + correct mode)
+  async function handleSubmit(_autoFromTimer: boolean) {
+    if (submitted) return;
+    setSubmitted(true);
 
-  try {
-    const r = await fetch("/api/sessions/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        sessionId,                                    // 👈 NEW
-        mode: isDiagnostic ? "DIAGNOSTIC" : (isTopic ? "TOPIC" : "TEST"),
-        category: isTopic ? category : undefined,
-        examKey,                                      // 👈 NEW (null for random/diagnostic)
-        questionIds: questions.map((q) => q.id),
-        answers,
-        startedAt,
-      }),
-    });
+    try {
+      const r = await fetch("/api/sessions/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId,
+          mode: isDiagnostic ? "DIAGNOSTIC" : isTopic ? "TOPIC" : "TEST",
+          category: isTopic ? category : undefined,
+          examKey, // null for diagnostic/topic; set when TEST via initialData
+          questionIds: questions.map((q) => q.id),
+          answers,
+          startedAt,
+        }),
+      });
 
-    if (r.ok) {
-      const j = await r.json();
-      const srv = j?.results;
-      if (srv) {
-        if (!srv.perQuestion) {
-          const local = scoreLocally();
-          srv.perQuestion = local.perQuestion;
+      if (r.ok) {
+        const j = await r.json();
+        const srv = j?.results;
+        if (srv) {
+          if (!srv.perQuestion) {
+            const local = scoreLocally();
+            srv.perQuestion = local.perQuestion;
+          }
+          setResults(srv);
+          return;
         }
-        setResults(srv);
-        return;
       }
+    } catch {
+      // ignore, fall back to local
     }
-  } catch {
-    // ignore, fall back to local
+    setResults(scoreLocally());
   }
-  setResults(scoreLocally());
-}
 
-  function startReview(
-    filter: "all" | "wrong" | "correct" | "flagged"
-  ) {
+  function startReview(filter: "all" | "wrong" | "correct" | "flagged") {
     setReviewFilter(filter);
     setReviewing(true);
     const list = getIndicesForFilter(
@@ -561,55 +499,15 @@ async function handleSubmit(_autoFromTimer: boolean) {
             Review flagged
           </Button>
 
- {/* +++++++++ NEW: Send via email + dialog +++++++++ */}
- <Dialog open={emailOpen} onOpenChange={setEmailOpen}>
-    <DialogTrigger asChild>
-      <Button variant="secondary">Send report via email</Button>
-    </DialogTrigger>
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Send report</DialogTitle>
-        <DialogDescription>
-          Enter a recipient email and we’ll send this exam summary.
-        </DialogDescription>
-      </DialogHeader>
-
-      <div className="space-y-3">
-        <div className="grid gap-2">
-          <Label htmlFor="report-email">Recipient email</Label>
-          <Input
-            id="report-email"
-            type="email"
-            placeholder="student@school.com"
-            value={emailTo}
-            onChange={(e) => setEmailTo(e.target.value)}
-          />
-        </div>
-        {emailError && (
-          <p className="text-sm text-destructive">Error: {emailError}</p>
-        )}
-        {emailSent && (
-          <p className="text-sm text-green-600">Sent! Check the inbox shortly.</p>
-        )}
-      </div>
-
-      <DlgFooter>
-        <Button onClick={sendReportEmail} disabled={!emailTo || emailSending}>
-          {emailSending ? "Sending..." : "Send"}
-        </Button>
-      </DlgFooter>
-    </DialogContent>
-  </Dialog>
-
-
-
           <div className="ml-auto flex gap-2">
             <Button
               onClick={() =>
                 router.push(
                   isDiagnostic
                     ? "/practice?mode=diagnostic"
-                    : `/practice?mode=topic${category ? `&category=${encodeURIComponent(category)}` : ""}`
+                    : `/practice?mode=topic${
+                        category ? `&category=${encodeURIComponent(category)}` : ""
+                      }`
                 )
               }
             >
@@ -771,7 +669,9 @@ async function handleSubmit(_autoFromTimer: boolean) {
                 </div>
               </div>
             ) : (
-              <div className="text-sm text-muted-foreground">{sessionLabel}</div>
+              <div className="text-sm text-muted-foreground">
+                {sessionLabel}
+              </div>
             )}
 
             <div className="text-sm text-muted-foreground">
