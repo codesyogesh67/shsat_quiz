@@ -1,85 +1,198 @@
-// app/api/webhooks/clerk/route.ts
+// src/app/api/webhooks/clerk/route.ts
 import { NextResponse } from "next/server";
-
 import { Webhook } from "svix";
-import type { WebhookEvent } from "@clerk/nextjs/server"; // ✅ use Clerk’s event type
+import type { WebhookEvent } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
+import { clerkClient } from "@clerk/nextjs/server";
+import { createClerkClient } from "@clerk/backend";
 
 export const runtime = "nodejs";
 
-const secret = process.env.CLERK_WEBHOOK_SECRET!;
+// const clerkClient = Clerk({ secretKey: process.env.CLERK_SECRET_KEY! });
 
+const adminClerk = process.env.CLERK_SECRET_KEY // ✅ explicit admin client
+  ? createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY })
+  : null;
+
+/** ---- Helpers ---- */
+function need(h: Headers, key: string) {
+  const v = h.get(key);
+  if (!v) throw new Error(`Missing header: ${key}`);
+  return v;
+}
+
+// Shapes we care about from Clerk's event payload
+type EmailAddress = {
+  id: string;
+  email_address: string;
+  verification?: { status?: string } | null;
+};
+type ExternalAccount = { email_address?: string | null };
+
+function getBestEmailFromEvent(u: {
+  primary_email_address_id?: string | null;
+  email_addresses?: EmailAddress[] | null;
+  external_accounts?: ExternalAccount[] | null;
+}) {
+  // 1) Primary email (if set)
+  if (u.primary_email_address_id && u.email_addresses?.length) {
+    const primary = u.email_addresses.find(
+      (e) => e.id === u.primary_email_address_id
+    );
+    if (primary?.email_address) return primary.email_address.toLowerCase();
+  }
+  // 2) First VERIFIED email
+  const verified = u.email_addresses?.find(
+    (e) => e.verification?.status === "verified" && !!e.email_address
+  );
+  if (verified?.email_address) return verified.email_address.toLowerCase();
+
+  // 3) Any email present
+  const any = u.email_addresses?.find((e) => !!e.email_address)?.email_address;
+  if (any) return any.toLowerCase();
+
+  // 4) OAuth external account fallback
+  const ext = u.external_accounts?.find((x) => !!x.email_address)
+    ?.email_address;
+  if (ext) return ext.toLowerCase();
+
+  // 5) Nothing found
+  return null;
+}
+
+async function upsertByClerkId(
+  clerkUserId: string,
+  opts?: {
+    email?: string | null;
+    name?: string | null;
+    imageUrl?: string | null;
+  }
+) {
+  let email = opts?.email ?? null;
+  let name = opts?.name ?? null;
+  let imageUrl = opts?.imageUrl ?? null;
+
+  // Last-resort: fetch from Clerk only if we have a server secret (helps local dev)
+  if ((!email || !name || !imageUrl) && process.env.CLERK_SECRET_KEY) {
+    try {
+      const c = await adminClerk.users.getUser(clerkUserId);
+      email =
+        email ??
+        c.primaryEmailAddress?.emailAddress ??
+        c.emailAddresses[0]?.emailAddress ??
+        null;
+      name =
+        name ??
+        ([c.firstName, c.lastName].filter(Boolean).join(" ") ||
+          c.username ||
+          email ||
+          null);
+      imageUrl = imageUrl ?? (c.imageUrl || null);
+    } catch (e) {
+      console.warn("[webhook] clerkClient.getUser fallback failed:", e);
+    }
+  }
+
+  // Upsert using your schema (externalAuthId is the unique key to Clerk id)
+  return prisma.user.upsert({
+    where: { externalAuthId: clerkUserId },
+    update: {
+      ...(email !== undefined ? { email } : {}),
+      ...(name !== undefined ? { name } : {}),
+      ...(imageUrl !== undefined ? { imageUrl } : {}),
+    },
+    create: {
+      externalAuthId: clerkUserId,
+      ...(email !== undefined ? { email } : {}),
+      ...(name !== undefined ? { name } : {}),
+      ...(imageUrl !== undefined ? { imageUrl } : {}),
+    },
+  });
+}
+
+/** ---- Handler ---- */
 export async function POST(req: Request) {
-  const payload = await req.text();
-  const svixId = req.headers.get("svix-id");
-  const svixTimestamp = req.headers.get("svix-timestamp");
-  const svixSignature = req.headers.get("svix-signature");
-  if (!svixId || !svixTimestamp || !svixSignature) {
+  // 1) Verify signature with Svix using RAW body
+  const secret = process.env.CLERK_WEBHOOK_SECRET;
+  if (!secret) {
     return NextResponse.json(
-      { ok: false, error: "Missing Svix headers" },
-      { status: 400 }
+      { ok: false, error: "missing CLERK_WEBHOOK_SECRET" },
+      { status: 500 }
     );
   }
-  const svixHeaders = {
-    "svix-id": svixId,
-    "svix-timestamp": svixTimestamp,
-    "svix-signature": svixSignature,
-  };
 
-  let evt: WebhookEvent; // ✅ strongly typed
+  let evt: WebhookEvent;
   try {
-    evt = new Webhook(secret).verify(payload, svixHeaders) as WebhookEvent; // <- no `any`
-  } catch {
+    const payload = await req.text();
+    const svixHeaders = {
+      "svix-id": need(req.headers, "svix-id"),
+      "svix-timestamp": need(req.headers, "svix-timestamp"),
+      "svix-signature": need(req.headers, "svix-signature"),
+    };
+    evt = new Webhook(secret).verify(payload, svixHeaders) as WebhookEvent;
+  } catch (e) {
     return NextResponse.json(
-      { ok: false, error: "invalid signature" },
+      { ok: false, error: `invalid signature: ${e?.message || e}` },
       { status: 400 }
     );
   }
 
-  // Optional: narrow useful fields for user.* events
-  if (evt.type === "user.created" || evt.type === "user.updated") {
-    // A lightweight shape for the parts we read:
-    const d = evt.data as {
-      id: string;
-      first_name?: string | null;
-      last_name?: string | null;
-      username?: string | null;
-      image_url?: string | null;
-      primary_email_address_id?: string | null;
-      email_addresses?: { id: string; email_address: string }[];
-    };
+  try {
+    switch (evt.type) {
+      case "user.created":
+      case "user.updated": {
+        const u: any = evt.data;
 
-    const email =
-      d.email_addresses?.find((e) => e.id === d.primary_email_address_id)
-        ?.email_address ??
-      d.email_addresses?.[0]?.email_address ??
-      null;
+        console.log("user", u);
 
-    const name =
-      d.first_name || d.last_name
-        ? `${d.first_name ?? ""} ${d.last_name ?? ""}`.trim()
-        : d.username ?? null;
+        // Extract directly from event payload (works even without CLERK_SECRET_KEY)
+        const email = getBestEmailFromEvent({
+          primary_email_address_id: u?.primary_email_address_id,
+          email_addresses: u?.email_addresses,
+          external_accounts: u?.external_accounts,
+        });
 
-    await prisma.user.upsert({
-      where: { externalAuthId: d.id },
-      update: {
-        email: email ?? undefined,
-        name,
-        imageUrl: d.image_url ?? null,
-      },
-      create: {
-        externalAuthId: d.id,
-        email: email!,
-        name,
-        imageUrl: d.image_url ?? null,
-      },
-    });
+        const name =
+          [u?.first_name, u?.last_name].filter(Boolean).join(" ") ||
+          u?.username ||
+          email ||
+          null;
+        const imageUrl = u?.image_url ?? null;
+
+        await upsertByClerkId(u.id, { email, name, imageUrl });
+        return NextResponse.json({ ok: true, event: evt.type });
+      }
+
+      // Many apps also see session.created on first sign-in
+      case "session.created": {
+        const s: any = evt.data;
+        if (s?.user_id) {
+          // Upsert minimally; upsertByClerkId will fetch more if CLERK_SECRET_KEY exists
+          await upsertByClerkId(s.user_id);
+        }
+        return NextResponse.json({ ok: true, event: evt.type });
+      }
+
+      // Keep DB in sync (soft-delete is also fine)
+      case "user.deleted": {
+        const uid = (evt.data as any)?.id as string | undefined;
+        if (uid) {
+          await prisma.user.deleteMany({ where: { externalAuthId: uid } });
+        }
+        return NextResponse.json({ ok: true, event: evt.type });
+      }
+
+      default:
+        // Ignore events you don't care about
+        return NextResponse.json({ ok: true, ignored: evt.type });
+    }
+  } catch (e) {
+    console.error("Webhook DB error:", e);
+    return NextResponse.json({ ok: false, error: "db error" }, { status: 500 });
   }
+}
 
-  if (evt.type === "user.deleted") {
-    const d = evt.data as { id: string };
-    await prisma.user.deleteMany({ where: { externalAuthId: d.id } });
-  }
-
-  return NextResponse.json({ ok: true });
+// Optional: block other methods
+export async function GET() {
+  return NextResponse.json({ error: "Method Not Allowed" }, { status: 405 });
 }
