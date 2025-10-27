@@ -8,9 +8,7 @@ import { createClerkClient } from "@clerk/backend";
 
 export const runtime = "nodejs";
 
-// const clerkClient = Clerk({ secretKey: process.env.CLERK_SECRET_KEY! });
-
-const adminClerk = process.env.CLERK_SECRET_KEY // ✅ explicit admin client
+const adminClerk = process.env.CLERK_SECRET_KEY
   ? createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY })
   : null;
 
@@ -73,7 +71,7 @@ async function upsertByClerkId(
   let imageUrl = opts?.imageUrl ?? null;
 
   // Last-resort: fetch from Clerk only if we have a server secret (helps local dev)
-  if ((!email || !name || !imageUrl) && process.env.CLERK_SECRET_KEY) {
+  if ((!email || !name || !imageUrl) && adminClerk) {
     try {
       const c = await adminClerk.users.getUser(clerkUserId);
       email =
@@ -89,7 +87,7 @@ async function upsertByClerkId(
           null);
       imageUrl = imageUrl ?? (c.imageUrl || null);
     } catch (e) {
-      console.warn("[webhook] clerkClient.getUser fallback failed:", e);
+      console.warn("[webhook] adminClerk.getUser fallback failed:", e);
     }
   }
 
@@ -109,6 +107,14 @@ async function upsertByClerkId(
     },
   });
 }
+
+/** ---- Narrowed event helpers (types only) ---- */
+type UserUpsertEvt = Extract<
+  WebhookEvent,
+  { type: "user.created" | "user.updated" }
+>;
+type SessionCreatedEvt = Extract<WebhookEvent, { type: "session.created" }>;
+type UserDeletedEvt = Extract<WebhookEvent, { type: "user.deleted" }>;
 
 /** ---- Handler ---- */
 export async function POST(req: Request) {
@@ -131,8 +137,9 @@ export async function POST(req: Request) {
     };
     evt = new Webhook(secret).verify(payload, svixHeaders) as WebhookEvent;
   } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
     return NextResponse.json(
-      { ok: false, error: `invalid signature: ${e?.message || e}` },
+      { ok: false, error: `invalid signature: ${msg}` },
       { status: 400 }
     );
   }
@@ -141,15 +148,13 @@ export async function POST(req: Request) {
     switch (evt.type) {
       case "user.created":
       case "user.updated": {
-        const u: any = evt.data;
-
-        console.log("user", u);
+        const u = (evt as UserUpsertEvt).data;
 
         // Extract directly from event payload (works even without CLERK_SECRET_KEY)
         const email = getBestEmailFromEvent({
-          primary_email_address_id: u?.primary_email_address_id,
-          email_addresses: u?.email_addresses,
-          external_accounts: u?.external_accounts,
+          primary_email_address_id: u?.primary_email_address_id ?? null,
+          email_addresses: (u as any)?.email_addresses ?? null, // Clerk event typing exposes snake_case
+          external_accounts: (u as any)?.external_accounts ?? null,
         });
 
         const name =
@@ -157,25 +162,24 @@ export async function POST(req: Request) {
           u?.username ||
           email ||
           null;
-        const imageUrl = u?.image_url ?? null;
+        const imageUrl = (u as any)?.image_url ?? null;
 
         await upsertByClerkId(u.id, { email, name, imageUrl });
         return NextResponse.json({ ok: true, event: evt.type });
       }
 
-      // Many apps also see session.created on first sign-in
       case "session.created": {
-        const s: any = evt.data;
-        if (s?.user_id) {
+        const s = (evt as SessionCreatedEvt).data;
+        const userId = s?.user_id;
+        if (userId) {
           // Upsert minimally; upsertByClerkId will fetch more if CLERK_SECRET_KEY exists
-          await upsertByClerkId(s.user_id);
+          await upsertByClerkId(userId);
         }
         return NextResponse.json({ ok: true, event: evt.type });
       }
 
-      // Keep DB in sync (soft-delete is also fine)
       case "user.deleted": {
-        const uid = (evt.data as any)?.id as string | undefined;
+        const uid = (evt as UserDeletedEvt).data.id;
         if (uid) {
           await prisma.user.deleteMany({ where: { externalAuthId: uid } });
         }
