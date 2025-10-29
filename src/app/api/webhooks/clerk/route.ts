@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { Webhook } from "svix";
 import type { WebhookEvent } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
-import { clerkClient } from "@clerk/nextjs/server";
 import { createClerkClient } from "@clerk/backend";
 
 export const runtime = "nodejs";
@@ -47,7 +46,28 @@ interface ClerkSessionPayload {
   user_id?: string | null;
 }
 
-/** ---- Shapes we care about for best-email helper ---- */
+interface ClerkUserDeletedPayload {
+  id: string;
+}
+
+/** ---- Helper for resilient narrowing (works even if Clerk types omit an event) ---- */
+type Narrowed<TType extends string, TData> = Extract<
+  WebhookEvent,
+  { type: TType }
+> extends never
+  ? { type: TType; data: TData }
+  : Extract<WebhookEvent, { type: TType }>;
+
+/** ---- Event specializations ---- */
+type UserCreatedEvt = Narrowed<"user.created", ClerkUserPayload>;
+type UserUpdatedEvt = Narrowed<"user.updated", ClerkUserPayload>;
+type UserUpsertEvt = UserCreatedEvt | UserUpdatedEvt;
+
+type SessionCreatedEvt = Narrowed<"session.created", ClerkSessionPayload>;
+
+type UserDeletedEvt = Narrowed<"user.deleted", ClerkUserDeletedPayload>;
+
+/** ---- Email selection helper ---- */
 function getBestEmailFromEvent(u: {
   primary_email_address_id?: string | null;
   email_addresses?: ClerkEmailAddress[] | null;
@@ -79,6 +99,7 @@ function getBestEmailFromEvent(u: {
   return null;
 }
 
+/** ---- DB upsert ---- */
 async function upsertByClerkId(
   clerkUserId: string,
   opts?: {
@@ -112,7 +133,6 @@ async function upsertByClerkId(
     }
   }
 
-  // Upsert using your schema (externalAuthId is the unique key to Clerk id)
   return prisma.user.upsert({
     where: { externalAuthId: clerkUserId },
     update: {
@@ -128,14 +148,6 @@ async function upsertByClerkId(
     },
   });
 }
-
-/** ---- Narrowed event helpers (types only) ---- */
-type UserUpsertEvt = Extract<
-  WebhookEvent,
-  { type: "user.created" | "user.updated" }
->;
-type SessionCreatedEvt = Extract<WebhookEvent, { type: "session.created" }>;
-type UserDeletedEvt = Extract<WebhookEvent, { type: "user.deleted" }>;
 
 /** ---- Handler ---- */
 export async function POST(req: Request) {
@@ -169,9 +181,8 @@ export async function POST(req: Request) {
     switch (evt.type) {
       case "user.created":
       case "user.updated": {
-        const u = (evt as UserUpsertEvt).data as ClerkUserPayload;
+        const u = (evt as UserUpsertEvt).data;
 
-        // Extract directly from event payload (works even without CLERK_SECRET_KEY)
         const email = getBestEmailFromEvent({
           primary_email_address_id: u.primary_email_address_id ?? null,
           email_addresses: u.email_addresses ?? null,
@@ -190,18 +201,15 @@ export async function POST(req: Request) {
         return NextResponse.json({ ok: true, event: evt.type });
       }
 
-      // Many apps also see session.created on first sign-in
       case "session.created": {
-        const s = (evt as SessionCreatedEvt).data as ClerkSessionPayload;
+        const s = (evt as SessionCreatedEvt).data;
         const userId = s.user_id ?? null;
         if (userId) {
-          // Upsert minimally; upsertByClerkId will fetch more if adminClerk exists
           await upsertByClerkId(userId);
         }
         return NextResponse.json({ ok: true, event: evt.type });
       }
 
-      // Keep DB in sync (soft-delete is also fine)
       case "user.deleted": {
         const uid = (evt as UserDeletedEvt).data.id;
         if (uid) {
@@ -211,7 +219,6 @@ export async function POST(req: Request) {
       }
 
       default:
-        // Ignore events you don't care about
         return NextResponse.json({ ok: true, ignored: evt.type });
     }
   } catch (e) {
@@ -220,7 +227,7 @@ export async function POST(req: Request) {
   }
 }
 
-// Optional: block other methods
+/** ---- Optional: block other methods ---- */
 export async function GET() {
   return NextResponse.json({ error: "Method Not Allowed" }, { status: 405 });
 }
