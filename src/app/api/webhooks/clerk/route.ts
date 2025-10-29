@@ -8,6 +8,7 @@ import { createClerkClient } from "@clerk/backend";
 
 export const runtime = "nodejs";
 
+/** ---- Admin Clerk client (explicit) ---- */
 const adminClerk = process.env.CLERK_SECRET_KEY
   ? createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY })
   : null;
@@ -19,18 +20,38 @@ function need(h: Headers, key: string) {
   return v;
 }
 
-// Shapes we care about from Clerk's event payload
-type EmailAddress = {
+/** ---- Types for event payloads we actually use ---- */
+type ClerkEmailAddress = {
   id: string;
   email_address: string;
   verification?: { status?: string } | null;
 };
-type ExternalAccount = { email_address?: string | null };
 
+type ClerkExternalAccount = {
+  email_address?: string | null;
+};
+
+interface ClerkUserPayload {
+  id: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  username?: string | null;
+  image_url?: string | null;
+  primary_email_address_id?: string | null;
+  email_addresses?: ClerkEmailAddress[] | null;
+  external_accounts?: ClerkExternalAccount[] | null;
+}
+
+interface ClerkSessionPayload {
+  id: string;
+  user_id?: string | null;
+}
+
+/** ---- Shapes we care about for best-email helper ---- */
 function getBestEmailFromEvent(u: {
   primary_email_address_id?: string | null;
-  email_addresses?: EmailAddress[] | null;
-  external_accounts?: ExternalAccount[] | null;
+  email_addresses?: ClerkEmailAddress[] | null;
+  external_accounts?: ClerkExternalAccount[] | null;
 }) {
   // 1) Primary email (if set)
   if (u.primary_email_address_id && u.email_addresses?.length) {
@@ -70,7 +91,7 @@ async function upsertByClerkId(
   let name = opts?.name ?? null;
   let imageUrl = opts?.imageUrl ?? null;
 
-  // Last-resort: fetch from Clerk only if we have a server secret (helps local dev)
+  // Last-resort: fetch from Clerk only if we have an admin client (helps local & prod)
   if ((!email || !name || !imageUrl) && adminClerk) {
     try {
       const c = await adminClerk.users.getUser(clerkUserId);
@@ -148,36 +169,39 @@ export async function POST(req: Request) {
     switch (evt.type) {
       case "user.created":
       case "user.updated": {
-        const u = (evt as UserUpsertEvt).data;
+        const u = (evt as UserUpsertEvt).data as ClerkUserPayload;
 
         // Extract directly from event payload (works even without CLERK_SECRET_KEY)
         const email = getBestEmailFromEvent({
-          primary_email_address_id: u?.primary_email_address_id ?? null,
-          email_addresses: (u as any)?.email_addresses ?? null, // Clerk event typing exposes snake_case
-          external_accounts: (u as any)?.external_accounts ?? null,
+          primary_email_address_id: u.primary_email_address_id ?? null,
+          email_addresses: u.email_addresses ?? null,
+          external_accounts: u.external_accounts ?? null,
         });
 
         const name =
-          [u?.first_name, u?.last_name].filter(Boolean).join(" ") ||
-          u?.username ||
+          [u.first_name, u.last_name].filter(Boolean).join(" ") ||
+          u.username ||
           email ||
           null;
-        const imageUrl = (u as any)?.image_url ?? null;
+
+        const imageUrl = u.image_url ?? null;
 
         await upsertByClerkId(u.id, { email, name, imageUrl });
         return NextResponse.json({ ok: true, event: evt.type });
       }
 
+      // Many apps also see session.created on first sign-in
       case "session.created": {
-        const s = (evt as SessionCreatedEvt).data;
-        const userId = s?.user_id;
+        const s = (evt as SessionCreatedEvt).data as ClerkSessionPayload;
+        const userId = s.user_id ?? null;
         if (userId) {
-          // Upsert minimally; upsertByClerkId will fetch more if CLERK_SECRET_KEY exists
+          // Upsert minimally; upsertByClerkId will fetch more if adminClerk exists
           await upsertByClerkId(userId);
         }
         return NextResponse.json({ ok: true, event: evt.type });
       }
 
+      // Keep DB in sync (soft-delete is also fine)
       case "user.deleted": {
         const uid = (evt as UserDeletedEvt).data.id;
         if (uid) {
