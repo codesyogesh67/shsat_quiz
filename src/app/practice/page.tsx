@@ -40,6 +40,7 @@ const CATEGORIES = [
   "Geometry",
   "Data & Probability",
   "Word Problems",
+  "Practice_set_1",
 ];
 
 // (Optional) Show available counts per category to help users choose
