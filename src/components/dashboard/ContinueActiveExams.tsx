@@ -90,7 +90,7 @@ export function ContinueActiveExams() {
         setState({ kind: "some", sessions });
       } catch {
         setState({ kind: "none" });
-    
+      }
     })();
     return () => {
       alive = false;
