@@ -29,7 +29,7 @@ export function AccuracyByCategory({ data }: { data: CategoryStat[] }) {
     <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>Accuracy by Category</CardTitle>
-        <CardDescription>
+        <CardDescription>P
           Track where you’re strongest and where to focus next.
         </CardDescription>
       </CardHeader>

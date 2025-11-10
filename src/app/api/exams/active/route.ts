@@ -17,16 +17,23 @@ export async function GET() {
   });
   if (!dbUser) return new Response(null, { status: 204 });
 
-  const s = await prisma.session.findFirst({
+  // ⬅️ get ALL active (not submitted) sessions for this user
+  const sessions = await prisma.session.findMany({
     where: { userId: dbUser.id, submittedAt: null },
     orderBy: { startedAt: "desc" },
     select: { id: true, minutes: true, questionIds: true, startedAt: true },
   });
-  if (!s) return new Response(null, { status: 204 });
+
+  // no active sessions
+  if (!sessions.length) return new Response(null, { status: 204 });
+
+  // for each session, get its attempts
+  const sessionIds = sessions.map((s) => s.id);
 
   const attempts = await prisma.attempt.findMany({
-    where: { sessionId: s.id },
+    where: { sessionId: { in: sessionIds } },
     select: {
+      sessionId: true,
       questionId: true,
       givenAnswer: true,
       flagged: true,
@@ -34,21 +41,31 @@ export async function GET() {
     },
   });
 
-  return NextResponse.json({
+  // group attempts by sessionId
+  const attemptsBySession: Record<string, any> = {};
+  for (const s of sessionIds) {
+    attemptsBySession[s] = {};
+  }
+  for (const a of attempts) {
+    if (!attemptsBySession[a.sessionId]) {
+      attemptsBySession[a.sessionId] = {};
+    }
+    attemptsBySession[a.sessionId][a.questionId] = {
+      questionId: a.questionId,
+      answer: a.givenAnswer,
+      flagged: a.flagged,
+      timeSpentSec: a.timeSpentSec,
+    };
+  }
+
+  // build response array
+  const payload = sessions.map((s) => ({
     sessionId: s.id,
     minutes: s.minutes,
     startedAt: s.startedAt,
     questionIds: s.questionIds,
-    responses: Object.fromEntries(
-      attempts.map((a) => [
-        a.questionId,
-        {
-          questionId: a.questionId,
-          answer: a.givenAnswer,
-          flagged: a.flagged,
-          timeSpentSec: a.timeSpentSec,
-        },
-      ])
-    ),
-  });
+    responses: attemptsBySession[s.id] ?? {},
+  }));
+
+  return NextResponse.json(payload);
 }

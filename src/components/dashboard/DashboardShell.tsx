@@ -37,90 +37,7 @@ import { KPI } from "./KPI";
 import { RecentExamsTable } from "./RecentExamsTable";
 import { QuickActions } from "./QuickActions";
 import { DashboardSkeleton } from "./DashboardSkeleteon";
-
-/** ---- small helper to show an active (not submitted) session banner ---- */
-function ContinueActiveCard() {
-  const [state, setState] = React.useState<
-    | { kind: "loading" }
-    | { kind: "none" }
-    | {
-        kind: "some";
-        sessionId: string;
-        minutes?: number | null;
-        startedAt?: string | null;
-        questionCount?: number | null;
-        answeredCount?: number | null;
-      }
-  >({ kind: "loading" });
-
-  React.useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        const r = await fetch("/api/exams/active", { cache: "no-store" });
-        if (!alive) return;
-        if (r.status === 204) {
-          setState({ kind: "none" });
-          return;
-        }
-        if (!r.ok) {
-          setState({ kind: "none" });
-          return;
-        }
-        const j = await r.json();
-        const answeredCount = j?.responses
-          ? Object.keys(j.responses).length
-          : null;
-        setState({
-          kind: "some",
-          sessionId: j.sessionId,
-          minutes: j.minutes,
-          startedAt: j.startedAt,
-          questionCount: Array.isArray(j.questionIds)
-            ? j.questionIds.length
-            : null,
-          answeredCount,
-        });
-      } catch {
-        setState({ kind: "none" });
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, []);
-
-  if (state.kind !== "some") return null;
-
-  return (
-    <Card className="border-primary/30">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base">Continue your active exam</CardTitle>
-        <CardDescription>
-          {state.answeredCount ?? 0}/{state.questionCount ?? "—"} answered ·{" "}
-          {state.minutes ?? "—"} min session
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <p className="text-sm text-muted-foreground">
-          You have an in-progress exam. Pick up where you left off or discard it
-          and start a new one.
-        </p>
-      </CardContent>
-      <CardFooter className="gap-2">
-        <Button asChild>
-          <Link href={`/exam/${state.sessionId}`}>Resume</Link>
-        </Button>
-        <Button asChild variant="outline">
-          {/* Change this link to your preferred new-exam entry */}
-          <Link href="/practice?exam=random&count=57&minutes=90">
-            Discard & start new
-          </Link>
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-}
+import { ContinueActiveExams } from "./ContinueActiveExams";
 
 export function DashboardShell({
   data,
@@ -130,7 +47,6 @@ export function DashboardShell({
   isLoading?: boolean;
 }) {
   if (isLoading) return <DashboardSkeleton />;
-  console.log("data from Dashboard",data)
 
   return (
     <TooltipProvider>
@@ -199,7 +115,7 @@ export function DashboardShell({
 
               <TabsContent value="exams" className="space-y-4 pt-4">
                 {/* 👇 NEW: Only appears when there is an unfinished session */}
-                <ContinueActiveCard />
+                <ContinueActiveExams />
 
                 {/* Your existing table of submitted sessions */}
                 <RecentExamsTable exams={data.recentExams} />

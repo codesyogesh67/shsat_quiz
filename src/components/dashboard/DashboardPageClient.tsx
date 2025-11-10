@@ -83,32 +83,44 @@ export default function DashboardPageClient({
     attemptsBySession.set(a.sessionId, row);
   }
 
-  const recentExams: ExamResult[] = serverData.sessions.map((s) => {
-    const agg = attemptsBySession.get(s.id) ?? { flagged: 0, timeSpentSec: 0 };
-    const minutesSpent = Math.max(
-      s.minutes ?? 0,
-      Math.round((agg.timeSpentSec ?? 0) / 60)
-    );
-    const scoreRaw = s.scoreCorrect ?? 0;
-    const accuracy = s.scoreTotal ? (s.scoreCorrect ?? 0) / s.scoreTotal : 0;
-    const wrongCount = (s.scoreTotal ?? 0) - (s.scoreCorrect ?? 0);
-    const flaggedCount = agg.flagged;
+  const recentExams: ExamResult[] = serverData.sessions
+    // ✅ only completed exams
+    .filter((s) => !!s.submittedAt)
+    // optional: show newest submitted first
+    .sort((a, b) => {
+      const ad = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+      const bd = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+      return bd - ad;
+    })
+    .map((s) => {
+      const agg = attemptsBySession.get(s.id) ?? {
+        flagged: 0,
+        timeSpentSec: 0,
+      };
+      const minutesSpent = Math.max(
+        s.minutes ?? 0,
+        Math.round((agg.timeSpentSec ?? 0) / 60)
+      );
+      const scoreRaw = s.scoreCorrect ?? 0;
+      const accuracy = s.scoreTotal ? (s.scoreCorrect ?? 0) / s.scoreTotal : 0;
+      const wrongCount = (s.scoreTotal ?? 0) - (s.scoreCorrect ?? 0);
+      const flaggedCount = agg.flagged;
 
-    // Mode heuristic
-    const mode: ExamResult["mode"] = s.scoreTotal === 57 ? "Full 57" : "Custom";
+      const mode: ExamResult["mode"] =
+        s.scoreTotal === 57 ? "Full 57" : "Custom";
 
-    return {
-      id: s.id,
-      dateISO: toDateISO(s.startedAt),
-      mode,
-      label: s.examKey ?? undefined,
-      minutesSpent,
-      scoreRaw,
-      accuracy,
-      wrongCount,
-      flaggedCount,
-    };
-  });
+      return {
+        id: s.id,
+        dateISO: toDateISO(s.submittedAt ?? s.startedAt),
+        mode,
+        label: s.examKey ?? undefined,
+        minutesSpent,
+        scoreRaw,
+        accuracy,
+        wrongCount,
+        flaggedCount,
+      };
+    });
 
   // ---- activity feed (simple: from sessions) ----
   const activity: ActivityItem[] = serverData.sessions.slice(0, 8).map((s) => ({

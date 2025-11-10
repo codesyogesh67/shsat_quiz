@@ -2,9 +2,7 @@ export type CategoryKey =
   | "Algebra"
   | "Arithmetic"
   | "Geometry"
-  | "Statistics & Probability"
-  | "Percents"
-  | "Ratios";
+  | "Statistics & Probability";
 
 export type CategoryStat = {
   category: CategoryKey | string;
