@@ -13,6 +13,22 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
+type ActiveExamResponse = {
+  sessionId: string;
+  minutes: number | null;
+  startedAt: string | null;
+  questionIds: string[];
+  responses: Record<
+    string,
+    {
+      questionId: string;
+      answer: string | null;
+      flagged: boolean;
+      timeSpentSec: number;
+    }
+  >;
+};
+
 function formatDateTime(d?: string | null) {
   if (!d) return "unknown time";
   const dt = new Date(d);
@@ -61,7 +77,7 @@ export function ContinueActiveExams() {
           return;
         }
 
-        const sessions = arr.map((s: any) => ({
+        const sessions = (arr as ActiveExamResponse[]).map((s) => ({
           sessionId: s.sessionId,
           minutes: s.minutes,
           startedAt: s.startedAt,
@@ -74,7 +90,7 @@ export function ContinueActiveExams() {
         setState({ kind: "some", sessions });
       } catch {
         setState({ kind: "none" });
-      }
+    
     })();
     return () => {
       alive = false;
