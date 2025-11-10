@@ -11,10 +11,12 @@ import type {
   ActivityItem,
 } from "./types";
 
-function toDateISO(d: Date) {
-  const x = new Date(d);
-  x.setHours(0, 0, 0, 0);
-  return x.toISOString().slice(0, 10);
+// local-date helper (NYC safe)
+function toLocalYYYYMMDD(date: Date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 export default function DashboardPageClient({
@@ -30,24 +32,39 @@ export default function DashboardPageClient({
   );
   const accuracy = questionsAnswered ? totalCorrect / questionsAnswered : 0;
 
-  // minutes = sum of last 3 *submitted* sessions' minutes OR from attempts time (fallback)
-  const submitted = serverData.sessions.filter((s) => !!s.submittedAt);
-  const minutesRecent3 = submitted
+  // minutes = sum of last 3 *submitted* sessions' minutes
+  const submittedSessions = serverData.sessions
+    .filter((s) => !!s.submittedAt)
+    // just in case they aren't sorted
+    .sort((a, b) => {
+      const ad = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
+      const bd = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+      return bd - ad;
+    });
+
+  const minutesRecent3 = submittedSessions
     .slice(0, 3)
     .reduce((sum, s) => sum + (s.minutes ?? 0), 0);
 
-  // streak days based on attempts (activity by day)
+  // ---- streak days based on attempts (activity by day) ----
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+
+  // make a set of local dates (YYYY-MM-DD) when user did something
   const daysWithActivity = new Set(
-    serverData.attempts.map((a) => toDateISO(a.createdAt))
+    serverData.attempts.map((a) => toLocalYYYYMMDD(new Date(a.createdAt)))
   );
+
   let streakDays = 0;
   for (let i = 0; i < 365; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() - i);
-    if (daysWithActivity.has(d.toISOString().slice(0, 10))) streakDays++;
-    else break;
+    const key = toLocalYYYYMMDD(d);
+    if (daysWithActivity.has(key)) {
+      streakDays++;
+    } else {
+      break;
+    }
   }
 
   // ---- category stats ----
@@ -68,7 +85,7 @@ export default function DashboardPageClient({
     }))
     .sort((a, b) => a.category.localeCompare(b.category));
 
-  // ---- recent exams table ----
+  // ---- aggregate attempts per session (for flagged/time) ----
   const attemptsBySession = new Map<
     string,
     { flagged: number; timeSpentSec: number }
@@ -83,55 +100,58 @@ export default function DashboardPageClient({
     attemptsBySession.set(a.sessionId, row);
   }
 
-  const recentExams: ExamResult[] = serverData.sessions
-    // ✅ only completed exams
-    .filter((s) => !!s.submittedAt)
-    // optional: show newest submitted first
+  // ---- recent exams table (ONLY submitted) ----
+  const recentExams: ExamResult[] = submittedSessions.map((s) => {
+    const agg = attemptsBySession.get(s.id) ?? {
+      flagged: 0,
+      timeSpentSec: 0,
+    };
+
+    // prefer session.minutes, but fall back to sum of attempts
+    const minutesSpent = Math.max(
+      s.minutes ?? 0,
+      Math.round((agg.timeSpentSec ?? 0) / 60)
+    );
+
+    const scoreRaw = s.scoreCorrect ?? 0;
+    const acc = s.scoreTotal ? (s.scoreCorrect ?? 0) / s.scoreTotal : 0;
+    const wrongCount = (s.scoreTotal ?? 0) - (s.scoreCorrect ?? 0);
+    const flaggedCount = agg.flagged;
+
+    const mode: ExamResult["mode"] = s.scoreTotal === 57 ? "Full 57" : "Custom";
+
+    return {
+      id: s.id,
+      // show submitted date in local yyyy-mm-dd
+      dateISO: toLocalYYYYMMDD(new Date(s.submittedAt ?? s.startedAt)),
+      mode,
+      label: s.examKey ?? undefined,
+      minutesSpent,
+      scoreRaw,
+      accuracy: acc,
+      wrongCount,
+      flaggedCount,
+    };
+  });
+
+  // ---- activity feed (you can keep "Started" here if you like) ----
+  const activity: ActivityItem[] = serverData.sessions
+    // newest first
     .sort((a, b) => {
-      const ad = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
-      const bd = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
+      const ad = new Date(a.submittedAt ?? a.startedAt).getTime();
+      const bd = new Date(b.submittedAt ?? b.startedAt).getTime();
       return bd - ad;
     })
-    .map((s) => {
-      const agg = attemptsBySession.get(s.id) ?? {
-        flagged: 0,
-        timeSpentSec: 0,
-      };
-      const minutesSpent = Math.max(
-        s.minutes ?? 0,
-        Math.round((agg.timeSpentSec ?? 0) / 60)
-      );
-      const scoreRaw = s.scoreCorrect ?? 0;
-      const accuracy = s.scoreTotal ? (s.scoreCorrect ?? 0) / s.scoreTotal : 0;
-      const wrongCount = (s.scoreTotal ?? 0) - (s.scoreCorrect ?? 0);
-      const flaggedCount = agg.flagged;
-
-      const mode: ExamResult["mode"] =
-        s.scoreTotal === 57 ? "Full 57" : "Custom";
-
-      return {
-        id: s.id,
-        dateISO: toDateISO(s.submittedAt ?? s.startedAt),
-        mode,
-        label: s.examKey ?? undefined,
-        minutesSpent,
-        scoreRaw,
-        accuracy,
-        wrongCount,
-        flaggedCount,
-      };
-    });
-
-  // ---- activity feed (simple: from sessions) ----
-  const activity: ActivityItem[] = serverData.sessions.slice(0, 8).map((s) => ({
-    id: s.id,
-    type: "exam",
-    title: s.submittedAt
-      ? `Submitted ${s.examKey ?? "exam"} • ${s.scoreCorrect}/${s.scoreTotal}`
-      : `Started ${s.examKey ?? "exam"}`,
-    dateISO: toDateISO(s.submittedAt ?? s.startedAt),
-    meta: undefined,
-  }));
+    .slice(0, 8)
+    .map((s) => ({
+      id: s.id,
+      type: "exam",
+      title: s.submittedAt
+        ? `Submitted ${s.examKey ?? "exam"} • ${s.scoreCorrect}/${s.scoreTotal}`
+        : `Started ${s.examKey ?? "exam"}`,
+      dateISO: toLocalYYYYMMDD(new Date(s.submittedAt ?? s.startedAt)),
+      meta: undefined,
+    }));
 
   const data: DashboardData = {
     totals: {

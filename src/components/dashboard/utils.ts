@@ -12,3 +12,12 @@ export function minutesToHMM(mins: number) {
   const m = mins % 60;
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
 }
+
+export function fmtLocalDate(d: string) {
+  const parts = d.split("-").map(Number);
+  const local = new Date(parts[0], parts[1] - 1, parts[2]); // no UTC shift
+  return local.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
+}

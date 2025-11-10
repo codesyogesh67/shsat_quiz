@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import type { ExamResult } from "./types";
-import { fmtDate, minutesToHMM, pct } from "./utils";
+import { fmtDate, fmtLocalDate, minutesToHMM, pct } from "./utils";
 
 export function RecentExamsTable({ exams }: { exams: ExamResult[] }) {
   return (
@@ -45,7 +45,7 @@ export function RecentExamsTable({ exams }: { exams: ExamResult[] }) {
           <TableBody>
             {exams.map((e) => (
               <TableRow key={e.id}>
-                <TableCell>{fmtDate(e.dateISO)}</TableCell>
+                <TableCell>{fmtLocalDate(e.dateISO)}</TableCell>
                 <TableCell>
                   <Badge variant="secondary">{e.mode}</Badge>
                 </TableCell>
