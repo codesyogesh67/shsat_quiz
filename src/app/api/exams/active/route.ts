@@ -4,6 +4,14 @@ import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
+type AttemptRow = {
+  sessionId: string;
+  questionId: string;
+  givenAnswer: string | null;
+  flagged: boolean;
+  timeSpentSec: number;
+};
+
 export async function GET() {
   const { userId: clerkUserId } = await auth();
 
@@ -17,17 +25,22 @@ export async function GET() {
   });
   if (!dbUser) return new Response(null, { status: 204 });
 
-  // ⬅️ get ALL active (not submitted) sessions for this user
+  // 1) get ALL active (not submitted) sessions for this user
   const sessions = await prisma.session.findMany({
     where: { userId: dbUser.id, submittedAt: null },
     orderBy: { startedAt: "desc" },
-    select: { id: true, minutes: true, questionIds: true, startedAt: true },
+    select: {
+      id: true,
+      minutes: true,
+      questionIds: true,
+      startedAt: true,
+    },
   });
 
   // no active sessions
   if (!sessions.length) return new Response(null, { status: 204 });
 
-  // for each session, get its attempts
+  // 2) get all attempts that belong to those sessions
   const sessionIds = sessions.map((s) => s.id);
 
   const attempts = await prisma.attempt.findMany({
@@ -41,12 +54,26 @@ export async function GET() {
     },
   });
 
-  // group attempts by sessionId
-  const attemptsBySession: Record<string, any> = {};
-  for (const s of sessionIds) {
-    attemptsBySession[s] = {};
+  // 3) group attempts by sessionId, fully typed
+  const attemptsBySession: Record<
+    string,
+    Record<
+      string,
+      {
+        questionId: string;
+        answer: string | null;
+        flagged: boolean;
+        timeSpentSec: number;
+      }
+    >
+  > = {};
+
+  // init each sessionId so we always have an object
+  for (const id of sessionIds) {
+    attemptsBySession[id] = {};
   }
-  for (const a of attempts) {
+
+  for (const a of attempts as AttemptRow[]) {
     if (!attemptsBySession[a.sessionId]) {
       attemptsBySession[a.sessionId] = {};
     }
@@ -58,7 +85,7 @@ export async function GET() {
     };
   }
 
-  // build response array
+  // 4) build response array
   const payload = sessions.map((s) => ({
     sessionId: s.id,
     minutes: s.minutes,
