@@ -1,5 +1,3 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,89 +9,70 @@ datasource db {
   relationMode = "foreignKeys"
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
 model User {
   id             String    @id @default(cuid())
-  externalAuthId String    @unique // maps to Clerk user ID now; generic for future
   email          String?   @unique
   name           String?
-  imageUrl       String?
-  role           Role      @default(USER)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  externalAuthId String    @unique
+  imageUrl       String?
+  role           Role      @default(USER)
   Attempt        Attempt[]
-
-  sessions Session[] @relation("UserSessions")
-}
-
-enum QuestionType {
-  MULTIPLE_CHOICE
-  FREE_RESPONSE
-  GRID_IN
+  sessions       Session[] @relation("UserSessions")
 }
 
 model Question {
-  id          String       @id // stays as-is (existing 50 rows OK)
-  externalId  String? // original JSON id (e.g., "Q58")
-  examKey     String? // e.g., "shsat_2018", "shsat_2018_B", "random_questions"
+  id          String       @id
+  externalId  String?
+  examKey     String?
   index       Int
   category    String?
-  type        QuestionType @default(MULTIPLE_CHOICE) // enum for safety
+  type        QuestionType @default(MULTIPLE_CHOICE)
   stem        String
   answer      String
-  choices     Json? // MCQ options
-  media       Json? // images/graphs metadata
-  explanation String? // optional: store solution text/markdown
-  tags        String[] // optional: quick filtering (Postgres text[])
-  difficulty  Int? // optional: 1..5 or similar
+  choices     Json?
+  media       Json?
+  explanation String?
+  tags        String[]
+  difficulty  Int?
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-
-  // Optional: group questions by exam/paper; keep nullable so existing rows are fine
-  examId String?
-  exam   Exam?   @relation(fields: [examId], references: [id])
-
-  attempts Attempt[]
+  examId      String?
+  attempts    Attempt[]
+  exam        Exam?        @relation(fields: [examId], references: [id])
 
   @@index([examKey, index])
   @@index([examKey, externalId])
 }
 
 model Exam {
-  id        String   @id @default(cuid())
-  key       String   @unique // e.g., "shsat_2023_A"
+  id        String     @id @default(cuid())
+  key       String     @unique
   year      Int?
-  form      String? // e.g., "A", "B"
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  form      String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   questions Question[]
-
-  sessions Session[]
+  sessions  Session[]
 }
 
 model Attempt {
   id              String    @id @default(cuid())
-  sessionId       String // ✅ required: every answer belongs to a session
   questionId      String
-  userId          String? // stays optional (guest until claimed)
+  userId          String?
+  sessionId       String
   givenAnswer     String?
   isCorrect       Boolean?
-  flagged         Boolean   @default(false) // ✅ mark for review
-  timeSpentSec    Int       @default(0) // ✅ cumulative
-  firstAnsweredAt DateTime?
-  updatedAt       DateTime  @updatedAt
   createdAt       DateTime  @default(now())
+  firstAnsweredAt DateTime?
+  flagged         Boolean   @default(false)
+  timeSpentSec    Int       @default(0)
+  updatedAt       DateTime  @updatedAt
+  question        Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  session         Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user            User?     @relation(fields: [userId], references: [id])
 
-  session  Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  user     User?    @relation(fields: [userId], references: [id])
-
-  // ✅ exactly one attempt row per (session, question)
   @@unique([sessionId, questionId])
   @@index([questionId])
   @@index([userId])
@@ -101,28 +80,35 @@ model Attempt {
 }
 
 model Session {
-  id           String    @id @default(cuid())
-  userId       String?
-  examId       String?
-  examKey      String?
-  label        String?
-  mode         String
-  startedAt    DateTime  @default(now())
-  submittedAt  DateTime?
-  scoreCorrect Int       @default(0)
-  scoreTotal   Int       @default(0)
-  minutes      Int?
-
-  questionIds            String[] @db.Text
-  progressCount          Int      @default(0)
-  flagsCount             Int      @default(0)
+  id                     String    @id @default(cuid())
+  userId                 String?
+  examId                 String?
+  examKey                String?
+  label                  String?
+  mode                   String
+  startedAt              DateTime  @default(now())
+  submittedAt            DateTime?
+  scoreCorrect           Int       @default(0)
+  scoreTotal             Int       @default(0)
+  minutes                Int?
+  flagsCount             Int       @default(0)
+  progressCount          Int       @default(0)
+  questionIds            String[]
   serverSecondsRemaining Int?
-
-  user User? @relation("UserSessions", fields: [userId], references: [id])
-  exam Exam? @relation(fields: [examId], references: [id])
-
-  attempts Attempt[]
+  attempts               Attempt[]
+  exam                   Exam?     @relation(fields: [examId], references: [id])
+  user                   User?     @relation("UserSessions", fields: [userId], references: [id])
 
   @@index([userId])
   @@index([examKey])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  FREE_RESPONSE
 }
