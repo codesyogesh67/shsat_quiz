@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { Menu, Calculator } from "lucide-react";
+import { MobileSidebar } from "./mobile-sidebar";
 
 // import ComingSoonLink from "@/components/ComingSoonLink";
 
@@ -101,59 +102,7 @@ const Navbar = () => {
           </SignedIn>
         </div>
 
-        {/* Mobile menu */}
-        <div className="md:hidden">
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button variant="outline" size="icon" aria-label="Open menu">
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-80">
-              <SheetHeader>
-                <div className="mt-6 flex items-center justify-between">
-                  <SheetTitle>
-                    <Link
-                      href="/"
-                      className="flex items-center gap-2"
-                      onClick={() => setOpen(false)}
-                    >
-                      <Calculator className="h-5 w-5" />
-                      <span className="text-sm font-semibold tracking-wide">
-                        SHSAT Guide
-                      </span>
-                    </Link>
-                  </SheetTitle>
-                </div>
-              </SheetHeader>
-              <div className="flex ml-8">
-                <SignedIn>
-                  <UserButton />
-                </SignedIn>
-              </div>
-              <Separator className="mb-4" />
-
-              <NavLinks onClick={() => setOpen(false)} />
-
-              <div className="mt-6 flex gap-2">
-                <SignedOut>
-                  <SignInButton mode="modal">
-                    <Button className="w-full">Sign in</Button>
-                  </SignInButton>
-                </SignedOut>
-                <SignedIn>
-                  <Link
-                    href="/practice"
-                    onClick={() => setOpen(false)}
-                    className="w-full"
-                  >
-                    <Button className="w-full">Starting Practice</Button>
-                  </Link>
-                </SignedIn>
-              </div>
-            </SheetContent>
-          </Sheet>
-        </div>
+        <MobileSidebar open={open} setOpen={setOpen} />
       </div>
     </header>
   );
