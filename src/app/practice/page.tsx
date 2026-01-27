@@ -38,8 +38,7 @@ const CATEGORIES = [
   "Algebra",
   "Arithmetic",
   "Geometry",
-  "Data & Probability",
-  "Word Problems",
+  "Probability and Statistics",
   "Practice_set_1",
 ];
 
