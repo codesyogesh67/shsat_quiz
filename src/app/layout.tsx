@@ -63,6 +63,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  console.log(
+    "CLERK pk exists?",
+    !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  );
+  console.log("CLERK sk exists?", !!process.env.CLERK_SECRET_KEY);
   return (
     <ClerkProvider
       signInUrl="/sign-in"

@@ -24,6 +24,7 @@ type Props = {
   initialAnswers?: Record<string, string | null>;
   initialFlags?: Record<string, boolean>;
   initialSecondsLeft?: number;
+  mode?: "exam" | "diagnostic";
 };
 
 export default function ExamShell({
@@ -71,6 +72,13 @@ export default function ExamShell({
     initialFlags,
     initialSecondsLeft,
   });
+
+  React.useEffect(() => {
+    if (mode === "diagnostic" && submitted) {
+      router.replace(`/onboarding/diagnostic/results/${sessionId}`);
+    }
+  }, [mode, submitted, router, sessionId]);
+
   const answersForMap: Record<string, string> = React.useMemo(() => {
     const out: Record<string, string> = {};
     for (const [k, v] of Object.entries(answers)) out[k] = v ?? "";
@@ -140,7 +148,7 @@ export default function ExamShell({
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_280px]">
       <Card>
         <ExamTopBar
-          examLabel="SHSAT Practice"
+          examLabel={mode === "diagnostic" ? "SHSAT Diagnostic" : "SHSAT Practice"}
           minutes={minutes}
           secondsLeft={secondsLeft}
           timePct={timePct}

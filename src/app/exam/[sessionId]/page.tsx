@@ -28,10 +28,15 @@ type DBQuestion = Prisma.QuestionGetPayload<{ select: typeof questionSelect }>;
 
 export default async function ExamSessionPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ sessionId: string }>;
+  searchParams?: Promise<{ mode?: string }>;
 }) {
   const { sessionId } = await params;
+
+  const sp = (await searchParams) ?? {};
+  const mode = sp.mode === "diagnostic" ? "diagnostic" : "exam";
 
   const session = await prisma.session.findUnique({
     where: { id: sessionId },
@@ -64,6 +69,7 @@ export default async function ExamSessionPage({
         sessionId={session.id}
         minutes={session.minutes ?? 90}
         questions={questions}
+        mode={mode}
       />
     </div>
   );

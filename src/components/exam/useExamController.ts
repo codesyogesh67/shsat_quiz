@@ -43,6 +43,21 @@ type ControllerArgs = {
   initialSecondsLeft?: number; // from serverSecondsRemaining if you track it
 };
 
+async function flushTime(qid: string) {
+  const now = Date.now();
+  const delta = Math.floor((now - lastTickRef.current) / 1000);
+  lastTickRef.current = now;
+  if (delta <= 0) return;
+  try {
+    await saveAnswer(sessionId, {
+      questionId: qid,
+      timeSpentDeltaSec: delta,
+    });
+  } catch (e) {
+    console.error("flushTime failed", e);
+  }
+}
+
 /** ---------- Hook ---------- */
 
 export function useExamController({
@@ -119,16 +134,27 @@ export function useExamController({
   }, [questions, reviewing, reviewFilter, flags]);
 
   function go(i: number) {
+    const cur = questions[currentIdx]?.id;
+    if (cur) void flushTime(cur);
     if (i >= 0 && i < total) setCurrentIdx(i);
   }
+
   function next() {
+    const cur = questions[currentIdx]?.id;
+    if (cur) void flushTime(cur);
+
     const p = navList.indexOf(currentIdx);
     if (p >= 0 && p < navList.length - 1) setCurrentIdx(navList[p + 1]);
   }
+
   function prev() {
+    const cur = questions[currentIdx]?.id;
+    if (cur) void flushTime(cur);
+
     const p = navList.indexOf(currentIdx);
     if (p > 0) setCurrentIdx(navList[p - 1]);
   }
+
   function skip() {
     next();
   }
@@ -213,6 +239,9 @@ export function useExamController({
   // ---------- submit ----------
   async function submit(auto: boolean) {
     if (submitted) return;
+
+    const cur = questions[currentIdx]?.id;
+    if (cur) await flushTime(cur);
 
     setSubmitted(true);
     try {
