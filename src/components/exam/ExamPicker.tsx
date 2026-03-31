@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { startExam, getActive } from "@/lib/exams-client";
 import { Clock, ListChecks, BookOpen } from "lucide-react";
 
 const SETS = [
@@ -40,38 +39,54 @@ export default function ExamPicker({
   const router = useRouter();
   const [setKey, setSetKey] = React.useState<SetKey>(defaultSet);
   const [loading, setLoading] = React.useState(false);
-  const [resumeId, setResumeId] = React.useState<string | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
-    getActive()
-      .then((j) => setResumeId(j?.sessionId ?? null))
-      .catch(() => {});
-  }, []);
-
-  // Narrow string -> SetKey safely
   function isSetKey(v: string): v is SetKey {
     return SETS.some((s) => s.key === v);
   }
 
   const onStart = async () => {
-    setLoading(true);
     try {
-      const res = await startExam(setKey === "random" ? undefined : setKey);
-      router.push(`/exam/${res.sessionId}`);
+      setLoading(true);
+      setError(null);
+
+      const res = await fetch("/api/sessions/start", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mode: "exam",
+          examKey: setKey === "random" ? undefined : setKey,
+          count: DEFAULT_COUNT,
+          minutes: DEFAULT_MINUTES,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data?.ok || !data?.sessionId) {
+        throw new Error(data?.error || "Failed to start exam");
+      }
+
+      router.push(`/session/${data.sessionId}`);
     } catch (e) {
       console.error(e);
-      alert("Failed to start exam");
+      setError(e instanceof Error ? e.message : "Failed to start exam");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-6">
+    <div className="mx-auto w-full space-y-6">
       <Card className="shadow-sm">
-        <CardContent className="p-6 space-y-6">
+        <CardContent className="space-y-6 p-6 py-2">
           <div className="space-y-2">
-            <Label htmlFor="exam-set">Exam set</Label>
+            <Label htmlFor="exam-set" className="py-2 text-xl font-bold">
+              SHSAT EXAM OLD Questions
+            </Label>
+
             <Select
               value={setKey}
               onValueChange={(v) => {
@@ -81,6 +96,7 @@ export default function ExamPicker({
               <SelectTrigger id="exam-set">
                 <SelectValue placeholder="Choose set" />
               </SelectTrigger>
+
               <SelectContent>
                 {SETS.map((s) => (
                   <SelectItem key={s.key} value={s.key}>
@@ -99,11 +115,13 @@ export default function ExamPicker({
               label="Questions"
               value={`${DEFAULT_COUNT}`}
             />
+
             <SummaryItem
               icon={<Clock className="h-4 w-4" aria-hidden />}
               label="Time limit"
               value={`${DEFAULT_MINUTES} min`}
             />
+
             <SummaryItem
               icon={<BookOpen className="h-4 w-4" aria-hidden />}
               label="Mode"
@@ -113,24 +131,15 @@ export default function ExamPicker({
 
           <div className="flex flex-wrap gap-2 pt-2">
             <Button
-              className="w-full sm:w-auto"
+              className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20 transition-all duration-200 hover:opacity-95 sm:w-auto"
               onClick={onStart}
               disabled={loading}
             >
-              {loading ? "Starting…" : "Start exam"}
+              {loading ? "Starting..." : "Start exam"}
             </Button>
-
-            {/* {resumeId && (
-              <Button
-                variant="outline"
-                className="w-full sm:w-auto"
-                onClick={() => router.push(`/exam/${resumeId}`)}
-                disabled={loading}
-              >
-                Continue active exam
-              </Button>
-            )} */}
           </div>
+
+          {error ? <p className="text-sm text-destructive">{error}</p> : null}
         </CardContent>
       </Card>
     </div>
@@ -149,6 +158,7 @@ function SummaryItem({
   return (
     <div className="flex items-center gap-3 rounded-lg border bg-card p-3">
       <div className="rounded-md border p-2">{icon}</div>
+
       <div className="space-y-0.5">
         <div className="text-xs text-muted-foreground">{label}</div>
         <div className="text-sm font-medium">{value}</div>

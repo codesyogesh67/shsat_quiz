@@ -7,7 +7,7 @@ export type StartResponse = {
 };
 
 export async function startExam(examKey?: string) {
-  const r = await fetch("/api/exams/start", {
+  const r = await fetch("/api/sessions/start", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ examKey }),
@@ -25,7 +25,7 @@ export async function saveAnswer(
     timeSpentDeltaSec?: number;
   }
 ) {
-  const r = await fetch(`/api/exams/${sessionId}/answer`, {
+  const r = await fetch(`/api/sessions/${sessionId}/answer`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -35,13 +35,15 @@ export async function saveAnswer(
 }
 
 export async function submitExam(sessionId: string) {
-  const r = await fetch(`/api/exams/${sessionId}/submit`, { method: "POST" });
+  const r = await fetch(`/api/sessions/${sessionId}/submit`, {
+    method: "POST",
+  });
   if (!r.ok) throw new Error(await r.text());
   return await r.json();
 }
 
 export async function getActive() {
-  const r = await fetch("/api/exams/active", { cache: "no-store" });
+  const r = await fetch("/api/sessions/active", { cache: "no-store" });
   if (r.status === 204) return null;
   if (!r.ok) throw new Error(await r.text());
   return await r.json();

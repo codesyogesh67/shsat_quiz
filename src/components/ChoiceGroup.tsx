@@ -1,5 +1,5 @@
 import React from "react";
-import type { Choice } from "@/types";
+import type { Choice } from "@/types/exam";
 
 const ChoiceGroup = ({
   name,

@@ -1,12 +1,21 @@
-// components/practice/QuestionView.tsx
 "use client";
 
 import * as React from "react";
-import { Question } from "./PracticeShell";
-import Image from "next/image";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import MediaRenderer from "@/components/MediaRenderer";
+import type { ExamQuestion } from "@/types/exam";
+
+type Props = {
+  mode?: "test" | "review";
+  question: ExamQuestion;
+  value: string;
+  onChange: (val: string) => void;
+  onClear: () => void;
+  onFlag: () => void;
+  correctAnswer?: string;
+  userAnswer?: string;
+};
 
 export default function QuestionView({
   mode = "test",
@@ -17,39 +26,21 @@ export default function QuestionView({
   onFlag,
   correctAnswer,
   userAnswer,
-}: {
-  mode?: "test" | "review";
-  question: Question;
-  value: string;
-  onChange: (val: string) => void;
-  onClear: () => void;
-  onFlag: () => void;
-  correctAnswer?: string;
-  userAnswer?: string;
-}) {
+}: Props) {
   const isReview = mode === "review";
 
   return (
     <div className="space-y-4">
-      {/* Stem */}
-      <div className="prose prose-sm dark:prose-invert max-w-none">
+      <div className="prose prose-sm max-w-none dark:prose-invert">
         <div dangerouslySetInnerHTML={{ __html: question.stem }} />
       </div>
 
-      {/* Media */}
-      {question.media && question.media.type === "image" && (
+      {question.media && question.media.type === "image" && question.media.url && (
         <div className="relative mx-auto aspect-video w-full max-w-xl overflow-hidden rounded-md border">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          {/* <img
-            src={question.media.url}
-            alt={question.media.alt ?? question.id}
-            className="h-full w-full object-contain"
-          /> */}
           <MediaRenderer media={question.media} />
         </div>
       )}
 
-      {/* Answer controls */}
       {question.type === "MULTIPLE_CHOICE" ? (
         isReview ? (
           <div className="space-y-2">
@@ -92,24 +83,25 @@ export default function QuestionView({
           </div>
         ) : (
           <div className="space-y-3">
-            <RadioGroup value={value} onValueChange={onChange}>
+            <RadioGroup value={value ?? ""} onValueChange={onChange}>
               <div className="grid grid-cols-1 gap-2">
-                {question.choices?.map((c, i) => (
-                  <label
-                    key={c.key}
-                    htmlFor={`choice-${c.key}`}
-                    className="flex cursor-pointer items-center gap-3 rounded-md border p-3 hover:bg-muted"
-                  >
-                    <RadioGroupItem id={`choice-${c.key}`} value={c.key} />
-                    <span className="inline-flex h-6 w-6 items-center justify-center rounded bg-muted font-semibold">
-                      {c.key}
-                    </span>
-                    <span className="text-sm">{c.text}</span>
-                    <span className="ml-auto text-xs text-muted-foreground">
-                      ({i + 1})
-                    </span>
-                  </label>
-                ))}
+                {question.choices?.map((c, idx) => {
+                  const inputId = `choice-${question.id}-${c.key ?? idx}`;
+
+                  return (
+                    <label
+                      key={`${question.id}-${c.key ?? idx}`}
+                      htmlFor={inputId}
+                      className="flex cursor-pointer items-center gap-3 rounded-md border p-3 hover:bg-muted"
+                    >
+                      <RadioGroupItem id={inputId} value={c.key} />
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded bg-muted font-semibold">
+                        {c.key}
+                      </span>
+                      <span className="text-sm">{c.text}</span>
+                    </label>
+                  );
+                })}
               </div>
             </RadioGroup>
 
@@ -132,8 +124,7 @@ export default function QuestionView({
             </p>
           </div>
         )
-      ) : // FREE_RESPONSE
-      isReview ? (
+      ) : isReview ? (
         <div className="space-y-2">
           <div
             className={
@@ -188,6 +179,7 @@ function normalize(s: string) {
     .trim()
     .toUpperCase();
 }
+
 function equalsNum(a?: string, b?: string) {
   if (a == null || b == null) return false;
   const na = Number(String(a).trim());

@@ -1,4 +1,3 @@
-// components/exam/ExamReviewPanel.tsx
 "use client";
 
 import * as React from "react";
@@ -13,36 +12,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
-
 import QuestionView from "@/components/practice/QuestionView";
-
-import type { ExamResultsData } from "./ExamResults";
-import type { ExamQuestion } from "./useExamController";
-
-/* ---------- Types to match QuestionView (practice) ---------- */
-/* If you already export these from a shared file, import them instead. */
-type PracticeChoice = { key: string; text: string };
-type PracticeMedia = { type: "image"; url: string; alt?: string } | null;
-type PracticeQuestion = {
-  id: string;
-  index?: number;
-  type: "MULTIPLE_CHOICE" | "FREE_RESPONSE";
-  category?: string | null;
-  stem: string;
-  media?: PracticeMedia;
-  choices?: PracticeChoice[];
-  answer?: string; // QuestionView accepts this, but we won't rely on it
-};
-
-type ReviewFilter = "wrong" | "all" | "correct" | "flagged";
+import type {
+  ExamQuestion,
+  ReviewFilter,
+  SessionResultsData,
+} from "@/types/exam";
 
 type Props = {
-  q: ExamQuestion; // current exam question
-  currentIdx: number; // index in the *filtered* nav list
-  navList: number[]; // indices of questions being reviewed (in order)
+  q: ExamQuestion;
+  currentIdx: number;
+  navList: number[];
   reviewFilter: ReviewFilter;
 
-  results: ExamResultsData; // contains correct/total/byCategory/perQuestion
+  results: SessionResultsData | null;
   answers: Record<string, string | null>;
   flags: Record<string, boolean>;
 
@@ -53,19 +36,6 @@ type Props = {
   onBackToResults: () => void;
   onToggleFlag: () => void;
 };
-
-/* ---------- Adapter: ExamQuestion -> PracticeQuestion ---------- */
-function toPracticeQuestion(q: ExamQuestion): PracticeQuestion {
-  return {
-    id: q.id,
-    type: q.type, // assumes same union: "MULTIPLE_CHOICE" | "FREE_RESPONSE"
-    category: q.category ?? null,
-    stem: q.stem,
-    media: q.media ?? null,
-    choices: q.choices ?? undefined,
-    // DO NOT pass q.answer here; in review we show `gold` from results
-  };
-}
 
 export default function ExamReviewPanel({
   q,
@@ -85,16 +55,13 @@ export default function ExamReviewPanel({
   const totalInReview = navList.length;
   const positionMeta = `Question ${currentIdx + 1} / ${totalInReview}`;
 
-  // --- Safe accessors ---
   const byCategory = results?.byCategory ?? {};
   const perQ = results?.perQuestion ?? [];
 
   const currentUser = answers[q.id] ?? null;
-
-  // Pull the official correct answer ("gold") from results only
   const match = perQ.find((r) => r.id === q.id);
-  const currentGold: string | undefined =
-    (match?.gold ?? null) != null ? (match!.gold as string) : undefined;
+
+  const currentGold = typeof match?.gold === "string" ? match.gold : undefined;
 
   const isCorrect =
     match?.correct ??
@@ -102,12 +69,8 @@ export default function ExamReviewPanel({
 
   const isFlagged = !!flags[q.id];
 
-  // Convert ExamQuestion to the shape QuestionView expects
-  const questionForView: PracticeQuestion = toPracticeQuestion(q);
-
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_320px]">
-      {/* Left: question & controls */}
       <Card>
         <CardHeader className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base">
@@ -125,11 +88,11 @@ export default function ExamReviewPanel({
         <CardContent className="space-y-4">
           <QuestionView
             mode="review"
-            question={questionForView}
-            value={currentUser ?? ""} // still required by the component
-            correctAnswer={currentGold} // ✅ rename from gold → correctAnswer
-            userAnswer={currentUser ?? undefined} // optional but nice to pass in review
-            onChange={(_: string) => {}}
+            question={q}
+            value={currentUser ?? ""}
+            correctAnswer={currentGold}
+            userAnswer={currentUser ?? undefined}
+            onChange={() => {}}
             onClear={() => {}}
             onFlag={onToggleFlag}
           />
@@ -180,7 +143,6 @@ export default function ExamReviewPanel({
         </CardFooter>
       </Card>
 
-      {/* Right: sidebar with filters, categories, and map */}
       <aside className="lg:sticky lg:top-20">
         <Card>
           <CardHeader>
@@ -232,10 +194,11 @@ export default function ExamReviewPanel({
                     const pct = v.total
                       ? Math.round((v.correct / v.total) * 100)
                       : 0;
+
                     return (
                       <div key={cat}>
                         <div className="flex items-center justify-between text-xs">
-                          <span className="font-medium truncate">{cat}</span>
+                          <span className="truncate font-medium">{cat}</span>
                           <span className="text-muted-foreground">
                             {v.correct}/{v.total} ({pct}%)
                           </span>
@@ -256,13 +219,14 @@ export default function ExamReviewPanel({
                 {navList.map((absIdx, i) => {
                   const key = String(absIdx);
                   const isCurrent = i === currentIdx;
+
                   return (
                     <Button
                       key={key}
                       size="sm"
                       variant={isCurrent ? "default" : "outline"}
                       className="h-8 w-8 p-0"
-                      onClick={() => onJump(i)}
+                      onClick={() => onJump(absIdx)}
                     >
                       {i + 1}
                     </Button>
