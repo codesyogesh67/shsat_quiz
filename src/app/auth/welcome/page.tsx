@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 import { ensureUserByClerkId } from "@/lib/auth/ensureUser.server";
 
 export default async function Welcome() {
-  const { userId } = auth();
+  const { userId } = await auth();
 
   if (!userId) redirect("/sign-in");
   // creates/updates prisma.User where externalAuthId = userId

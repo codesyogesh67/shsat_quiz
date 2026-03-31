@@ -9,21 +9,34 @@ datasource db {
   relationMode = "foreignKeys"
 }
 
+enum PlanType {
+  FREE
+  TRIAL
+  PREMIUM
+}
+
 model User {
-  id             String    @id @default(cuid())
-  email          String?   @unique
+  id             String   @id @default(cuid())
+  email          String?  @unique
   name           String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  externalAuthId String    @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  externalAuthId String   @unique
   imageUrl       String?
-  role           Role      @default(USER)
-  Attempt        Attempt[]
-  sessions       Session[] @relation("UserSessions")
+  role           Role     @default(USER)
+
+  planType         PlanType  @default(TRIAL)
+  trialStartedAt   DateTime?
+  trialEndsAt      DateTime?
+  premiumStartedAt DateTime?
+  premiumEndsAt    DateTime?
+
+  Attempt  Attempt[]
+  sessions Session[] @relation("UserSessions")
 }
 
 model Question {
-  id          String       @id
+  id          String       @id @default(cuid())
   externalId  String?
   examKey     String?
   index       Int
