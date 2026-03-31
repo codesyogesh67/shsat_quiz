@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "SHSAT Math Practice App",
+  icons: {
+    icon: "/favicon.svg",
+  },
   description:
     "Practice SHSAT math questions with detailed solutions, timed quizzes, and progress tracking. Perfect for NYC students preparing for the Specialized High Schools Admissions Test.",
   keywords: [
@@ -63,26 +66,48 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log(
-    "CLERK pk exists?",
-    !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-  );
-  console.log("CLERK sk exists?", !!process.env.CLERK_SECRET_KEY);
   return (
     <ClerkProvider
-      signInUrl="/sign-in"
-      signUpUrl="/sign-up"
-      afterSignInUrl="/dashboard"
-      afterSignUpUrl="/dashboard"
+      appearance={{
+        variables: {
+          colorPrimary: "#4f46e5",
+          colorText: "#0f172a",
+          colorTextSecondary: "#64748b",
+          colorBackground: "#ffffff",
+          colorInputBackground: "#ffffff",
+          colorInputText: "#0f172a",
+          borderRadius: "0.875rem",
+        },
+        layout: {
+          socialButtonsPlacement: "top",
+          socialButtonsVariant: "blockButton",
+          shimmer: false,
+        },
+        elements: {
+          card: "rounded-3xl border border-slate-200/70 shadow-sm",
+          modalContent: "rounded-3xl",
+          headerTitle: "text-slate-900 text-xl font-semibold",
+          headerSubtitle: "text-slate-500",
+          socialButtonsBlockButton:
+            "h-11 rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50 transition-all duration-200",
+          socialButtonsBlockButtonText: "font-medium text-slate-700",
+          formFieldInput:
+            "h-11 rounded-xl border border-slate-200 bg-white text-slate-900 shadow-none focus:border-indigo-500 focus:ring-0",
+          formButtonPrimary:
+            "h-11 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20 hover:opacity-95 transition-all duration-200",
+          footerActionLink: "text-indigo-600 hover:text-violet-600",
+          dividerLine: "bg-slate-200",
+          dividerText: "text-slate-400",
+        },
+      }}
     >
       <html lang="en">
         <body
           id="top"
-          className="min-h-screen bg-background text-foreground antialiased"
+          className="min-h-screen"
+          // className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.10),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(139,92,246,0.10),transparent_26%)]"
         >
-          <Navbar />
           <main>{children}</main>
-          <Footer />
         </body>
       </html>
     </ClerkProvider>
