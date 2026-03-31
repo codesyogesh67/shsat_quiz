@@ -17,7 +17,7 @@ const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
   { icon: Target, label: "Diagnostic", href: "/diagnostic" },
   { icon: BookOpen, label: "Practice", href: "/practice" },
-  { icon: BarChart3, label: "Reports", href: "/reports" },
+  // { icon: BarChart3, label: "Reports", href: "/reports" },
   { icon: User, label: "Profile", href: "/profile" },
 ];
 
