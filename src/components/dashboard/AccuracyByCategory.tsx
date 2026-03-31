@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Card,
@@ -23,16 +25,19 @@ export function AccuracyByCategory({ data }: { data: CategoryStat[] }) {
     accuracy: Math.round(d.accuracy * 100),
   }));
 
-  const tooltipFormatter = (value: number | string): React.ReactNode =>
-    `${value}%`;
+  const tooltipFormatter: NonNullable<
+    React.ComponentProps<typeof RTooltip>["formatter"]
+  > = (value) => `${value ?? 0}%`;
+
   return (
     <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>Accuracy by Category</CardTitle>
-        <CardDescription>P
+        <CardDescription>
           Track where you’re strongest and where to focus next.
         </CardDescription>
       </CardHeader>
+
       <CardContent className="h-72">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chart}>
@@ -40,7 +45,6 @@ export function AccuracyByCategory({ data }: { data: CategoryStat[] }) {
             <XAxis dataKey="category" tick={{ fontSize: 12 }} />
             <YAxis unit="%" />
             <RTooltip formatter={tooltipFormatter} />
-
             <Bar dataKey="accuracy" radius={[6, 6, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>

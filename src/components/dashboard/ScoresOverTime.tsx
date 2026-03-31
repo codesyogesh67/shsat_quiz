@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   Card,
@@ -26,14 +28,18 @@ export function ScoresOverTime({ exams }: { exams: ExamResult[] }) {
       date: fmtDate(e.dateISO),
       score: Math.round((e.accuracy || 0) * 100),
     }));
-  const tooltipFormatter = (value: number | string): React.ReactNode =>
-    `${value}%`;
+
+  const tooltipFormatter: NonNullable<
+    React.ComponentProps<typeof RTooltip>["formatter"]
+  > = (value) => `${value ?? 0}%`;
+
   return (
     <Card className="shadow-sm">
       <CardHeader>
         <CardTitle>Scores over Time</CardTitle>
         <CardDescription>Your recent performance trend.</CardDescription>
       </CardHeader>
+
       <CardContent className="h-72">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>

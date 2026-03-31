@@ -1,9 +1,7 @@
-// components/dashboard/DashboardPageClient.tsx
 "use client";
 
 import * as React from "react";
 import { DashboardShell } from "./DashboardShell";
-import type { DashboardServerData } from "@/app/dashboard/page";
 import type {
   DashboardData,
   CategoryStat,
@@ -11,12 +9,60 @@ import type {
   ActivityItem,
 } from "./types";
 
-// local-date helper (NYC safe)
-function toLocalYYYYMMDD(date: Date) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+type ServerAttempt = {
+  sessionId: string;
+  category: string | null;
+  isCorrect: boolean | null;
+  flagged: boolean;
+  timeSpentSec: number | null;
+  createdAt: string | Date | null;
+};
+
+type ServerSession = {
+  id: string;
+  label: string | null;
+  examKey: string | null;
+  minutes: number | null;
+  scoreCorrect: number | null;
+  scoreTotal: number | null;
+  startedAt: string | Date | null;
+  submittedAt: string | Date | null;
+};
+
+type DashboardServerData = {
+  user?: {
+    name?: string | null;
+    imageUrl?: string | null;
+  };
+  attempts: ServerAttempt[];
+  sessions: ServerSession[];
+};
+
+function toNYYYYYMMDD(date?: string | Date | null) {
+  if (!date) return "0000-01-01";
+
+  const d = new Date(date);
+  if (Number.isNaN(d.getTime())) return "0000-01-01";
+
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(d);
+
+  const year = parts.find((p) => p.type === "year")?.value ?? "0000";
+  const month = parts.find((p) => p.type === "month")?.value ?? "01";
+  const day = parts.find((p) => p.type === "day")?.value ?? "01";
+
+  return `${year}-${month}-${day}`;
+}
+
+function safeTime(date?: string | Date | null) {
+  if (!date) return 0;
+
+  const parsed = new Date(date).getTime();
+  return Number.isNaN(parsed) ? 0 : parsed;
 }
 
 export default function DashboardPageClient({
@@ -24,58 +70,64 @@ export default function DashboardPageClient({
 }: {
   serverData: DashboardServerData;
 }) {
-  // ---- totals ----
-  const questionsAnswered = serverData.attempts.length;
-  const totalCorrect = serverData.attempts.reduce(
-    (n, a) => n + (a.isCorrect ? 1 : 0),
+  const attempts = Array.isArray(serverData.attempts)
+    ? serverData.attempts
+    : [];
+  const sessions = Array.isArray(serverData.sessions)
+    ? serverData.sessions
+    : [];
+
+  const questionsAnswered = attempts.length;
+  const totalCorrect = attempts.reduce(
+    (n, a) => n + (a.isCorrect === true ? 1 : 0),
     0
   );
   const accuracy = questionsAnswered ? totalCorrect / questionsAnswered : 0;
 
-  // minutes = sum of last 3 *submitted* sessions' minutes
-  const submittedSessions = serverData.sessions
-    .filter((s) => !!s.submittedAt)
-    // just in case they aren't sorted
-    .sort((a, b) => {
-      const ad = a.submittedAt ? new Date(a.submittedAt).getTime() : 0;
-      const bd = b.submittedAt ? new Date(b.submittedAt).getTime() : 0;
-      return bd - ad;
-    });
+  const submittedSessions = [...sessions]
+    .filter((s) => Boolean(s.submittedAt))
+    .sort((a, b) => safeTime(b.submittedAt) - safeTime(a.submittedAt));
 
   const minutesRecent3 = submittedSessions
     .slice(0, 3)
     .reduce((sum, s) => sum + (s.minutes ?? 0), 0);
 
-  // ---- streak days based on attempts (activity by day) ----
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const now = new Date();
+  const todayNY = toNYYYYYMMDD(now);
 
-  // make a set of local dates (YYYY-MM-DD) when user did something
   const daysWithActivity = new Set(
-    serverData.attempts.map((a) => toLocalYYYYMMDD(new Date(a.createdAt)))
+    attempts.map((a) => toNYYYYYMMDD(a.createdAt))
   );
 
   let streakDays = 0;
   for (let i = 0; i < 365; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    const key = toLocalYYYYMMDD(d);
-    if (daysWithActivity.has(key)) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    const key = toNYYYYYMMDD(d);
+
+    if (i === 0) {
+      if (daysWithActivity.has(todayNY)) {
+        streakDays++;
+      } else {
+        break;
+      }
+    } else if (daysWithActivity.has(key)) {
       streakDays++;
     } else {
       break;
     }
   }
 
-  // ---- category stats ----
   const catMap = new Map<string, { correct: number; attempted: number }>();
-  for (const a of serverData.attempts) {
+
+  for (const a of attempts) {
     const cat = (a.category ?? "Uncategorized").trim() || "Uncategorized";
     const row = catMap.get(cat) ?? { correct: 0, attempted: 0 };
     row.attempted += 1;
-    if (a.isCorrect) row.correct += 1;
+    if (a.isCorrect === true) row.correct += 1;
     catMap.set(cat, row);
   }
+
   const categoryStats: CategoryStat[] = Array.from(catMap.entries())
     .map(([category, { correct, attempted }]) => ({
       category,
@@ -85,29 +137,28 @@ export default function DashboardPageClient({
     }))
     .sort((a, b) => a.category.localeCompare(b.category));
 
-  // ---- aggregate attempts per session (for flagged/time) ----
   const attemptsBySession = new Map<
     string,
     { flagged: number; timeSpentSec: number }
   >();
-  for (const a of serverData.attempts) {
+
+  for (const a of attempts) {
     const row = attemptsBySession.get(a.sessionId) ?? {
       flagged: 0,
       timeSpentSec: 0,
     };
+
     if (a.flagged) row.flagged += 1;
     row.timeSpentSec += a.timeSpentSec ?? 0;
     attemptsBySession.set(a.sessionId, row);
   }
 
-  // ---- recent exams table (ONLY submitted) ----
   const recentExams: ExamResult[] = submittedSessions.map((s) => {
     const agg = attemptsBySession.get(s.id) ?? {
       flagged: 0,
       timeSpentSec: 0,
     };
 
-    // prefer session.minutes, but fall back to sum of attempts
     const minutesSpent = Math.max(
       s.minutes ?? 0,
       Math.round((agg.timeSpentSec ?? 0) / 60)
@@ -115,17 +166,15 @@ export default function DashboardPageClient({
 
     const scoreRaw = s.scoreCorrect ?? 0;
     const acc = s.scoreTotal ? (s.scoreCorrect ?? 0) / s.scoreTotal : 0;
-    const wrongCount = (s.scoreTotal ?? 0) - (s.scoreCorrect ?? 0);
+    const wrongCount = Math.max(0, (s.scoreTotal ?? 0) - (s.scoreCorrect ?? 0));
     const flaggedCount = agg.flagged;
-
     const mode: ExamResult["mode"] = s.scoreTotal === 57 ? "Full 57" : "Custom";
 
     return {
       id: s.id,
-      // show submitted date in local yyyy-mm-dd
-      dateISO: toLocalYYYYMMDD(new Date(s.submittedAt ?? s.startedAt)),
+      dateISO: toNYYYYYMMDD(s.submittedAt ?? s.startedAt),
       mode,
-      label: s.examKey ?? undefined,
+      label: s.label ?? undefined,
       minutesSpent,
       scoreRaw,
       accuracy: acc,
@@ -134,22 +183,22 @@ export default function DashboardPageClient({
     };
   });
 
-  // ---- activity feed (you can keep "Started" here if you like) ----
-  const activity: ActivityItem[] = serverData.sessions
-    // newest first
-    .sort((a, b) => {
-      const ad = new Date(a.submittedAt ?? a.startedAt).getTime();
-      const bd = new Date(b.submittedAt ?? b.startedAt).getTime();
-      return bd - ad;
-    })
+  const activity: ActivityItem[] = [...sessions]
+    .sort(
+      (a, b) =>
+        safeTime(b.submittedAt ?? b.startedAt) -
+        safeTime(a.submittedAt ?? a.startedAt)
+    )
     .slice(0, 8)
     .map((s) => ({
       id: s.id,
       type: "exam",
       title: s.submittedAt
-        ? `Submitted ${s.examKey ?? "exam"} • ${s.scoreCorrect}/${s.scoreTotal}`
-        : `Started ${s.examKey ?? "exam"}`,
-      dateISO: toLocalYYYYMMDD(new Date(s.submittedAt ?? s.startedAt)),
+        ? `Submitted ${s.label ?? s.examKey ?? "exam"} • ${
+            s.scoreCorrect ?? 0
+          }/${s.scoreTotal ?? 0}`
+        : `Started ${s.label ?? s.examKey ?? "exam"}`,
+      dateISO: toNYYYYYMMDD(s.submittedAt ?? s.startedAt),
       meta: undefined,
     }));
 
