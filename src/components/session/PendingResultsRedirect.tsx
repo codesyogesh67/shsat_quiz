@@ -49,7 +49,8 @@ export default function PendingResultsRedirect({
             </div>
           </div>
 
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20">
+          {/* icon */}
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center app-icon-filled">
             <BarChart3 className="h-8 w-8" />
           </div>
 

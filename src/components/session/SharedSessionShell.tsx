@@ -250,16 +250,15 @@ export default function SharedSessionShell({
                           Question {Math.min(currentIdx + 1, total)} of {total}
                         </span>
                       </div>
-
                       <Button
                         type="button"
                         variant="ghost"
-                        size="icon"
+                        // size="icon"
                         onClick={() => setExitOpen(true)}
-                        className="h-9 w-9 shrink-0 rounded-xl text-slate-500 hover:bg-white/80 hover:text-slate-700"
+                        className="app-icon-square"
                         aria-label="Exit session"
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-5 w-5 text-white" />
                       </Button>
                     </div>
 
@@ -476,8 +475,8 @@ export default function SharedSessionShell({
               <div
                 className={`flex h-12 w-12 items-center justify-center rounded-2xl shadow-md ${
                   canSubmit
-                    ? "bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-indigo-500/20"
-                    : "bg-amber-100 text-amber-700 shadow-amber-200/60"
+                    ? "app-icon-filled shadow-indigo-500/20"
+                    : "app-icon-filled shadow-amber-200/60"
                 }`}
               >
                 {canSubmit ? (
@@ -561,10 +560,7 @@ export default function SharedSessionShell({
                   Submit Answers
                 </AlertDialogAction>
               ) : (
-                <AlertDialogAction
-                  onClick={onExit}
-                  className="rounded-2xl bg-gradient-to-r from-slate-900 to-slate-700 text-white hover:opacity-95"
-                >
+                <AlertDialogAction onClick={onExit} className="rounded-2xl">
                   Exit Test
                 </AlertDialogAction>
               )}
@@ -577,10 +573,6 @@ export default function SharedSessionShell({
         <AlertDialogContent className="max-w-md rounded-3xl border border-slate-200/70 bg-white p-0 shadow-2xl">
           <div className="overflow-hidden rounded-3xl">
             <div className="bg-[radial-gradient(26rem_14rem_at_0%_0%,rgba(99,102,241,0.12),transparent_55%),radial-gradient(18rem_12rem_at_100%_0%,rgba(139,92,246,0.10),transparent_55%)] px-6 py-5">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm">
-                <X className="h-5 w-5 text-slate-700" />
-              </div>
-
               <AlertDialogHeader className="mt-4 space-y-2 text-left">
                 <AlertDialogTitle className="text-xl font-semibold tracking-tight text-slate-900">
                   Exit this session?
@@ -599,7 +591,7 @@ export default function SharedSessionShell({
 
               <AlertDialogAction
                 onClick={onExit}
-                className="rounded-2xl bg-gradient-to-r from-slate-900 to-slate-700 text-white hover:opacity-95"
+                className="rounded-2xl text-white hover:opacity-95"
               >
                 Yes, Exit Session
               </AlertDialogAction>

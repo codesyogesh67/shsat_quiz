@@ -60,8 +60,10 @@ export async function POST(
         )
         .map((attempt) => attempt.questionId)
     );
+ 
 
     const answeredCount = answeredQuestionIds.size;
+
 
     if (answeredCount < minimumRequired) {
       return NextResponse.json(

@@ -45,6 +45,7 @@ export default function PendingSessionResults({
       >
         <div className="rounded-3xl border border-slate-200/70 bg-white/90 p-6 shadow-sm backdrop-blur-xl sm:p-8">
           {/* top badge */}
+
           <div className="mb-6 flex items-center justify-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 shadow-sm">
               <Sparkles className="h-3.5 w-3.5 text-violet-600" />
@@ -53,7 +54,7 @@ export default function PendingSessionResults({
           </div>
 
           {/* icon */}
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center app-icon-filled">
             <BarChart3 className="h-8 w-8" />
           </div>
 

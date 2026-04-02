@@ -283,50 +283,61 @@ export default function SessionResults({
                     </p>
                   </div>
                 </div>
+                {categoryEntries.map(([name, value]) => {
+                  let valuePct = 0;
 
-                {categoryEntries.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-8 text-center">
-                    <p className="text-sm text-slate-500">
-                      No category breakdown is available yet.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid gap-3 md:grid-cols-2">
-                    {categoryEntries.map(([name, value]) => {
-                      const valuePct = Math.max(
-                        0,
-                        Math.min(Number(value || 0), 100)
-                      );
+                  if (typeof value === "number") {
+                    valuePct = value;
+                  } else if (
+                    value &&
+                    typeof value === "object" &&
+                    "accuracy" in value &&
+                    typeof value.accuracy === "number"
+                  ) {
+                    valuePct = value.accuracy;
+                  } else if (
+                    value &&
+                    typeof value === "object" &&
+                    "correct" in value &&
+                    "total" in value &&
+                    typeof value.correct === "number" &&
+                    typeof value.total === "number"
+                  ) {
+                    valuePct =
+                      value.total > 0
+                        ? Math.round((value.correct / value.total) * 100)
+                        : 0;
+                  }
 
-                      return (
+                  valuePct = Math.max(0, Math.min(valuePct, 100));
+
+                  return (
+                    <div
+                      key={name}
+                      className="rounded-2xl border border-slate-200/70 bg-slate-50/70 p-4"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-sm font-medium text-slate-900">
+                          {name}
+                        </p>
+                        <span className="text-sm font-semibold text-slate-700">
+                          {valuePct}%
+                        </span>
+                      </div>
+
+                      <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
                         <div
-                          key={name}
-                          className="rounded-2xl border border-slate-200/70 bg-slate-50/70 p-4"
-                        >
-                          <div className="flex items-center justify-between gap-3">
-                            <p className="text-sm font-medium text-slate-900">
-                              {name}
-                            </p>
-                            <span className="text-sm font-semibold text-slate-700">
-                              {valuePct}%
-                            </span>
-                          </div>
+                          className="h-full rounded-full bg-gradient-to-r from-indigo-600 to-violet-600"
+                          style={{ width: `${valuePct}%` }}
+                        />
+                      </div>
 
-                          <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
-                            <div
-                              className="h-full rounded-full bg-gradient-to-r from-indigo-600 to-violet-600"
-                              style={{ width: `${valuePct}%` }}
-                            />
-                          </div>
-
-                          <p className="mt-2 text-xs text-slate-500">
-                            Category accuracy
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+                      <p className="mt-2 text-xs text-slate-500">
+                        Category accuracy
+                      </p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </motion.section>
