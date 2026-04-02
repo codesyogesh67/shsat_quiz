@@ -62,7 +62,7 @@ export default async function DiagnosticPlanPage({ params }: PageProps) {
         <div className="space-y-6">
           <section className="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-sm md:p-8">
             <Link
-              href={`/diagnostic/results/${report.sessionId}`}
+              href={`/diagnostic/${report.sessionId}/results`}
               className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition-all duration-200 hover:text-slate-900"
             >
               <ArrowLeft className="h-4 w-4" />

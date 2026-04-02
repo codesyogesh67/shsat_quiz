@@ -351,13 +351,21 @@ export default function DiagnosticResultsDashboard({
                 </p>
               </div>
 
-              <Link
+              {/* <Link
                 href={`/diagnostic/plan/${report.sessionId}`}
                 className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all duration-200 hover:opacity-95"
               >
                 View full plan
                 <ArrowRight className="h-4 w-4" />
-              </Link>
+              </Link> */}
+
+               <div
+           
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all duration-200 hover:opacity-95"
+              >
+                View full plan
+                <ArrowRight className="h-4 w-4" />
+              </div>
             </div>
 
             <div className="mt-6 grid gap-4 lg:grid-cols-4">
