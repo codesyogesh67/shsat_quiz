@@ -273,7 +273,7 @@ export default function CategoryPracticeCard({
                         <div className="flex min-w-[240px] items-center justify-between gap-3">
                           <div className="flex items-center gap-2">
                             {option.kind === "mixed" ? (
-                              <Shuffle className="h-3.5 w-3.5 text-slate-500" />
+                              <Shuffle className="h-3.5 w-3.5" />
                             ) : null}
                             <span className="truncate text-slate-800">
                               {option.label}
