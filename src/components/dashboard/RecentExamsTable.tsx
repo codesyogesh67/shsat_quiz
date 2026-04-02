@@ -27,7 +27,6 @@ function modeLabel(mode: string) {
 }
 
 export function RecentExamsTable({ exams }: { exams: ExamResult[] }) {
-  console.log("exams recent table", exams);
   return (
     <section className="overflow-hidden rounded-[28px] border border-slate-200/70 bg-white shadow-[0_10px_35px_rgba(15,23,42,0.05)]">
       <div className="border-b border-slate-200/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(248,250,252,0.92))] px-5 py-4 sm:px-6">
@@ -171,8 +170,8 @@ export function RecentExamsTable({ exams }: { exams: ExamResult[] }) {
 
                           <Button
                             asChild
-                            size="icon"
-                            className="h-9 w-9 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-sm shadow-indigo-500/20 hover:opacity-95"
+                            // size="icon"
+                            className="app-icon-square"
                           >
                             <Link
                               href={`/exams?retake=${e.id}`}
@@ -181,7 +180,7 @@ export function RecentExamsTable({ exams }: { exams: ExamResult[] }) {
                               }`}
                               title="Retake"
                             >
-                              <RotateCcw className="h-4 w-4" />
+                              <RotateCcw />
                             </Link>
                           </Button>
                         </div>
@@ -266,22 +265,21 @@ export function RecentExamsTable({ exams }: { exams: ExamResult[] }) {
                         e.id
                       }&filter=all&from=${encodeURIComponent("/dashboard")}`}
                     >
-                      {" "}
                       Review
                     </Link>
                   </Button>
 
                   <Button
                     asChild
-                    size="icon"
-                    className="h-9 w-9 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-sm shadow-indigo-500/20 hover:opacity-95"
+                    // size="icon"
+                    className="app-icon-square"
                   >
                     <Link
                       href={`/exams?retake=${e.id}`}
                       aria-label={`Retake ${e.label ?? modeLabel(e.mode)}`}
                       title="Retake"
                     >
-                      <RotateCcw className="h-4 w-4" />
+                      <RotateCcw />
                     </Link>
                   </Button>
                 </div>

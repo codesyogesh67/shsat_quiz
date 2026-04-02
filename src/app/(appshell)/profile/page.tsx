@@ -28,7 +28,7 @@ export default function ProfilePage() {
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center">
-                  <Sparkles className="h-5 w-5 text-slate-600" />
+                  <Sparkles className="h-5 w-5" />
                 </div>
                 <div>
                   <p className="text-sm text-slate-500">Student Profile</p>
@@ -57,7 +57,7 @@ export default function ProfilePage() {
             <CardContent className="p-6 space-y-6">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center">
-                  <Settings className="h-5 w-5 text-slate-600" />
+                  <Settings className="h-5 w-5" />
                 </div>
                 <h2 className="text-lg font-semibold text-slate-900">
                   Account Settings
@@ -129,7 +129,7 @@ export default function ProfilePage() {
           <Card className="rounded-3xl border-slate-200/70 bg-white shadow-sm">
             <CardContent className="p-6 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white flex items-center justify-center">
+                <div className="h-10 w-10 app-icon-filled flex items-center justify-center">
                   <Crown className="h-5 w-5" />
                 </div>
                 <div>
