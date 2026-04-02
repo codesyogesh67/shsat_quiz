@@ -197,7 +197,7 @@ export default function HeroLanding({ tone }: { tone?: Tone }) {
                 variant="ghost"
                 className="rounded-xl px-4 text-slate-700 hover:bg-slate-100/80"
               >
-                <Link href="/exam">
+                <Link href="/practice">
                   Full Exam
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
