@@ -97,9 +97,16 @@ export default function ExamPicker({
                 <SelectValue placeholder="Choose set" />
               </SelectTrigger>
 
-              <SelectContent>
+              <SelectContent
+                className="z-[100] rounded-xl border border-slate-200 bg-white shadow-xl"
+                position="popper"
+              >
                 {SETS.map((s) => (
-                  <SelectItem key={s.key} value={s.key}>
+                  <SelectItem
+                    key={s.key}
+                    value={s.key}
+                    className="cursor-pointer rounded-lg focus:bg-indigo-600 focus:text-white data-[highlighted]:bg-indigo-600 data-[highlighted]:text-white"
+                  >
                     {s.label}
                   </SelectItem>
                 ))}

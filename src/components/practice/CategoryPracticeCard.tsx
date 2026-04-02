@@ -2,14 +2,7 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import {
-  BookOpen,
-  ChevronRight,
-  Layers3,
-  Play,
-  Shuffle,
-  Timer,
-} from "lucide-react";
+import { BookOpen, ChevronRight, Shuffle, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -204,16 +197,6 @@ export default function CategoryPracticeCard({
     []
   );
 
-  function applyPreset(preset: QuickPreset) {
-    const cappedQuestions = Math.max(
-      1,
-      Math.min(preset.questions, selectedOption?.count ?? preset.questions)
-    );
-
-    setQuestionCount(cappedQuestions);
-    setMinutes(preset.minutes);
-  }
-
   return (
     <motion.section
       initial={{ opacity: 0, y: 14 }}
@@ -234,11 +217,6 @@ export default function CategoryPracticeCard({
               </h2>
               <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
             </div>
-          </div>
-
-          <div className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-600">
-            <Layers3 className="mr-1.5 h-3.5 w-3.5" />
-            {options.length} options
           </div>
         </div>
       </div>
@@ -263,24 +241,25 @@ export default function CategoryPracticeCard({
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
 
-                  <SelectContent className="rounded-2xl border-slate-200">
+                  <SelectContent
+                    position="popper"
+                    className="z-[100] rounded-2xl border border-slate-200 bg-white shadow-xl"
+                  >
                     {options.map((option) => (
                       <SelectItem
                         key={option.key}
                         value={option.key}
-                        className="rounded-xl"
+                        className="rounded-xl text-slate-700 focus:bg-indigo-600 focus:text-white data-[highlighted]:bg-indigo-600 data-[highlighted]:text-white"
                       >
                         <div className="flex min-w-[240px] items-center justify-between gap-3">
                           <div className="flex items-center gap-2">
                             {option.kind === "mixed" ? (
                               <Shuffle className="h-3.5 w-3.5" />
                             ) : null}
-                            <span className="truncate text-slate-800">
-                              {option.label}
-                            </span>
+                            <span className="truncate">{option.label}</span>
                           </div>
 
-                          <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+                          <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs font-medium text-slate-600 group-data-[highlighted]:border-white/20 group-data-[highlighted]:bg-white/15 group-data-[highlighted]:text-white">
                             {option.count} Qs
                           </span>
                         </div>
@@ -371,7 +350,6 @@ export default function CategoryPracticeCard({
               </Button>
             </div>
 
-            {/* RIGHT SIDE — QUICK PRACTICE */}
             <div className="rounded-3xl border border-slate-200/70 bg-gradient-to-br from-slate-50 to-white p-4 sm:p-5">
               <div className="mb-4">
                 <h3 className="text-sm font-semibold text-slate-900">
@@ -383,55 +361,51 @@ export default function CategoryPracticeCard({
               </div>
 
               <div className="space-y-3">
-                {quickPresets.map((preset) => {
-                  const exceedsAvailable = preset.questions > maxQuestions;
+                {quickPresets.map((preset) => (
+                  <button
+                    key={preset.id}
+                    type="button"
+                    onClick={() => {
+                      if (!selectedOption) return;
 
-                  return (
-                    <button
-                      key={preset.id}
-                      type="button"
-                      onClick={() => {
-                        if (!selectedOption) return;
+                      const finalQuestions = Math.max(
+                        1,
+                        Math.min(preset.questions, selectedOption.count)
+                      );
 
-                        const finalQuestions = Math.max(
-                          1,
-                          Math.min(preset.questions, selectedOption.count)
-                        );
+                      onStartCategory(
+                        selectedOption.key,
+                        finalQuestions,
+                        preset.minutes
+                      );
+                    }}
+                    disabled={!selectedOption || maxQuestions === 0}
+                    className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-left transition-all duration-200 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
+                            <Play className="h-4 w-4" />
+                          </span>
 
-                        onStartCategory(
-                          selectedOption.key,
-                          finalQuestions,
-                          preset.minutes
-                        );
-                      }}
-                      disabled={!selectedOption || maxQuestions === 0}
-                      className="w-full rounded-2xl border border-slate-200 bg-white p-4 text-left transition-all duration-200 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
-                              <Play className="h-4 w-4" />
-                            </span>
-
-                            <div>
-                              <p className="text-sm font-semibold text-slate-900">
-                                {preset.label}
-                              </p>
-                              <p className="text-xs text-slate-500">
-                                {preset.description}
-                              </p>
-                            </div>
+                          <div>
+                            <p className="text-sm font-semibold text-slate-900">
+                              {preset.label}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              {preset.description}
+                            </p>
                           </div>
                         </div>
-
-                        <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600">
-                          {preset.questions} / {preset.minutes}m
-                        </span>
                       </div>
-                    </button>
-                  );
-                })}
+
+                      <span className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600">
+                        {preset.questions} / {preset.minutes}m
+                      </span>
+                    </div>
+                  </button>
+                ))}
               </div>
             </div>
           </div>

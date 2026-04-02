@@ -94,9 +94,9 @@ export default function PracticeCenterHeader({
             </Button>
 
             <Button
-              variant="outline"
+              // variant="outline"
               onClick={onStartDiagnostic}
-              className="h-11 rounded-2xl border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+              className="h-11 "
             >
               Start Diagnostic
             </Button>
