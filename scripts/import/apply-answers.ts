@@ -187,21 +187,18 @@ async function applyAnswersForExam(prisma: any, examKey: string) {
     updated++;
   }
 
-  console.log(
-    `• ${examKey}: matched ${matched}, updated ${updated}, skipped ${skipped}`
-  );
+  
   return { examKey, matched, updated, skipped };
 }
 
 async function main() {
-  console.log("Using data directory:", DATA_DIR);
-  console.log("Overwrite existing answers:", OVERWRITE);
+
   const prisma = await getPrisma();
   await prisma.$connect();
 
   const examKeys = await detectExamKeys(prisma);
   if (examKeys.length === 0) {
-    console.log("No exam keys detected in DB. Nothing to do.");
+  
     await prisma.$disconnect();
     return;
   }

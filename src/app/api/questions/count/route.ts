@@ -10,7 +10,7 @@ export async function GET() {
   try {
     const total = await prisma.question.count();
     // helpful log while debugging
-    console.log("questions.count =", total);
+ 
     return NextResponse.json(
       { total },
       { status: 200, headers: { "Cache-Control": "no-store" } }
