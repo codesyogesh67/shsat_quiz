@@ -172,11 +172,7 @@ export default function HeroLanding({ tone }: { tone?: Tone }) {
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button
-                asChild
-                size="lg"
-                className="rounded-xl border-0 bg-gradient-to-r from-indigo-600 to-violet-600 px-6 text-white shadow-lg shadow-indigo-500/20 transition hover:-translate-y-0.5 hover:shadow-xl"
-              >
+              <Button asChild size="lg">
                 <Link href="/diagnostic">
                   <FileBarChart2 className="mr-2 h-4 w-4" />
                   Take Diagnostic
@@ -187,7 +183,7 @@ export default function HeroLanding({ tone }: { tone?: Tone }) {
                 asChild
                 size="lg"
                 variant="outline"
-                className="rounded-xl border-slate-300 bg-white/80 px-6 text-slate-700 backdrop-blur hover:bg-slate-50"
+                // className="rounded-xl border-slate-300 bg-white/80 px-6 text-slate-700 backdrop-blur hover:bg-slate-50"
               >
                 <Link href="/practice">
                   <PencilLine className="mr-2 h-4 w-4" />

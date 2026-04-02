@@ -1,122 +1,247 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-
-@custom-variant dark (&:is(.dark *));
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-}
-
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+  :root {
+    --background: 248 250 252;
+    --foreground: 15 23 42;
+
+    --card: 255 255 255;
+    --card-foreground: 15 23 42;
+
+    --popover: 255 255 255;
+    --popover-foreground: 15 23 42;
+
+    --primary: 79 70 229; /* indigo-600 */
+    --primary-foreground: 255 255 255;
+
+    --secondary: 248 250 252;
+    --secondary-foreground: 51 65 85;
+
+    --muted: 241 245 249;
+    --muted-foreground: 100 116 139;
+
+    --accent: 245 243 255;
+    --accent-foreground: 67 56 202;
+
+    --border: 226 232 240;
+    --input: 226 232 240;
+    --ring: 99 102 241;
+
+    --radius: 1rem;
+
+    /* custom app tokens */
+    --app-indigo: 79 70 229; /* indigo-600 */
+    --app-violet: 124 58 237; /* violet-600 */
+    --app-fuchsia: 217 70 239; /* fuchsia-500 */
+
+    --app-bg-from: 248 250 252; /* slate-50 */
+    --app-bg-via: 255 255 255; /* white */
+    --app-bg-to: 238 242 255; /* indigo-50 */
+
+    --app-card-border: 226 232 240;
+    --app-sidebar-bg: 255 255 255;
+    --app-heading: 15 23 42;
+    --app-text: 71 85 105;
+    --app-muted: 100 116 139;
+
+    --app-icon-color: 79 70 229; /* indigo-600 */
   }
+
+  /* svg.lucide {
+    @apply text-indigo-600;
+  } */
+
+  * {
+    @apply border-slate-200/70;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/40 text-slate-700 antialiased;
+  }
+
+  /*
+    GLOBAL ICON DEFAULT
+    All Lucide icons inside .app-shell become indigo by default
+  */
+  .app-shell svg.lucide {
+    color: rgb(var(--app-icon-color));
+  }
+
+  /* RADIO GROUP FIX */
+  [data-state="checked"] {
+    border-color: rgb(var(--app-indigo)) !important;
+  }
+
+  [data-state="checked"] svg {
+    fill: rgb(var(--app-indigo)) !important;
+    color: rgb(var(--app-indigo)) !important;
   }
 }
+
+@layer components {
+  .app-page {
+    @apply min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/40;
+  }
+
+  .app-container {
+    @apply px-4 md:px-6;
+  }
+
+  .app-heading {
+    @apply text-slate-900 tracking-tight;
+  }
+
+  .app-muted {
+    @apply text-slate-500;
+  }
+
+  .app-card {
+    @apply rounded-2xl border border-slate-200/70 bg-white shadow-sm;
+  }
+
+  .app-card-lg {
+    @apply rounded-3xl border border-slate-200/70 bg-white shadow-sm;
+  }
+
+  .app-section {
+    @apply rounded-3xl border border-slate-200/70 bg-white p-6 shadow-sm;
+  }
+
+  .app-sidebar {
+    @apply border-r border-slate-200/70 bg-white/90 backdrop-blur-xl;
+  }
+
+  .app-icon-box {
+    @apply flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600;
+  }
+
+  .app-icon-box svg {
+    @apply h-5 w-5;
+  }
+
+  .app-hover {
+    @apply transition-all duration-200 hover:bg-slate-100;
+  }
+
+  .app-nav-item {
+    @apply flex h-14 items-center gap-3 rounded-2xl px-3 text-slate-600 transition-all duration-200 hover:bg-slate-100;
+  }
+
+  .app-nav-item svg {
+    @apply h-5 w-5 text-slate-500 transition-all duration-200;
+  }
+
+  .app-nav-item-active {
+    @apply bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20;
+  }
+
+  .app-gradient {
+    @apply bg-gradient-to-r from-indigo-600 to-violet-600 text-white;
+  }
+
+  .app-gradient-soft {
+    @apply bg-gradient-to-br from-indigo-600 to-violet-600;
+  }
+
+  .app-gradient-text {
+    @apply bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent;
+  }
+
+  .app-badge {
+    @apply inline-flex items-center rounded-full border border-slate-200/70 bg-white px-3 py-1 text-xs font-medium text-slate-600;
+  }
+
+  .app-input {
+    @apply rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm transition-all duration-200 placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100;
+  }
+
+  .app-button-primary {
+    @apply inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition-all duration-200 hover:opacity-95;
+  }
+
+  .app-button-secondary {
+    @apply inline-flex items-center justify-center rounded-xl border border-slate-200/80 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-all duration-200 hover:bg-slate-50;
+  }
+
+  .app-button-ghost {
+    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium text-slate-600 transition-all duration-200 hover:bg-slate-100;
+  }
+
+  .app-gradient,
+  .app-button-primary,
+  .app-nav-item-active,
+  .app-white-surface {
+    @apply text-white;
+  }
+
+  .app-gradient svg,
+  .app-button-primary svg,
+  .app-nav-item-active svg,
+  .app-white-surface svg {
+    @apply text-white;
+  }
+
+  .app-white-surface .app-icon-box,
+  .app-nav-item-active .app-icon-box,
+  .app-button-primary .app-icon-box,
+  .app-gradient .app-icon-box {
+    @apply bg-white/15;
+  }
+
+  /*
+    FILLED ICON (PRIMARY)
+    - Indigo background
+    - White icon
+  */
+  .app-icon-filled {
+    @apply flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 shadow-sm;
+  }
+
+  .app-icon-filled svg {
+    @apply h-5 w-5 text-white;
+  }
+
+  /*
+    SMALL VERSION (optional)
+  */
+  .app-icon-filled-sm {
+    @apply flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 shadow-sm transition-all duration-200;
+  }
+
+  .app-icon-filled-sm svg {
+    @apply h-6 w-6 text-white;
+  }
+
+  /*
+    LARGE VERSION (optional)
+  */
+  .app-icon-filled-lg {
+    @apply flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600;
+  }
+
+  .app-icon-filled-lg svg {
+    @apply h-6 w-6 text-white;
+  }
+
+  /* Perfect square icon button (matches question map) */
+  .app-icon-square {
+    @apply flex h-12 w-12 items-center justify-center rounded-xl 
+           bg-gradient-to-br from-indigo-600 to-violet-600 
+           text-white shadow-sm transition-all duration-200;
+  }
+
+  .app-icon-square svg {
+    @apply h-5 w-5;
+  }
+
+  .app-icon-square:hover {
+    @apply scale-105 shadow-md shadow-indigo-500/20;
+  }
+}
+
+
+/* className="rounded-xl border-0 bg-gradient-to-r from-indigo-600 to-violet-600 px-6 text-white shadow-lg shadow-indigo-500/20 transition hover:-translate-y-0.5 hover:shadow-xl" */

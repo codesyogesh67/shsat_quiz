@@ -1,113 +1,80 @@
 // components/site-footer.tsx
 import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { Calculator, Github, Twitter, Youtube, Instagram } from "lucide-react";
+import { Calculator, ArrowUpRight, ChevronUp } from "lucide-react";
 
 export default function Footer() {
   const year = new Date().getFullYear();
-  return (
-    <footer className="border-t bg-muted/30">
-      <div className="mx-auto max-w-7xl px-3 sm:px-6 md:px-10 lg:px-20 xl:px-28 py-10">
-        {/* Top */}
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-5">
-          {/* Brand / blurb */}
-          <div className="md:col-span-2">
-            <Link href="/" className="flex items-center gap-2">
-              <Calculator className="h-5 w-5" />
-              <span className="text-sm font-semibold tracking-wide">
-                SHSAT Guide
-              </span>
-            </Link>
-            <p className="mt-3 text-sm text-muted-foreground">
-              Target weak topics, master timing, and track progress. Start
-              free—upgrade anytime.
-            </p>
 
-            {/* Socials */}
-            <div className="mt-4 flex gap-2">
-              <Social href="#" label="GitHub">
-                <Github className="h-4 w-4" />
-              </Social>
-              <Social href="#" label="Twitter / X">
-                <Twitter className="h-4 w-4" />
-              </Social>
-              <Social href="#" label="YouTube">
-                <Youtube className="h-4 w-4" />
-              </Social>
-              <Social href="#" label="Instagram">
-                <Instagram className="h-4 w-4" />
-              </Social>
+  return (
+    <footer className="border-t border-slate-200/70 bg-white/95 backdrop-blur">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 md:px-10 lg:px-20 xl:px-28">
+        <div className="flex flex-col gap-8">
+          {/* Top row */}
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            {/* Brand + description */}
+            <div className="max-w-xl">
+              <Link href="/" className="inline-flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center app-icon-filled">
+                  <Calculator className="h-5 w-5" />
+                </div>
+
+                <div>
+                  <div className="text-sm font-semibold tracking-wide text-slate-900">
+                    SHSAT Guide
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    Math prep platform for focused SHSAT practice
+                  </div>
+                </div>
+              </Link>
+
+              <p className="mt-4 text-sm leading-6 text-slate-600">
+                Target weak topics, improve timing, and track progress with a
+                clean practice experience built for students preparing with
+                intention.
+              </p>
             </div>
+
+            {/* Navigation row */}
+            <nav className="flex flex-wrap items-center gap-x-9 gap-y-3 text-sm ">
+              <FooterLink href="/practice" label="Practice" />
+              <FooterLink href="/dashboard" label="Dashboard" />
+              <FooterLink href="/pricing" label="Pricing" />
+              <FooterLink href="/diagnostic" label="Diagnostic" />
+            </nav>
           </div>
 
-          {/* Columns */}
-          <FooterCol
-            title="Product"
-            links={[
-              { href: "/practice", label: "Practice by Topic" },
-              { href: "/exam", label: "Full Exams" },
-              { href: "/dashboard", label: "Dashboard" },
-              { href: "/pricing", label: "Pricing" },
-            ]}
-          />
+          {/* Bottom row */}
+          <div className="flex flex-col gap-4 border-t border-slate-200/70 pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs text-slate-500">
+              © {year} SHSAT Guide. All rights reserved.
+            </p>
 
-          <FooterCol
-            title="Resources"
-            links={[
-              { href: "/how-it-works", label: "How it works" },
-              { href: "/faq", label: "FAQ" },
-              { href: "/roadmap", label: "Roadmap" },
-            ]}
-          />
+            <div className="flex items-center gap-3">
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                className="h-9 rounded-xl border-slate-200 bg-white px-3 text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50"
+              >
+                <a href="#top" aria-label="Back to top">
+                  <ChevronUp className="mr-1 h-4 w-4" />
+                  Back to top
+                </a>
+              </Button>
 
-          <FooterCol
-            title="Company"
-            links={[
-              { href: "/about", label: "About" },
-              { href: "/contact", label: "Contact" },
-              { href: "/status", label: "Status" },
-            ]}
-          />
-        </div>
-
-        <Separator className="my-6" />
-
-        {/* Bottom */}
-        <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-          <p className="text-xs text-muted-foreground">
-            © {year} SHSAT Guide. All rights reserved.
-          </p>
-
-          <div className="flex items-center gap-4 text-xs">
-            <Link
-              className="hover:underline text-muted-foreground"
-              href="/terms"
-            >
-              Terms
-            </Link>
-            <Link
-              className="hover:underline text-muted-foreground"
-              href="/privacy"
-            >
-              Privacy
-            </Link>
-            <Link
-              className="hover:underline text-muted-foreground"
-              href="/cookies"
-            >
-              Cookies
-            </Link>
-            <Button
-              asChild
-              variant="outline"
-              size="sm"
-              className="h-7 px-2 text-xs"
-            >
-              <a href="#top" aria-label="Back to top">
-                Back to top ↑
-              </a>
-            </Button>
+              {/* <Button
+                asChild
+                size="sm"
+                className="h-9 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-4 text-white shadow-lg shadow-indigo-500/20 hover:opacity-95"
+              >
+                <Link href="/pricing">
+                  Start free
+                  <ArrowUpRight className="ml-1.5 h-4 w-4" />
+                </Link>
+              </Button> */}
+            </div>
           </div>
         </div>
       </div>
@@ -115,52 +82,13 @@ export default function Footer() {
   );
 }
 
-function FooterCol({
-  title,
-  links,
-}: {
-  title: string;
-  links: { href: string; label: string }[];
-}) {
+function FooterLink({ href, label }: { href: string; label: string }) {
   return (
-    <div>
-      <h3 className="mb-3 text-sm font-semibold">{title}</h3>
-      <ul className="space-y-2">
-        {links.map((l) => (
-          <li key={l.href}>
-            <Link
-              href={l.href}
-              className="text-sm text-muted-foreground hover:text-foreground hover:underline"
-            >
-              {l.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function Social({
-  href,
-  label,
-  children,
-}: {
-  href: string;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Button
-      asChild
-      variant="outline"
-      size="icon"
-      className="h-8 w-8"
-      aria-label={label}
+    <Link
+      href={href}
+      className="font-medium text-sm text-indigo-600 transition-colors hover:text-indigo-900 "
     >
-      <a href={href} target="_blank" rel="noreferrer">
-        {children}
-      </a>
-    </Button>
+      {label}
+    </Link>
   );
 }

@@ -104,7 +104,7 @@ export default function RootLayout({
       <html lang="en">
         <body
           id="top"
-          className="min-h-screen"
+          className="app-shell min-h-screen"
           // className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(99,102,241,0.10),transparent_26%),radial-gradient(circle_at_bottom_right,rgba(139,92,246,0.10),transparent_26%)]"
         >
           <main>{children}</main>

@@ -104,11 +104,7 @@ export default async function PricingPage() {
               </ul>
 
               <div className="mt-auto">
-                <Button
-                  asChild
-                  variant="outline"
-                  className="h-11 w-full rounded-xl border-slate-200/80 bg-white text-slate-700 hover:bg-slate-100"
-                >
+                <Button asChild className="h-11 w-full rounded-xl">
                   <Link href="/practice">Continue with Free</Link>
                 </Button>
               </div>
@@ -148,11 +144,7 @@ export default async function PricingPage() {
               </ul>
 
               <div className="mt-auto">
-                <Button
-                  asChild
-                  variant="outline"
-                  className="h-11 w-full rounded-xl border-slate-200/80 bg-white text-slate-700 hover:bg-slate-100"
-                >
+                <Button asChild className="h-11 w-full rounded-xl ">
                   <Link href="/sign-up">Start Free Trial</Link>
                 </Button>
               </div>
@@ -166,7 +158,7 @@ export default async function PricingPage() {
             <CardContent className="flex h-full flex-col p-6">
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div className="space-y-2">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl app-icon-filled">
                     <Crown className="h-5 w-5" />
                   </div>
 
@@ -258,7 +250,7 @@ export default async function PricingPage() {
           <Card className="rounded-3xl border-slate-200/70 bg-white shadow-sm">
             <CardContent className="p-6">
               <div className="mb-5 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl app-icon-filled">
                   <Crown className="h-5 w-5" />
                 </div>
                 <div>

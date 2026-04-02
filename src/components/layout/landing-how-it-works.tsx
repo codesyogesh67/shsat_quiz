@@ -57,13 +57,9 @@ export default function LandingHowItWorks() {
                 className="group rounded-[28px] border border-slate-200/80 bg-white/85 p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
                 <div className="mb-5 flex items-center justify-between">
-                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/20">
-                    <Icon className="h-5 w-5" />
+                  <div className="app-icon-filled ">
+                    <Icon />
                   </div>
-
-                  <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">
-                    0{index + 1}
-                  </span>
                 </div>
 
                 <p className="text-xs font-medium uppercase tracking-[0.18em] text-indigo-600">
