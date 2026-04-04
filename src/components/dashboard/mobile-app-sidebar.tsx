@@ -71,7 +71,10 @@ export default function MobileAppSidebar() {
           </Button>
         </SheetTrigger>
 
-        <SheetContent side="left" className="w-80 p-0 [&>button]:hidden">
+        <SheetContent
+          side="left"
+          className="bg-white w-80 p-0 [&>button]:hidden"
+        >
           <SheetHeader className="border-b px-5 py-5">
             <div className="flex items-center justify-between">
               <SheetTitle asChild>
@@ -79,7 +82,7 @@ export default function MobileAppSidebar() {
                   href="/"
                   className="flex items-center gap-3 rounded-md px-1 py-1"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/20">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl app-icon-filled">
                     <Sparkles className="h-5 w-5" />
                   </div>
 

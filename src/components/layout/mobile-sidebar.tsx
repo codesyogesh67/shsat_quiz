@@ -79,7 +79,7 @@ function MobileNavCard({
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(28rem_14rem_at_0%_0%,rgba(99,102,241,0.10),transparent_55%),radial-gradient(22rem_12rem_at_100%_100%,rgba(139,92,246,0.08),transparent_55%)] opacity-70 transition-opacity duration-200 group-hover:opacity-100" />
 
       <div className="relative flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-slate-600 transition-all duration-200 group-hover:bg-gradient-to-br group-hover:from-indigo-600 group-hover:to-violet-600 group-hover:text-white bg-gradient-to-br from-indigo-600 to-violet-600 text-white">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center app-icon-filled">
           <Icon className="h-6 w-6" />
         </div>
 
@@ -88,7 +88,7 @@ function MobileNavCard({
             <h3 className="text-sm font-semibold tracking-wide text-slate-900">
               {label}
             </h3>
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/80 text-slate-400 shadow-sm transition-all duration-200 group-hover:text-white group-hover:bg-indigo-600">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center ">
               <ArrowRight className="h-4 w-4" />
             </div>
           </div>
@@ -151,7 +151,7 @@ export function MobileSidebar({ open, setOpen }: MobileSidebarProps) {
                     onClick={() => setOpen(false)}
                     className="group flex min-w-0 items-center gap-3"
                   >
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center app-icon-filled">
                       <Sparkles className="h-5 w-5" />
                     </div>
 
@@ -185,14 +185,14 @@ export function MobileSidebar({ open, setOpen }: MobileSidebarProps) {
                   </SignedIn>
 
                   <SheetClose asChild>
-                    <Button
-                      variant="ghost"
+                    <button
+                      // variant="ghost"
                       size="icon"
                       aria-label="Close menu"
-                      className="rounded-2xl text-slate-600 transition-all duration-200 hover:bg-white/80 hover:text-slate-900"
+                      className="text-white transition-all duration-200 cursor-pointer"
                     >
-                      <X className="h-5 w-5" />
-                    </Button>
+                      <X className="h-5 w-5 text-indigo-600" />
+                    </button>
                   </SheetClose>
                 </div>
               </div>
