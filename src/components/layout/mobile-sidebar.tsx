@@ -88,7 +88,7 @@ function MobileNavCard({
             <h3 className="text-sm font-semibold tracking-wide text-slate-900">
               {label}
             </h3>
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center ">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center">
               <ArrowRight className="h-4 w-4" />
             </div>
           </div>
@@ -168,7 +168,7 @@ export function MobileSidebar({ open, setOpen }: MobileSidebarProps) {
 
                 <div className="flex items-center gap-2">
                   <SignedIn>
-                    <div className="">
+                    <div>
                       <UserButton
                         afterSignOutUrl="/"
                         appearance={{
@@ -185,14 +185,15 @@ export function MobileSidebar({ open, setOpen }: MobileSidebarProps) {
                   </SignedIn>
 
                   <SheetClose asChild>
-                    <button
-                      // variant="ghost"
+                    <Button
+                      type="button"
+                      variant="ghost"
                       size="icon"
                       aria-label="Close menu"
-                      className="text-white transition-all duration-200 cursor-pointer"
+                      className="cursor-pointer rounded-xl text-slate-700 transition-all duration-200 hover:bg-slate-100 hover:text-slate-900"
                     >
                       <X className="h-5 w-5 text-indigo-600" />
-                    </button>
+                    </Button>
                   </SheetClose>
                 </div>
               </div>
