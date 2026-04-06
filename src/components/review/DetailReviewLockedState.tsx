@@ -27,7 +27,7 @@ export default function DetailedReviewLockedState({
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center ">
                   <FileSearch className="h-6 w-6" />
                 </div>
 
