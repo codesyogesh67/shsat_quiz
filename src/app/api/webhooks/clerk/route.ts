@@ -112,39 +112,42 @@ async function upsertByClerkId(
   let name = opts?.name ?? null;
   let imageUrl = opts?.imageUrl ?? null;
 
-  // Last-resort: fetch from Clerk only if we have an admin client (helps local & prod)
-  if ((!email || !name || !imageUrl) && adminClerk) {
-    try {
-      const c = await adminClerk.users.getUser(clerkUserId);
-      email =
-        email ??
-        c.primaryEmailAddress?.emailAddress ??
-        c.emailAddresses[0]?.emailAddress ??
-        null;
-      name =
-        name ??
-        ([c.firstName, c.lastName].filter(Boolean).join(" ") ||
-          c.username ||
-          email ||
-          null);
-      imageUrl = imageUrl ?? (c.imageUrl || null);
-    } catch (e) {
-      console.warn("[webhook] adminClerk.getUser fallback failed:", e);
-    }
+  const existing = await prisma.user.findUnique({
+    where: { externalAuthId: clerkUserId },
+  });
+
+  const now = new Date();
+  const trialEndsAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+  if (existing) {
+    return prisma.user.update({
+      where: { externalAuthId: clerkUserId },
+      data: {
+        ...(email !== undefined ? { email } : {}),
+        ...(name !== undefined ? { name } : {}),
+        ...(imageUrl !== undefined ? { imageUrl } : {}),
+
+        // ✅ BACKFILL if missing
+        ...(existing.planType === "TRIAL" && !existing.trialStartedAt
+          ? { trialStartedAt: now }
+          : {}),
+        ...(existing.planType === "TRIAL" && !existing.trialEndsAt
+          ? { trialEndsAt }
+          : {}),
+      },
+    });
   }
 
-  return prisma.user.upsert({
-    where: { externalAuthId: clerkUserId },
-    update: {
-      ...(email !== undefined ? { email } : {}),
-      ...(name !== undefined ? { name } : {}),
-      ...(imageUrl !== undefined ? { imageUrl } : {}),
-    },
-    create: {
+  return prisma.user.create({
+    data: {
       externalAuthId: clerkUserId,
       ...(email !== undefined ? { email } : {}),
       ...(name !== undefined ? { name } : {}),
       ...(imageUrl !== undefined ? { imageUrl } : {}),
+
+      planType: "TRIAL",
+      trialStartedAt: now,
+      trialEndsAt,
     },
   });
 }
