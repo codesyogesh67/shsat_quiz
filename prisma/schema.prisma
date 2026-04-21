@@ -15,6 +15,11 @@ enum PlanType {
   PREMIUM
 }
 
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+}
+
 model User {
   id             String   @id @default(cuid())
   email          String?  @unique
@@ -31,8 +36,17 @@ model User {
   premiumStartedAt DateTime?
   premiumEndsAt    DateTime?
 
+  stripeCustomerId     String?       @unique
+  stripeSubscriptionId String?       @unique
+  stripePriceId        String?
+  subscriptionStatus   String?
+  cancelAtPeriodEnd    Boolean       @default(false)
+  billingCycle         BillingCycle?
+
   Attempt  Attempt[]
   sessions Session[] @relation("UserSessions")
+
+  preferences UserPreferences?
 }
 
 model Question {
@@ -124,4 +138,21 @@ enum Role {
 enum QuestionType {
   MULTIPLE_CHOICE
   FREE_RESPONSE
+}
+
+model UserPreferences {
+  id                 String    @id @default(cuid())
+  userId             String    @unique
+  dailyStudyGoal     Int       @default(30)
+  studyFocus         String    @default("weak_areas")
+  targetExamDate     DateTime?
+  parentSummaryEmail Boolean   @default(false)
+
+  parentEmail  String?
+  billingEmail String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
