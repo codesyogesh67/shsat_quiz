@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SignOutButton } from "@clerk/nextjs";
 import { useState } from "react";
 import {
   LayoutDashboard,
@@ -9,6 +10,7 @@ import {
   BookOpen,
   User,
   Sparkles,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -102,6 +104,28 @@ export default function AppSidebar() {
               </Link>
             );
           })}
+
+          <SignOutButton redirectUrl="/">
+            <button
+              type="button"
+              className="group relative cursor-pointer flex h-14 w-full items-center overflow-hidden rounded-2xl text-red-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
+            >
+              <span className="absolute left-7 top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl">
+                <LogOut className="h-5 w-5" />
+              </span>
+
+              <span
+                className={cn(
+                  "pl-16 whitespace-nowrap text-sm font-medium transition-all duration-200",
+                  expanded
+                    ? "translate-x-0 opacity-100"
+                    : "pointer-events-none translate-x-1 opacity-0"
+                )}
+              >
+                Log out
+              </span>
+            </button>
+          </SignOutButton>
         </nav>
       </div>
     </aside>
