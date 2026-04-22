@@ -426,7 +426,7 @@ export default function CategoryPracticeCard({
                   <p className="mt-2 text-xs text-slate-500 leading-loose">
                     Set how many{" "}
                     <span className="text-white bg-indigo-500 font-bold text-md rounded-full border border-indigo-500 p-1 px-3">
-                      {selectedOption.label}
+                      {selectedOption?.label ?? "selected"}
                     </span>{" "}
                     questions you want in this session. Max available:{" "}
                     {maxQuestions}
