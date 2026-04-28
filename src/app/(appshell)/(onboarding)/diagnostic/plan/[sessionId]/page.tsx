@@ -8,8 +8,13 @@ import {
   Sparkles,
   Target,
   TrendingUp,
+  BookOpenCheck,
+  ArrowRight,
+  ShieldCheck,
 } from "lucide-react";
+
 import { getDiagnosticReport } from "@/lib/diagnostic-report";
+import DiagnosticStudyPlanClient from "@/components/reports/DiagnosticStudyPlanClient";
 
 type PageProps = {
   params: Promise<{
@@ -43,6 +48,33 @@ function ninetyDayGoal(readinessLevel: string) {
   }
 }
 
+const planCards = [
+  {
+    label: "Today",
+    icon: Target,
+    tone: "from-indigo-50 via-white to-indigo-50",
+    iconTone: "bg-indigo-600 text-white",
+  },
+  {
+    label: "This Week",
+    icon: CalendarDays,
+    tone: "from-violet-50 via-white to-violet-50",
+    iconTone: "bg-violet-600 text-white",
+  },
+  {
+    label: "This Month",
+    icon: TrendingUp,
+    tone: "from-fuchsia-50 via-white to-fuchsia-50",
+    iconTone: "bg-fuchsia-600 text-white",
+  },
+  {
+    label: "3-Month Goal",
+    icon: Sparkles,
+    tone: "from-slate-50 via-white to-indigo-50",
+    iconTone: "bg-slate-900 text-white",
+  },
+];
+
 export default async function DiagnosticPlanPage({ params }: PageProps) {
   const { sessionId } = await params;
   if (!sessionId) notFound();
@@ -56,201 +88,155 @@ export default async function DiagnosticPlanPage({ params }: PageProps) {
   const monthTopics =
     report.weakTopics?.slice(0, 3).join(", ") || "your main focus topics";
 
+  const cards = [
+    {
+      ...planCards[0],
+      title: `Start with ${todayTopic}`,
+      description: `Study ${todayTopic} for ${report.recommendedDailyMinutes} minutes and review each mistake before moving on.`,
+    },
+    {
+      ...planCards[1],
+      title: `Focus on ${weekTopics}`,
+      description:
+        "Work on accuracy first. Slow down, show steps clearly, and review wrong answers before doing more sets.",
+    },
+    {
+      ...planCards[2],
+      title: `Strengthen ${monthTopics}`,
+      description: `${monthGoal(
+        report.readinessLevel
+      )} Keep your strongest topic active with short review practice.`,
+    },
+    {
+      ...planCards[3],
+      title: "Reach more balanced readiness",
+      description: ninetyDayGoal(report.readinessLevel),
+    },
+  ];
+
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/40">
-      <div className="mx-auto max-w-7xl px-4 py-8 md:px-6 md:py-10">
+      <div className="w-full px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <div className="space-y-6">
-          <section className="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-sm md:p-8">
-            <Link
-              href={`/diagnostic/${report.sessionId}/results`}
-              className="inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition-all duration-200 hover:text-slate-900"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Back to diagnostic report
-            </Link>
+          <section className="relative overflow-hidden rounded-[28px] border border-slate-200/70 bg-white p-5 shadow-sm sm:p-6 lg:p-8">
+            <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-indigo-200/40 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-28 left-1/3 h-72 w-72 rounded-full bg-fuchsia-200/30 blur-3xl" />
 
-            <div className="mt-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-500">
-                  Full Study Plan
-                </p>
-                <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-                  Your improvement roadmap
-                </h1>
-                <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600 md:text-base">
-                  A longer-term plan built from your diagnostic results. Follow
-                  this roadmap to improve weak topics, maintain strengths, and
-                  build stronger SHSAT readiness over time.
-                </p>
-              </div>
+            <div className="relative">
+              <Link
+                href={`/diagnostic/${report.sessionId}/results`}
+                className="inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/80 px-3 py-1.5 text-sm font-medium text-slate-600 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-50 hover:text-slate-950"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to diagnostic report
+              </Link>
 
-              <div className="rounded-2xl bg-indigo-50 px-4 py-3 text-sm text-slate-700">
-                Recommended study time:{" "}
-                <span className="font-semibold text-slate-900">
-                  {report.recommendedDailyMinutes} min/day
-                </span>
+              <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px] lg:items-end">
+                <div className="flex gap-4">
+                  <div className="hidden h-14 w-14 app-icon-filled sm:flex">
+                    <BookOpenCheck className="h-7 w-7" />
+                  </div>
+
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-100">
+                        Full Study Plan
+                      </span>
+                      <span className="rounded-full bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200/70">
+                        {report.readinessLevel} readiness
+                      </span>
+                    </div>
+
+                    <h1 className="mt-4 max-w-4xl text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl lg:text-5xl">
+                      Your improvement roadmap
+                    </h1>
+
+                    <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-600 sm:text-base">
+                      A focused plan built from your diagnostic results. Use it
+                      to improve weak areas, protect strengths, and know exactly
+                      what to do next.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rounded-[24px] border border-indigo-100 bg-gradient-to-br from-indigo-50 via-white to-violet-50 p-5 shadow-sm">
+                  <div className="flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-indigo-700">
+                        Recommended pace
+                      </p>
+                      <p className="mt-2 text-3xl font-semibold text-slate-950">
+                        {report.recommendedDailyMinutes}
+                        <span className="ml-1 text-base font-medium text-slate-500">
+                          min/day
+                        </span>
+                      </p>
+                    </div>
+
+                    <div className="flex h-12 w-12 app-icon-filled">
+                      <Clock3 className="h-6 w-6" />
+                    </div>
+                  </div>
+
+                  <div className="mt-5 rounded-2xl bg-white/80 p-4 ring-1 ring-indigo-100/80">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="mt-0.5 h-5 w-5" />
+
+                      <p className="text-sm leading-6 text-slate-700">
+                        Start with{" "}
+                        <span className="font-semibold text-slate-950">
+                          {todayTopic}
+                        </span>{" "}
+                        before moving into mixed practice.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
 
           <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <div className="rounded-3xl border border-slate-200/70 bg-white p-5 shadow-sm">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
-                <Target className="h-5 w-5" />
-              </div>
-              <p className="mt-4 text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
-                Today
-              </p>
-              <h2 className="mt-2 text-lg font-semibold text-slate-900">
-                Start with {todayTopic}
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Study {todayTopic} for {report.recommendedDailyMinutes} minutes
-                and review each mistake before moving on.
-              </p>
-            </div>
+            {cards.map((card) => {
+              const Icon = card.icon;
 
-            <div className="rounded-3xl border border-slate-200/70 bg-white p-5 shadow-sm">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
-                <CalendarDays className="h-5 w-5" />
-              </div>
-              <p className="mt-4 text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
-                This Week
-              </p>
-              <h2 className="mt-2 text-lg font-semibold text-slate-900">
-                Focus on {weekTopics}
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                Work on accuracy first. Slow down, show steps clearly, and
-                review wrong answers before doing more sets.
-              </p>
-            </div>
+              return (
+                <div
+                  key={card.label}
+                  className={`group relative overflow-hidden rounded-[24px] border border-slate-200/70 bg-gradient-to-br ${card.tone} p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_45px_-30px_rgba(79,70,229,0.45)]`}
+                >
+                  <div className="pointer-events-none absolute -right-12 -top-12 h-28 w-28 rounded-full bg-white/70 blur-2xl" />
 
-            <div className="rounded-3xl border border-slate-200/70 bg-white p-5 shadow-sm">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
-                <TrendingUp className="h-5 w-5" />
-              </div>
-              <p className="mt-4 text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
-                This Month
-              </p>
-              <h2 className="mt-2 text-lg font-semibold text-slate-900">
-                Strengthen {monthTopics}
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                {monthGoal(report.readinessLevel)} Keep your strongest topic
-                active with short review practice.
-              </p>
-            </div>
+                  <div className="relative">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex h-11 w-11 app-icon-filled">
+                        <Icon className="h-5 w-5" />
+                      </div>
 
-            <div className="rounded-3xl border border-slate-200/70 bg-white p-5 shadow-sm">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
-                <Sparkles className="h-5 w-5" />
-              </div>
-              <p className="mt-4 text-xs font-medium uppercase tracking-[0.16em] text-slate-500">
-                3-Month Goal
-              </p>
-              <h2 className="mt-2 text-lg font-semibold text-slate-900">
-                Reach more balanced readiness
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                {ninetyDayGoal(report.readinessLevel)}
-              </p>
-            </div>
+                      <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200/70">
+                        {card.label}
+                      </span>
+                    </div>
+
+                    <h2 className="mt-5 text-lg font-semibold leading-snug text-slate-950">
+                      {card.title}
+                    </h2>
+
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      {card.description}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
           </section>
 
-          <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-            <div className="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-sm md:p-8">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
-                  <Clock3 className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-500">
-                    30-Day Focus
-                  </p>
-                  <h2 className="text-2xl font-semibold tracking-tight text-slate-900">
-                    How to spend the next month
-                  </h2>
-                </div>
-              </div>
-
-              <div className="mt-6 space-y-4">
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                    Week 1
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-700">
-                    Focus on your weakest topic first and build cleaner problem
-                    solving habits.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                    Week 2
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-700">
-                    Add a second weak topic and begin mixing short review with
-                    targeted drills.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                    Week 3
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-700">
-                    Practice mixed sets and start watching for repeated mistake
-                    patterns.
-                  </p>
-                </div>
-
-                <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                    Week 4
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-700">
-                    Add timed practice and compare new results against your
-                    diagnostic weak areas.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-slate-200/70 bg-white p-6 shadow-sm md:p-8">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600">
-                  <CheckCircle2 className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-slate-500">
-                    Checkpoints
-                  </p>
-                  <h2 className="text-2xl font-semibold tracking-tight text-slate-900">
-                    What progress should look like
-                  </h2>
-                </div>
-              </div>
-
-              <div className="mt-6 space-y-3">
-                <div className="rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
-                  You should feel more confident in{" "}
-                  <span className="font-semibold text-slate-900">
-                    {todayTopic}
-                  </span>{" "}
-                  after the first week of focused review.
-                </div>
-
-                <div className="rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
-                  By the end of the month, your weak-topic work should feel more
-                  structured and less random.
-                </div>
-
-                <div className="rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
-                  Over 3 months, the goal is fewer obvious gaps and stronger
-                  overall balance across categories.
-                </div>
-              </div>
+          <section className="">
+            <div className="min-w-0 rounded-[28px] border border-slate-200/70 bg-white p-4 shadow-sm sm:p-5 lg:p-6">
+              <DiagnosticStudyPlanClient
+                topicStats={report.topicStats}
+                sessionId={sessionId}
+              />
             </div>
           </section>
         </div>

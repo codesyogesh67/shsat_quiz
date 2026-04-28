@@ -60,11 +60,20 @@ export default async function DiagnosticResultsPage({ params }: PageProps) {
         select: {
           questionId: true,
           isCorrect: true,
+          flagged: true,
+          givenAnswer: true,
           timeSpentSec: true,
           question: {
             select: {
+              index: true,
               category: true,
+              answer: true,
             },
+          },
+        },
+        orderBy: {
+          question: {
+            index: "asc",
           },
         },
       },
@@ -80,6 +89,7 @@ export default async function DiagnosticResultsPage({ params }: PageProps) {
     );
   }
 
+  // Keep your real stored mode check
   if (session.mode !== "diagnostic") {
     notFound();
   }
@@ -107,6 +117,8 @@ export default async function DiagnosticResultsPage({ params }: PageProps) {
       topic: string;
       correct: number;
       total: number;
+      wrong: number;
+      unanswered: number;
     }
   >();
 
@@ -118,14 +130,20 @@ export default async function DiagnosticResultsPage({ params }: PageProps) {
         topic,
         correct: 0,
         total: 0,
+        wrong: 0,
+        unanswered: 0,
       });
     }
 
     const existing = topicMap.get(topic)!;
     existing.total += 1;
 
-    if (attempt.isCorrect) {
+    if (attempt.isCorrect === true) {
       existing.correct += 1;
+    } else if (attempt.isCorrect === false) {
+      existing.wrong += 1;
+    } else {
+      existing.unanswered += 1;
     }
   }
 
