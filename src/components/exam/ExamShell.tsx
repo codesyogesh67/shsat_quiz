@@ -15,6 +15,7 @@ type Props = {
   initialFlags?: Record<string, boolean>;
   initialSecondsLeft?: number;
   mode?: "exam" | "diagnostic";
+  exitPath?: string;
 };
 
 export default function ExamShell({
@@ -25,6 +26,7 @@ export default function ExamShell({
   initialFlags,
   initialSecondsLeft,
   mode = "exam",
+  exitPath,
 }: Props) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -63,7 +65,9 @@ export default function ExamShell({
 
   const minimumRequired = Math.ceil(total * 0.5);
   const canSubmit = answeredCount >= minimumRequired;
-  const exitPath = mode === "diagnostic" ? "/diagnostic" : "/practice";
+
+  const resolvedExitPath =
+    exitPath ?? (mode === "diagnostic" ? "/diagnostic" : "/practice");
 
   const handleSubmit = async () => {
     if (!canSubmit || isSubmitting) return;
@@ -121,9 +125,9 @@ export default function ExamShell({
         onSubmit={handleSubmit}
         onStartReview={startReview}
         onStopReview={stopReview}
-        onExit={() => router.push(exitPath)}
-        onRetake={() => router.push(exitPath)}
-        onPickAnother={() => router.push(exitPath)}
+        onExit={() => router.push(resolvedExitPath)}
+        onRetake={() => router.push(resolvedExitPath)}
+        onPickAnother={() => router.push(resolvedExitPath)}
         renderReview={({
           q,
           currentIdx,

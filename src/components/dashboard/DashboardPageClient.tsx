@@ -1,6 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
+
 import { DashboardShell } from "./DashboardShell";
 import type {
   DashboardData,
@@ -9,24 +11,26 @@ import type {
   ActivityItem,
 } from "./types";
 
-type ServerAttempt = {
-  sessionId: string;
-  category: string | null;
-  isCorrect: boolean | null;
-  flagged: boolean;
-  timeSpentSec: number | null;
-  createdAt: string | Date | null;
+type CategoryBreakdownItem = {
+  total?: number;
+  correct?: number;
+  flagged?: number;
+  accuracy?: number;
 };
 
 type ServerSession = {
   id: string;
   label: string | null;
   examKey: string | null;
-  minutes: number | null;
-  scoreCorrect: number | null;
-  scoreTotal: number | null;
-  startedAt: string | Date | null;
+  mode: string;
+  startedAt: string | Date;
   submittedAt: string | Date | null;
+  scoreCorrect: number;
+  scoreTotal: number;
+  minutes: number;
+  flagsCount: number;
+  progressCount: number;
+  categoryBreakdown: unknown;
 };
 
 type DashboardServerData = {
@@ -34,35 +38,56 @@ type DashboardServerData = {
     name?: string | null;
     imageUrl?: string | null;
   };
-  attempts: ServerAttempt[];
   sessions: ServerSession[];
 };
 
-function toNYYYYYMMDD(date?: string | Date | null) {
-  if (!date) return "0000-01-01";
-
-  const d = new Date(date);
-  if (Number.isNaN(d.getTime())) return "0000-01-01";
-
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/New_York",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(d);
-
-  const year = parts.find((p) => p.type === "year")?.value ?? "0000";
-  const month = parts.find((p) => p.type === "month")?.value ?? "01";
-  const day = parts.find((p) => p.type === "day")?.value ?? "01";
-
-  return `${year}-${month}-${day}`;
-}
-
 function safeTime(date?: string | Date | null) {
   if (!date) return 0;
+  const t = new Date(date).getTime();
+  return Number.isNaN(t) ? 0 : t;
+}
 
-  const parsed = new Date(date).getTime();
-  return Number.isNaN(parsed) ? 0 : parsed;
+function toISO(date?: string | Date | null) {
+  if (!date) return "0000-01-01";
+  const d = new Date(date);
+  return d.toISOString().slice(0, 10);
+}
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null;
+}
+
+function normalizeBreakdown(
+  value: unknown
+): Record<string, CategoryBreakdownItem> {
+  if (!isRecord(value)) return {};
+
+  const out: Record<string, CategoryBreakdownItem> = {};
+
+  for (const [k, v] of Object.entries(value)) {
+    if (!isRecord(v)) continue;
+
+    out[k] = {
+      total: typeof v.total === "number" ? v.total : 0,
+      correct: typeof v.correct === "number" ? v.correct : 0,
+      flagged: typeof v.flagged === "number" ? v.flagged : 0,
+      accuracy: typeof v.accuracy === "number" ? v.accuracy : 0,
+    };
+  }
+
+  return out;
+}
+
+function inferMode(s: ServerSession): ExamResult["mode"] {
+  if ((s.scoreTotal ?? 0) === 57) return "Full 57";
+
+  const text = `${s.mode} ${s.label ?? ""} ${s.examKey ?? ""}`.toLowerCase();
+
+  if (text.includes("topic")) return "By Category";
+  if (text.includes("practice")) return "By Category";
+  if (text.includes("diagnostic")) return "Custom";
+
+  return "Custom";
 }
 
 export default function DashboardPageClient({
@@ -70,149 +95,161 @@ export default function DashboardPageClient({
 }: {
   serverData: DashboardServerData;
 }) {
-  const attempts = Array.isArray(serverData.attempts)
-    ? serverData.attempts
-    : [];
+  const router = useRouter();
+  const [isStartingSession, setIsStartingSession] = React.useState(false);
+
   const sessions = Array.isArray(serverData.sessions)
     ? serverData.sessions
     : [];
-
-  const questionsAnswered = attempts.length;
-  const totalCorrect = attempts.reduce(
-    (n, a) => n + (a.isCorrect === true ? 1 : 0),
-    0
-  );
-  const accuracy = questionsAnswered ? totalCorrect / questionsAnswered : 0;
 
   const submittedSessions = [...sessions]
     .filter((s) => Boolean(s.submittedAt))
     .sort((a, b) => safeTime(b.submittedAt) - safeTime(a.submittedAt));
 
-  const minutesRecent3 = submittedSessions
-    .slice(0, 3)
-    .reduce((sum, s) => sum + (s.minutes ?? 0), 0);
-
-  const now = new Date();
-  const todayNY = toNYYYYYMMDD(now);
-
-  const daysWithActivity = new Set(
-    attempts.map((a) => toNYYYYYMMDD(a.createdAt))
+  const totalCorrect = submittedSessions.reduce(
+    (sum, s) => sum + (s.scoreCorrect ?? 0),
+    0
   );
 
-  let streakDays = 0;
-  for (let i = 0; i < 365; i++) {
-    const d = new Date(now);
-    d.setDate(now.getDate() - i);
-    const key = toNYYYYYMMDD(d);
+  const totalQuestions = submittedSessions.reduce(
+    (sum, s) => sum + (s.scoreTotal ?? 0),
+    0
+  );
 
-    if (i === 0) {
-      if (daysWithActivity.has(todayNY)) {
-        streakDays++;
-      } else {
-        break;
-      }
-    } else if (daysWithActivity.has(key)) {
-      streakDays++;
-    } else {
-      break;
+  const accuracy = totalQuestions ? totalCorrect / totalQuestions : 0;
+
+  const totalMinutes = submittedSessions.reduce(
+    (sum, s) => sum + (s.minutes ?? 0),
+    0
+  );
+
+  const categoryMap = new Map<string, { attempted: number; correct: number }>();
+
+  for (const session of submittedSessions) {
+    const breakdown = normalizeBreakdown(session.categoryBreakdown);
+
+    for (const [category, stat] of Object.entries(breakdown)) {
+      const row = categoryMap.get(category) ?? {
+        attempted: 0,
+        correct: 0,
+      };
+
+      row.attempted += stat.total ?? 0;
+      row.correct += stat.correct ?? 0;
+
+      categoryMap.set(category, row);
     }
   }
 
-  const catMap = new Map<string, { correct: number; attempted: number }>();
-
-  for (const a of attempts) {
-    const cat = (a.category ?? "Uncategorized").trim() || "Uncategorized";
-    const row = catMap.get(cat) ?? { correct: 0, attempted: 0 };
-    row.attempted += 1;
-    if (a.isCorrect === true) row.correct += 1;
-    catMap.set(cat, row);
-  }
-
-  const categoryStats: CategoryStat[] = Array.from(catMap.entries())
-    .map(([category, { correct, attempted }]) => ({
+  const categoryStats: CategoryStat[] = Array.from(categoryMap.entries())
+    .map(([category, v]) => ({
       category,
-      attempted,
-      correct,
-      accuracy: attempted ? correct / attempted : 0,
+      attempted: v.attempted,
+      correct: v.correct,
+      accuracy: v.attempted ? v.correct / v.attempted : 0,
     }))
-    .sort((a, b) => a.category.localeCompare(b.category));
-
-  const attemptsBySession = new Map<
-    string,
-    { flagged: number; timeSpentSec: number }
-  >();
-
-  for (const a of attempts) {
-    const row = attemptsBySession.get(a.sessionId) ?? {
-      flagged: 0,
-      timeSpentSec: 0,
-    };
-
-    if (a.flagged) row.flagged += 1;
-    row.timeSpentSec += a.timeSpentSec ?? 0;
-    attemptsBySession.set(a.sessionId, row);
-  }
+    .sort((a, b) => {
+      if (a.accuracy !== b.accuracy) return a.accuracy - b.accuracy;
+      return b.attempted - a.attempted;
+    });
 
   const recentExams: ExamResult[] = submittedSessions.map((s) => {
-    const agg = attemptsBySession.get(s.id) ?? {
-      flagged: 0,
-      timeSpentSec: 0,
-    };
-
-    const minutesSpent = Math.max(
-      s.minutes ?? 0,
-      Math.round((agg.timeSpentSec ?? 0) / 60)
-    );
-
     const scoreRaw = s.scoreCorrect ?? 0;
-    const acc = s.scoreTotal ? (s.scoreCorrect ?? 0) / s.scoreTotal : 0;
-    const wrongCount = Math.max(0, (s.scoreTotal ?? 0) - (s.scoreCorrect ?? 0));
-    const flaggedCount = agg.flagged;
-    const mode: ExamResult["mode"] = s.scoreTotal === 57 ? "Full 57" : "Custom";
+    const total = s.scoreTotal ?? 0;
 
     return {
       id: s.id,
-      dateISO: toNYYYYYMMDD(s.submittedAt ?? s.startedAt),
-      mode,
+      dateISO: toISO(s.submittedAt ?? s.startedAt),
+      mode: inferMode(s),
       label: s.label ?? undefined,
-      minutesSpent,
+      minutesSpent: s.minutes ?? 0,
       scoreRaw,
-      accuracy: acc,
-      wrongCount,
-      flaggedCount,
+      accuracy: total ? scoreRaw / total : 0,
+      wrongCount: Math.max(0, total - scoreRaw),
+      flaggedCount: s.flagsCount ?? 0,
     };
   });
 
-  const activity: ActivityItem[] = [...sessions]
-    .sort(
-      (a, b) =>
-        safeTime(b.submittedAt ?? b.startedAt) -
-        safeTime(a.submittedAt ?? a.startedAt)
-    )
-    .slice(0, 8)
-    .map((s) => ({
-      id: s.id,
-      type: "exam",
-      title: s.submittedAt
-        ? `Submitted ${s.label ?? s.examKey ?? "exam"} • ${
-            s.scoreCorrect ?? 0
-          }/${s.scoreTotal ?? 0}`
-        : `Started ${s.label ?? s.examKey ?? "exam"}`,
-      dateISO: toNYYYYYMMDD(s.submittedAt ?? s.startedAt),
-      meta: undefined,
-    }));
+  const activity: ActivityItem[] = sessions.slice(0, 8).map((s) => ({
+    id: s.id,
+    type: "exam",
+    title: s.submittedAt
+      ? `Submitted ${s.label ?? "exam"} • ${s.scoreCorrect}/${s.scoreTotal}`
+      : `Started ${s.label ?? "exam"}`,
+    dateISO: toISO(s.submittedAt ?? s.startedAt),
+    meta: undefined,
+  }));
 
   const data: DashboardData = {
     totals: {
-      questionsAnswered,
+      questionsAnswered: totalQuestions,
       accuracy,
-      minutes: minutesRecent3,
-      streakDays,
+      minutes: totalMinutes,
+      streakDays: 0,
     },
     categoryStats,
     recentExams,
     activity,
   };
 
-  return <DashboardShell data={data} isLoading={false} />;
+  async function handleStartPlanSession(
+    category: string,
+    count?: number,
+    minutes?: number
+  ) {
+    if (isStartingSession) return;
+
+    try {
+      setIsStartingSession(true);
+
+      const finalCount = Math.max(1, count ?? 10);
+      const finalMinutes = Math.max(1, minutes ?? 15);
+
+      const res = await fetch("/api/sessions/start", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mode: "practice",
+          category,
+          count: finalCount,
+          minutes: finalMinutes,
+        }),
+      });
+
+      const payload = (await res.json().catch(() => null)) as {
+        sessionId?: string;
+        id?: string;
+        error?: string;
+      } | null;
+
+      if (!res.ok) {
+        throw new Error(payload?.error || "Failed to start session");
+      }
+
+      const sessionId = payload?.sessionId ?? payload?.id;
+
+      if (!sessionId) {
+        throw new Error("Session started but no session id was returned");
+      }
+
+      router.push(`/session/${sessionId}?from=dashboard`);
+      router.refresh();
+    } catch (error) {
+      console.error("Failed to start dashboard plan session:", error);
+      alert("Could not start the session. Please try again.");
+    } finally {
+      setIsStartingSession(false);
+    }
+  }
+
+  return (
+    <DashboardShell
+      data={data}
+      isLoading={false}
+      onStartPlanSession={handleStartPlanSession}
+      isStartingPlanSession={isStartingSession}
+    />
+  );
 }

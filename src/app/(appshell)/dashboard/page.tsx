@@ -9,29 +9,29 @@ export type ServerSessionRow = {
   id: string;
   label: string | null;
   examKey: string | null;
+  mode: string;
   startedAt: Date;
   submittedAt: Date | null;
   scoreCorrect: number;
   scoreTotal: number;
   minutes: number;
-};
-
-export type ServerAttemptRow = {
-  sessionId: string;
-  isCorrect: boolean | null;
-  flagged: boolean;
+  flagsCount: number;
+  progressCount: number;
+  categoryBreakdown: unknown | null;
   timeSpentSec: number;
-  createdAt: Date;
-  category: string | null;
 };
 
 export type DashboardServerData = {
   user?: {
     name?: string | null;
     imageUrl?: string | null;
+    planType?: "FREE" | "TRIAL" | "PREMIUM";
+    subscriptionStatus?: string | null;
+    trialEndsAt?: Date | null;
+    premiumStartedAt?: Date | null;
+    premiumEndsAt?: Date | null;
   };
   sessions: ServerSessionRow[];
-  attempts: ServerAttemptRow[];
 };
 
 export default async function DashboardPage() {
@@ -64,6 +64,11 @@ export default async function DashboardPage() {
       id: true,
       name: true,
       imageUrl: true,
+      planType: true,
+      subscriptionStatus: true,
+      trialEndsAt: true,
+      premiumStartedAt: true,
+      premiumEndsAt: true,
     },
   });
 
@@ -83,82 +88,70 @@ export default async function DashboardPage() {
   }
 
   const sessionsResult = await prisma.session.findMany({
-    where: { userId: dbUser.id },
-    orderBy: { startedAt: "desc" },
-    take: 10,
+    where: {
+      userId: dbUser.id,
+      submittedAt: {
+        not: null,
+      },
+    },
+    orderBy: {
+      submittedAt: "desc",
+    },
+    take: 50,
     select: {
       id: true,
       label: true,
       examKey: true,
+      mode: true,
       startedAt: true,
       submittedAt: true,
       scoreCorrect: true,
       scoreTotal: true,
       minutes: true,
+      flagsCount: true,
+      progressCount: true,
+      categoryBreakdown: true,
+      attempts: {
+        select: {
+          timeSpentSec: true,
+        },
+      },
     },
   });
 
-  let attemptsResult: {
-    sessionId: string;
-    isCorrect: boolean | null;
-    flagged: boolean;
-    timeSpentSec: number | null;
-    createdAt: Date;
-    question: {
-      category: string | null;
-    } | null;
-  }[] = [];
+  const sessions: ServerSessionRow[] = sessionsResult.map((s) => {
+    const timeSpentSec = s.attempts.reduce((total, attempt) => {
+      return total + (attempt.timeSpentSec ?? 0);
+    }, 0);
 
-  try {
-    attemptsResult = await prisma.attempt.findMany({
-      where: { userId: dbUser.id },
-      orderBy: { createdAt: "desc" },
-      take: 500,
-      select: {
-        sessionId: true,
-        isCorrect: true,
-        flagged: true,
-        timeSpentSec: true,
-        createdAt: true,
-        question: {
-          select: {
-            category: true,
-          },
-        },
-      },
-    });
-  } catch (error) {
-    console.error("Dashboard attempts query failed:", error);
-    attemptsResult = [];
-  }
-
-  const sessions: ServerSessionRow[] = sessionsResult.map((s) => ({
-    id: s.id,
-    label: s.label,
-    examKey: s.examKey ?? null,
-    startedAt: s.startedAt,
-    submittedAt: s.submittedAt,
-    scoreCorrect: s.scoreCorrect ?? 0,
-    scoreTotal: s.scoreTotal ?? 0,
-    minutes: s.minutes ?? 0,
-  }));
-
-  const attempts: ServerAttemptRow[] = attemptsResult.map((a) => ({
-    sessionId: a.sessionId,
-    isCorrect: a.isCorrect,
-    flagged: a.flagged,
-    timeSpentSec: a.timeSpentSec ?? 0,
-    createdAt: a.createdAt,
-    category: a.question?.category ?? null,
-  }));
+    return {
+      id: s.id,
+      label: s.label,
+      examKey: s.examKey ?? null,
+      mode: s.mode,
+      startedAt: s.startedAt,
+      submittedAt: s.submittedAt,
+      scoreCorrect: s.scoreCorrect ?? 0,
+      scoreTotal: s.scoreTotal ?? 0,
+      minutes: Math.ceil(timeSpentSec / 60),
+      flagsCount: s.flagsCount ?? 0,
+      progressCount: s.progressCount ?? 0,
+      categoryBreakdown: s.categoryBreakdown ?? null,
+      timeSpentSec,
+    };
+  });
 
   const serverData: DashboardServerData = {
     user: {
       name: dbUser.name,
       imageUrl: dbUser.imageUrl,
+      planType: dbUser.planType,
+      subscriptionStatus: dbUser.subscriptionStatus,
+      trialEndsAt: dbUser.trialEndsAt,
+      premiumStartedAt: dbUser.premiumStartedAt,
+      premiumEndsAt: dbUser.premiumEndsAt,
     },
     sessions,
-    attempts,
   };
 
   return <DashboardPageClient serverData={serverData} />;

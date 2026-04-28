@@ -7,6 +7,9 @@ type PageProps = {
   params: Promise<{
     sessionId: string;
   }>;
+  searchParams?: Promise<{
+    from?: string;
+  }>;
 };
 
 type BaseExamQuestion = Omit<ExamQuestion, "index">;
@@ -46,8 +49,18 @@ function normalizeQuestionIds(value: unknown): string[] {
   return value.filter((id): id is string => typeof id === "string");
 }
 
-export default async function SessionPage({ params }: PageProps) {
+function resolveExitPath(from?: string, mode?: string) {
+  if (from === "dashboard") return "/dashboard";
+  if (from === "practice") return "/practice";
+  if (from === "diagnostic") return "/diagnostic";
+
+  return mode === "diagnostic" ? "/diagnostic" : "/practice";
+}
+
+export default async function SessionPage({ params, searchParams }: PageProps) {
   const { sessionId } = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : undefined;
+  const from = resolvedSearchParams?.from;
 
   if (!sessionId) notFound();
 
@@ -116,6 +129,7 @@ export default async function SessionPage({ params }: PageProps) {
   if (orderedQuestions.length === 0) notFound();
 
   const normalizedMode = session.mode === "diagnostic" ? "diagnostic" : "exam";
+  const exitPath = resolveExitPath(from, session.mode);
 
   return (
     <ExamShell
@@ -123,6 +137,7 @@ export default async function SessionPage({ params }: PageProps) {
       minutes={session.minutes ?? 30}
       questions={orderedQuestions}
       mode={normalizedMode}
+      exitPath={exitPath}
     />
   );
 }

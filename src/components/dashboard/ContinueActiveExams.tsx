@@ -78,7 +78,7 @@ export function ContinueActiveExams() {
     | { kind: "some"; sessions: ActiveSessionCard[] }
   >({ kind: "loading" });
 
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const [cancelingId, setCancelingId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
