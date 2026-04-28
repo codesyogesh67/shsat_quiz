@@ -17,6 +17,7 @@ export async function getCurrentUserAccess() {
       trialEndsAt: true,
       premiumStartedAt: true,
       premiumEndsAt: true,
+      subscriptionStatus: true,
     },
   });
 

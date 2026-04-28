@@ -28,6 +28,7 @@ type AccessUser =
       | "trialEndsAt"
       | "premiumStartedAt"
       | "premiumEndsAt"
+      | "subscriptionStatus"
     >
   | null
   | undefined;
@@ -73,8 +74,13 @@ export function getUserAccess(user: AccessUser): UserAccess {
   const isTrialExpired =
     isTrial && (!!trialEndsAt ? trialEndsAt.getTime() <= now.getTime() : true);
 
+  const isPremiumStatus =
+    user.subscriptionStatus === "active" ||
+    user.subscriptionStatus === "trialing";
+
   const isPremium =
     planType === "PREMIUM" &&
+    isPremiumStatus &&
     (!premiumEndsAt || premiumEndsAt.getTime() > now.getTime());
 
   const hasFullAccess = isTrialActive || isPremium;

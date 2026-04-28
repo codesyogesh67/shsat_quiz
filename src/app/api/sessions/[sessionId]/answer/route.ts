@@ -3,6 +3,11 @@ import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
+function normalizeQuestionIds(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((id): id is string => typeof id === "string");
+}
+
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ sessionId: string }> }
@@ -23,15 +28,16 @@ export async function PATCH(
   const hasAnswerField = Object.prototype.hasOwnProperty.call(body, "answer");
   const answer = hasAnswerField ? body.answer : undefined;
 
-  // Ensure question belongs to this session
   const session = await prisma.session.findUnique({
     where: { id: sessionId },
     select: { questionIds: true },
   });
 
-  if (!session || !session.questionIds.includes(questionId)) {
+  const questionIds = normalizeQuestionIds(session?.questionIds);
+
+  if (!session || !questionIds.includes(questionId)) {
     return NextResponse.json(
-      { ok: false, error: "invalid question" },
+      { ok: false, error: "INVALID_QUESTION" },
       { status: 400 }
     );
   }
@@ -93,7 +99,6 @@ export async function PATCH(
     });
   }
 
-  // Better answered count: ignore null and empty string
   const attempts = await prisma.attempt.findMany({
     where: { sessionId },
     select: {

@@ -122,6 +122,7 @@ model Session {
   progressCount          Int       @default(0)
   questionIds            String[]
   serverSecondsRemaining Int?
+  categoryBreakdown      Json?
   attempts               Attempt[]
   exam                   Exam?     @relation(fields: [examId], references: [id])
   user                   User?     @relation("UserSessions", fields: [userId], references: [id])
