@@ -29,6 +29,7 @@ export default async function PricingPage() {
         trialEndsAt: true,
         premiumStartedAt: true,
         premiumEndsAt: true,
+        subscriptionStatus: true,
       },
     });
 
