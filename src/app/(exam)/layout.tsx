@@ -1,6 +1,4 @@
 import type { ReactNode } from "react";
-import AppSidebar from "@/components/dashboard/app-sidebar";
-import MobileAppSidebar from "@/components/dashboard/mobile-app-sidebar";
 
 export default function AppShellLayout({ children }: { children: ReactNode }) {
   return (

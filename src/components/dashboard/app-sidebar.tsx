@@ -2,7 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SignOutButton } from "@clerk/nextjs";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignOutButton,
+} from "@clerk/nextjs";
 import { useState } from "react";
 import {
   LayoutDashboard,
@@ -15,10 +20,32 @@ import {
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-  { icon: Target, label: "Diagnostic", href: "/diagnostic" },
-  { icon: BookOpen, label: "Practice", href: "/practice" },
-  { icon: User, label: "Profile", href: "/profile" },
+  {
+    icon: LayoutDashboard,
+    label: "Dashboard",
+    href: "/dashboard",
+    requiresAuth: true,
+  },
+  {
+    icon: Target,
+    label: "Diagnostic",
+    href: "/diagnostic",
+    requiresAuth: false,
+  },
+  {
+    icon: BookOpen,
+    label: "Practice",
+    href: "/practice",
+    requiresAuth: false,
+  },
+];
+
+const signedInOnlyNavItems = [
+  {
+    icon: User,
+    label: "Profile",
+    href: "/profile",
+  },
 ];
 
 export default function AppSidebar() {
@@ -71,24 +98,79 @@ export default function AppSidebar() {
         </div>
 
         <nav className="flex-1 space-y-2 px-3 py-4">
-          {navItems.map((item) => {
-            const Icon = item.icon;
-            const active =
-              pathname === item.href || pathname.startsWith(`${item.href}/`);
+          <SignedOut>
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active =
+                pathname === item.href || pathname.startsWith(`${item.href}/`);
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "group relative flex h-14 items-center overflow-hidden rounded-2xl transition-colors duration-200",
-                  active
-                    ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20"
-                    : "text-indigo-600 hover:bg-slate-100 hover:text-slate-900"
-                )}
+              if (item.requiresAuth) {
+                return (
+                  <SignInButton key={item.href} mode="modal">
+                    <button
+                      type="button"
+                      className={cn(
+                        "group relative flex h-14 w-full cursor-pointer items-center overflow-hidden rounded-2xl transition-colors duration-200",
+                        active
+                          ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20"
+                          : "text-indigo-600 hover:bg-slate-100 hover:text-slate-900"
+                      )}
+                    >
+                      <span className="absolute left-7 top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl">
+                        <Icon className="h-5 w-5 text-current" />
+                      </span>
+
+                      <span
+                        className={cn(
+                          "pl-16 whitespace-nowrap text-sm font-medium transition-all duration-200",
+                          expanded
+                            ? "translate-x-0 opacity-100"
+                            : "pointer-events-none translate-x-1 opacity-0"
+                        )}
+                      >
+                        {item.label}
+                      </span>
+                    </button>
+                  </SignInButton>
+                );
+              }
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "group relative flex h-14 items-center overflow-hidden rounded-2xl transition-colors duration-200",
+                    active
+                      ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20"
+                      : "text-indigo-600 hover:bg-slate-100 hover:text-slate-900"
+                  )}
+                >
+                  <span className="absolute left-7 top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl">
+                    <Icon className="h-5 w-5 text-current" />
+                  </span>
+
+                  <span
+                    className={cn(
+                      "pl-16 whitespace-nowrap text-sm font-medium transition-all duration-200",
+                      expanded
+                        ? "translate-x-0 opacity-100"
+                        : "pointer-events-none translate-x-1 opacity-0"
+                    )}
+                  >
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
+
+            <SignInButton mode="modal">
+              <button
+                type="button"
+                className="group relative flex h-14 w-full cursor-pointer items-center overflow-hidden rounded-2xl text-indigo-600 transition-colors duration-200 hover:bg-indigo-50 hover:text-indigo-700"
               >
                 <span className="absolute left-7 top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl">
-                  <Icon className="h-5 w-5 text-current" />
+                  <User className="h-5 w-5" />
                 </span>
 
                 <span
@@ -99,33 +181,69 @@ export default function AppSidebar() {
                       : "pointer-events-none translate-x-1 opacity-0"
                   )}
                 >
-                  {item.label}
+                  Sign in
                 </span>
-              </Link>
-            );
-          })}
+              </button>
+            </SignInButton>
+          </SignedOut>
 
-          <SignOutButton redirectUrl="/">
-            <button
-              type="button"
-              className="group relative cursor-pointer flex h-14 w-full items-center overflow-hidden rounded-2xl text-red-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
-            >
-              <span className="absolute left-7 top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl">
-                <LogOut className="h-5 w-5" />
-              </span>
+          <SignedIn>
+            {[...navItems, ...signedInOnlyNavItems].map((item) => {
+              const Icon = item.icon;
+              const active =
+                pathname === item.href || pathname.startsWith(`${item.href}/`);
 
-              <span
-                className={cn(
-                  "pl-16 whitespace-nowrap text-sm font-medium transition-all duration-200",
-                  expanded
-                    ? "translate-x-0 opacity-100"
-                    : "pointer-events-none translate-x-1 opacity-0"
-                )}
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "group relative flex h-14 items-center overflow-hidden rounded-2xl transition-colors duration-200",
+                    active
+                      ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/20"
+                      : "text-indigo-600 hover:bg-slate-100 hover:text-slate-900"
+                  )}
+                >
+                  <span className="absolute left-7 top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl">
+                    <Icon className="h-5 w-5 text-current" />
+                  </span>
+
+                  <span
+                    className={cn(
+                      "pl-16 whitespace-nowrap text-sm font-medium transition-all duration-200",
+                      expanded
+                        ? "translate-x-0 opacity-100"
+                        : "pointer-events-none translate-x-1 opacity-0"
+                    )}
+                  >
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
+
+            <SignOutButton redirectUrl="/">
+              <button
+                type="button"
+                className="group relative flex h-14 w-full cursor-pointer items-center overflow-hidden rounded-2xl text-red-500 transition-colors duration-200 hover:bg-red-50 hover:text-red-600"
               >
-                Log out
-              </span>
-            </button>
-          </SignOutButton>
+                <span className="absolute left-7 top-1/2 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl">
+                  <LogOut className="h-5 w-5" />
+                </span>
+
+                <span
+                  className={cn(
+                    "pl-16 whitespace-nowrap text-sm font-medium transition-all duration-200",
+                    expanded
+                      ? "translate-x-0 opacity-100"
+                      : "pointer-events-none translate-x-1 opacity-0"
+                  )}
+                >
+                  Log out
+                </span>
+              </button>
+            </SignOutButton>
+          </SignedIn>
         </nav>
       </div>
     </aside>
