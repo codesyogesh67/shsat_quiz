@@ -14,6 +14,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LockedAction } from "@/components/auth/LockedAction";
 import { cn } from "@/lib/utils";
 import type { ReviewFilter, SessionResultsData } from "@/types/exam";
 
@@ -447,13 +448,22 @@ export default function SessionResults({
                   </div>
 
                   <div className="mt-5 flex flex-col gap-3 border-t border-slate-200/70 pt-5">
-                    <Button
+                    {/* <Button
                       onClick={() => onReview("wrong")}
                       className="w-full justify-between rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-[0_12px_24px_-14px_rgba(79,70,229,0.35)] hover:opacity-95"
                     >
                       Review Mistakes
                       <ArrowRight className="h-4 w-4" />
-                    </Button>
+                    </Button> */}
+                    <LockedAction onUnlockedClick={() => onReview("wrong")}>
+                      <Button
+                        type="button"
+                        className="w-full justify-between rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-[0_12px_24px_-14px_rgba(79,70,229,0.35)] hover:opacity-95"
+                      >
+                        Review Mistakes
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </LockedAction>
 
                     {onRetake ? (
                       <Button

@@ -279,16 +279,6 @@ export default function PracticeReviewShell({
                     </p>
                   </div>
 
-                  {/* <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => router.push("/practice")}
-                    className="shrink-0 rounded-xl text-slate-600 hover:bg-white/80 hover:text-slate-900"
-                  >
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back
-                  </Button> */}
                   <ReviewBackButton />
                 </div>
 

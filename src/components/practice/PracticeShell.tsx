@@ -104,8 +104,8 @@ export default function PracticeShell({
     void startSavedSession(
       {
         mode: "diagnostic",
-        count: 20,
-        minutes: 12,
+        count: 12,
+        minutes: 20,
       },
       "diagnostic"
     );

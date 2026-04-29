@@ -252,7 +252,7 @@ export default function SharedSessionShell({
                       </div>
                       <Button
                         type="button"
-                        variant="ghost"
+                        variant="ghost_icon"
                         // size="icon"
                         onClick={() => setExitOpen(true)}
                         className="app-icon-square"
