@@ -23,7 +23,7 @@ export default function StartDiagnosticButton() {
         body: JSON.stringify({
           mode: "diagnostic",
           count: 12,
-          minutes: 30,
+          minutes: 20,
         }),
       });
 

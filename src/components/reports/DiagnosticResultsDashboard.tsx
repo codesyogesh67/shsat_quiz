@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { ReportComponentProps, TopicStatus } from "@/types/diagnostic";
+import { useRouter } from "next/navigation";
+import { LockedAction } from "@/components/auth/LockedAction";
 import {
   ArrowRight,
   BarChart3,
@@ -159,6 +161,7 @@ function StatCard({
 export default function DiagnosticResultsDashboard({
   report,
 }: ReportComponentProps) {
+  const router = useRouter();
   const recommendedParam = encodeURIComponent(report.weakTopics.join(","));
   const strongestTopic = report.strongestTopic?.topic ?? "Not enough data";
   const weakestTopic = report.weakestTopic?.topic ?? "Not enough data";
@@ -517,7 +520,7 @@ export default function DiagnosticResultsDashboard({
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs font-medium uppercase tracking-[0.16em] text-white/60">
-                      3-Month Goal
+                      Guided Improvement Plan
                     </p>
                     <h3 className="mt-3 text-base font-semibold leading-6 text-white">
                       Reach balanced readiness
@@ -526,17 +529,27 @@ export default function DiagnosticResultsDashboard({
                 </div>
 
                 <p className="mt-3 text-sm leading-6 text-white/75">
-                  Reduce weak spots, improve pacing, and move toward stronger
-                  overall SHSAT confidence across categories.
+                  Rather than a fixed schedule, your progress is built through
+                  focused 10-day cycles.
                 </p>
 
-                <Link
-                  href={`/diagnostic/plan/${report.sessionId}`}
-                  className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-white/15"
+                <LockedAction
+                  redirectUrl={`/diagnostic/plan/${report.sessionId}`}
+                  onUnlockedClick={() =>
+                    router.push(`/diagnostic/plan/${report.sessionId}`)
+                  }
                 >
-                  Open full roadmap
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
+                  {/*                       className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-500 to-fuchsia-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-18px_rgba(99,102,241,0.48)] transition-all duration-300 hover:-translate-y-0.5 hover:opacity-95"
+                   */}
+                  <button
+                    type="button"
+                    // className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-white/15"
+                    className=" cursor-pointer mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-500 to-fuchsia-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-18px_rgba(99,102,241,0.48)] transition-all duration-300 hover:-translate-y-0.5 hover:opacity-95"
+                  >
+                    Open full roadmap
+                    <ArrowRight className="h-4 w-4 text-white" />
+                  </button>
+                </LockedAction>
               </div>
             </div>
           </section>
@@ -628,7 +641,7 @@ export default function DiagnosticResultsDashboard({
                   </Link>
 
                   <div className="grid gap-3 sm:grid-cols-2">
-                    <Link
+                    {/* <Link
                       href={`/review/${report.sessionId}`}
                       className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm font-semibold text-white/90 transition-all duration-300 hover:bg-white/10"
                     >
@@ -636,7 +649,24 @@ export default function DiagnosticResultsDashboard({
                       <span className="mt-1 block text-xs font-medium text-white/55">
                         Revisit this diagnostic
                       </span>
-                    </Link>
+                    </Link> */}
+
+                    <LockedAction
+                      redirectUrl={`/review/${report.sessionId}`}
+                      onUnlockedClick={() =>
+                        router.push(`/review/${report.sessionId}`)
+                      }
+                    >
+                      <button
+                        type="button"
+                        className="w-full text-left rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm font-semibold text-white/90 transition-all duration-300 hover:bg-white/10"
+                      >
+                        <span className="block">Review mistakes</span>
+                        <span className="mt-1 block text-xs font-medium text-white/55">
+                          Revisit this diagnostic
+                        </span>
+                      </button>
+                    </LockedAction>
 
                     <Link
                       href="/practice"
