@@ -240,7 +240,8 @@ export default function SignInPage() {
                     <p className="text-slate-500">New to SHSAT Guide?</p>
 
                     <Link
-                      href="/sign-up"
+                      // href="/sign-up"
+                      href="/"
                       className="inline-flex items-center gap-1.5 font-medium text-indigo-600 transition-all duration-200 hover:text-violet-600"
                     >
                       Create account

@@ -3,6 +3,8 @@ import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
 import { getUserAccess } from "@/lib/access";
+import { SignedOut, SignedIn, SignInButton } from "@clerk/nextjs";
+
 import {
   Crown,
   Sparkles,
@@ -145,9 +147,26 @@ export default async function PricingPage() {
               </ul>
 
               <div className="mt-auto">
-                <Button asChild className="h-11 w-full rounded-xl ">
+                {/* <Button asChild className="h-11 w-full rounded-xl ">
                   <Link href="/sign-up">Start Free Trial</Link>
-                </Button>
+                </Button> */}
+
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    <Button className="h-11 w-full rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white hover:text-white">
+                      Start free trial
+                    </Button>
+                  </SignInButton>
+                </SignedOut>
+
+                <SignedIn>
+                  <Button
+                    asChild
+                    className="h-11 w-full rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white hover:text-white"
+                  >
+                    <Link href="/dashboard">Start free trial</Link>
+                  </Button>
+                </SignedIn>
               </div>
             </CardContent>
           </Card>
