@@ -168,7 +168,11 @@
   }
 
   .app-button-ghost {
-    @apply inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium text-slate-600 transition-all duration-200 hover:bg-slate-100;
+    @apply cursor-pointer inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-medium text-slate-600 transition-all duration-200 hover:bg-slate-100;
+  }
+
+  .app-button-icon-ghost {
+    @apply cursor-pointer inline-flex items-center justify-center rounded-xl h-9 w-9 text-slate-600 transition-all duration-200 hover:bg-slate-100;
   }
 
   .app-gradient,
@@ -242,6 +246,5 @@
     @apply scale-105 shadow-md shadow-indigo-500/20;
   }
 }
-
 
 /* className="rounded-xl border-0 bg-gradient-to-r from-indigo-600 to-violet-600 px-6 text-white shadow-lg shadow-indigo-500/20 transition hover:-translate-y-0.5 hover:shadow-xl" */

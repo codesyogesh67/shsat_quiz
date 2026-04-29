@@ -14,6 +14,8 @@ const buttonVariants = cva(
           "app-button-secondary",
         ghost:
           "app-button-ghost",
+        ghost_icon:
+          "app-button-icon-ghost",
         outline:
           "border border-slate-200/80 bg-white text-slate-700 hover:bg-slate-50",
       },
