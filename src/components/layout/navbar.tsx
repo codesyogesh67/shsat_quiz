@@ -1,16 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import * as React from "react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
-import { MobileSidebar } from "./mobile-sidebar";
+
+import { Button } from "@/components/ui/button";
+import MobileNavigation from "@/components/navigation/mobile-navigation";
 import { NavLinks } from "./nav-links";
 
 const Navbar = () => {
-  const [open, setOpen] = React.useState(false);
-
   return (
     <header className="sticky top-0 z-50 backdrop-blur-xl bg-[radial-gradient(60rem_35rem_at_15%_-10%,rgba(99,102,241,0.16),transparent_55%),radial-gradient(42rem_24rem_at_85%_0%,rgba(139,92,246,0.12),transparent_55%)]">
       <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
@@ -40,7 +38,7 @@ const Navbar = () => {
             <SignInButton mode="modal">
               <Button
                 variant="ghost"
-                className="rounded-xl duration-200 bg-gradient-to-br from-indigo-600 to-violet-600 text-white hover:text-white"
+                className="rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white duration-200 hover:text-white"
               >
                 Sign In
               </Button>
@@ -48,22 +46,20 @@ const Navbar = () => {
           </SignedOut>
 
           <SignedIn>
-            <div className="flex items-center gap-3">
-              <UserButton
-                afterSignOutUrl="/"
-                appearance={{
-                  elements: {
-                    userButtonAvatarBox: "h-9 w-9 rounded-xl",
-                    userButtonTrigger:
-                      "rounded-xl transition-all duration-200 focus:shadow-none focus:ring-0",
-                  },
-                }}
-              />
-            </div>
+            <UserButton
+              afterSignOutUrl="/"
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: "h-9 w-9 rounded-xl",
+                  userButtonTrigger:
+                    "rounded-xl transition-all duration-200 focus:shadow-none focus:ring-0",
+                },
+              }}
+            />
           </SignedIn>
         </div>
 
-        <MobileSidebar open={open} setOpen={setOpen} />
+        <MobileNavigation />
       </div>
     </header>
   );
