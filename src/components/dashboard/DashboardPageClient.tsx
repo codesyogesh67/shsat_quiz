@@ -39,6 +39,7 @@ type DashboardServerData = {
     imageUrl?: string | null;
   };
   sessions: ServerSession[];
+  completedPlanSessions?: number;
 };
 
 function safeTime(date?: string | Date | null) {
@@ -250,6 +251,7 @@ export default function DashboardPageClient({
       isLoading={false}
       onStartPlanSession={handleStartPlanSession}
       isStartingPlanSession={isStartingSession}
+      completedPlanSessions={serverData.completedPlanSessions ?? 0}
     />
   );
 }

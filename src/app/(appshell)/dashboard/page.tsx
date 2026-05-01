@@ -32,6 +32,7 @@ export type DashboardServerData = {
     premiumEndsAt?: Date | null;
   };
   sessions: ServerSessionRow[];
+  completedPlanSessions: number;
 };
 
 export default async function DashboardPage() {
@@ -141,6 +142,15 @@ export default async function DashboardPage() {
     };
   });
 
+  const completedPlanSessions = sessions.filter((session) => {
+    return (
+      session.submittedAt &&
+      ["PRACTICE", "practice", "topic", "CATEGORY", "category"].includes(
+        session.mode
+      )
+    );
+  }).length;
+
   const serverData: DashboardServerData = {
     user: {
       name: dbUser.name,
@@ -152,6 +162,7 @@ export default async function DashboardPage() {
       premiumEndsAt: dbUser.premiumEndsAt,
     },
     sessions,
+    completedPlanSessions,
   };
 
   return <DashboardPageClient serverData={serverData} />;

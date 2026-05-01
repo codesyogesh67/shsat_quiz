@@ -18,6 +18,7 @@ export function DashboardShell({
   isLoading = false,
   onStartPlanSession,
   isStartingPlanSession = false,
+  completedPlanSessions = 0,
 }: {
   data: DashboardData;
   isLoading?: boolean;
@@ -27,6 +28,7 @@ export function DashboardShell({
     minutes?: number
   ) => void;
   isStartingPlanSession?: boolean;
+  completedPlanSessions?: number;
 }) {
   const { user } = useUser();
   const username = user?.firstName ?? "there";
@@ -108,6 +110,7 @@ export function DashboardShell({
               recentExams={data.recentExams}
               onStartPlanSession={onStartPlanSession}
               isStartingPlanSession={isStartingPlanSession}
+              completedPlanSessions={completedPlanSessions}
             />
           </section>
         </div>

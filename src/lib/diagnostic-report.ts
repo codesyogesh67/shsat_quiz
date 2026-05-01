@@ -25,7 +25,8 @@ export type DiagnosticReport = {
   weakestTopic: TopicStat | null;
   topicStats: TopicStat[];
   weakTopics: string[];
-  recommendedDailyMinutes: string;
+  recommendedDailyMinutes: number;
+  recommendedDailyMinutesLabel: string;
   summary: string;
 };
 
@@ -45,10 +46,19 @@ function getReadinessLevel(
   return "Foundation";
 }
 
-function getRecommendedDailyMinutes(accuracy: number): string {
-  if (accuracy < 45) return "30–40 min/day";
-  if (accuracy < 65) return "25–30 min/day";
-  return "20–25 min/day";
+function getRecommendedDailyMinutes(
+  accuracy: number
+): {
+  minutes: number;
+  label: string;
+} {
+  if (accuracy < 45) {
+    return { minutes: 40, label: "30–40 min/day" };
+  }
+  if (accuracy < 65) {
+    return { minutes: 30, label: "25–30 min/day" };
+  }
+  return { minutes: 25, label: "20–25 min/day" };
 }
 
 function buildWeeklyPlan(
@@ -139,7 +149,7 @@ export async function getDiagnosticReport(
     [...topicStats].sort((a, b) => b.accuracy - a.accuracy)[0] ?? null;
 
   const readinessLevel = getReadinessLevel(accuracy);
-  const recommendedDailyMinutes = getRecommendedDailyMinutes(accuracy);
+  const recommendedDaily = getRecommendedDailyMinutes(accuracy);
 
   const strongestText = strongestTopic
     ? strongestTopic.topic
@@ -174,7 +184,8 @@ export async function getDiagnosticReport(
     weakestTopic,
     topicStats,
     weakTopics,
-    recommendedDailyMinutes,
+    recommendedDailyMinutes: recommendedDaily.minutes,
+    recommendedDailyMinutesLabel: recommendedDaily.label,
     summary,
   };
 }
