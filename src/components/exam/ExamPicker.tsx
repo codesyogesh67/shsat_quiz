@@ -30,6 +30,7 @@ const SETS = [
   { key: "shsat_2022", label: "SHSAT 2022" },
   { key: "shsat_2023", label: "SHSAT 2023" },
   { key: "shsat_2024", label: "SHSAT 2024" },
+  { key: "shsat_2025", label: "SHSAT 2025" },
 ] as const;
 
 type SetKey = typeof SETS[number]["key"];
