@@ -290,8 +290,9 @@ export default function ProfilePageClient({ access }: ProfilePageClientProps) {
               </div>
 
               <p className="max-w-2xl text-sm leading-6 text-slate-600">
-                Manage your profile, parent contact, billing contact, and
-                account access in one premium workspace.
+                {/* Manage your profile, parent contact, billing contact, and
+                account access in one premium workspace. */}
+                Manage your profile, profile details.
               </p>
 
               <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
@@ -308,10 +309,10 @@ export default function ProfilePageClient({ access }: ProfilePageClientProps) {
             </div>
           </div>
 
-          <div className="grid w-full max-w-sm grid-cols-2 gap-3">
+          {/* <div className="grid w-full max-w-sm grid-cols-2 gap-3">
             <HeroStat label="Plan" value={planLabel} />
             <HeroStat label="Parent Updates" value={parentUpdatesLabel} />
-          </div>
+          </div> */}
         </div>
       </section>
 
@@ -369,7 +370,7 @@ export default function ProfilePageClient({ access }: ProfilePageClientProps) {
               </div>
             </CardContent>
           </Card>
-
+          {/* 
           <Card className="rounded-[32px] border-slate-200/70 bg-white shadow-sm">
             <CardContent className="p-0">
               <SectionHeader
@@ -458,11 +459,11 @@ export default function ProfilePageClient({ access }: ProfilePageClientProps) {
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
 
         <div className="space-y-6">
-          <Card className="overflow-hidden rounded-[32px] border-slate-200/70 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 shadow-sm">
+          {/*   <Card className="overflow-hidden rounded-[32px] border-slate-200/70 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950 shadow-sm">
             <CardContent className="p-0">
               <div className="p-6 text-white">
                 <div className="flex items-start justify-between gap-4">
@@ -561,7 +562,7 @@ export default function ProfilePageClient({ access }: ProfilePageClientProps) {
                 )}
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
 
           <Card className="rounded-[32px] border-slate-200/70 bg-white shadow-sm">
             <CardContent className="p-0">
