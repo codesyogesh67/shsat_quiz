@@ -11,12 +11,12 @@ export default function Home() {
     <main className="relative overflow-hidden">
       <HeroLanding />
 
-      <LandingCta />
+      {/* <LandingCta />
       <LandingHowItWorks />
       <LandingDashboardPreview />
       <LandingParentSection />
 
-      <Footer />
+      <Footer /> */}
     </main>
   );
 }

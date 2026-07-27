@@ -38,9 +38,9 @@ export type DashboardServerData = {
 export default async function DashboardPage() {
   const access = await getCurrentUserAccess();
 
-  if (!access.canUseDashboard) {
-    return <DashboardLockedState access={access} />;
-  }
+  // if (!access.canUseDashboard) {
+  //   return <DashboardLockedState access={access} />;
+  // }
 
   const { userId: clerkUserId } = await auth();
 
