@@ -104,7 +104,7 @@ export function DashboardShell({
             <RecentExamsTable exams={data.recentExams} />
           </section>
 
-          <section>
+          {/* <section>
             <WeakAreaImprovementPlan
               categories={data.categoryStats}
               recentExams={data.recentExams}
@@ -112,7 +112,7 @@ export function DashboardShell({
               isStartingPlanSession={isStartingPlanSession}
               completedPlanSessions={completedPlanSessions}
             />
-          </section>
+          </section> */}
         </div>
       </div>
     </div>

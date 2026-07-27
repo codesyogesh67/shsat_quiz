@@ -442,7 +442,7 @@ export default function DiagnosticResultsDashboard({
           </section>
 
           {/* Improvement Plan */}
-          <section className="rounded-[32px] border border-slate-200/70 bg-white p-5 shadow-[0_24px_60px_-36px_rgba(15,23,42,0.18)] sm:p-6 lg:p-7">
+          {/* <section className="rounded-[32px] border border-slate-200/70 bg-white p-5 shadow-[0_24px_60px_-36px_rgba(15,23,42,0.18)] sm:p-6 lg:p-7">
             <SectionHeader
               icon={BookOpenCheck}
               eyebrow="Improvement Plan"
@@ -539,8 +539,7 @@ export default function DiagnosticResultsDashboard({
                     router.push(`/diagnostic/plan/${report.sessionId}`)
                   }
                 >
-                  {/*                       className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-500 to-fuchsia-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_-18px_rgba(99,102,241,0.48)] transition-all duration-300 hover:-translate-y-0.5 hover:opacity-95"
-                   */}
+                 
                   <button
                     type="button"
                     // className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-white/15"
@@ -552,7 +551,7 @@ export default function DiagnosticResultsDashboard({
                 </LockedAction>
               </div>
             </div>
-          </section>
+          </section> */}
 
           {/* Unified Summary + CTA */}
           <section className="rounded-[32px] border border-slate-200/70 bg-white p-5 shadow-[0_24px_60px_-36px_rgba(15,23,42,0.18)] sm:p-6 lg:p-7">
